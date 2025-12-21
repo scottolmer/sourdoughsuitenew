@@ -195,6 +195,7 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
                 value={originalYield}
                 onChangeText={setOriginalYield}
                 keyboardType="numeric"
+                editable={true}
                 leftIcon="bread-slice"
                 style={styles.yieldInput}
                 helperText="Loaves or servings"
@@ -211,6 +212,7 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
                 value={targetYield}
                 onChangeText={setTargetYield}
                 keyboardType="numeric"
+                editable={true}
                 leftIcon="bread-slice-outline"
                 style={styles.yieldInput}
                 helperText="Loaves or servings"
@@ -238,7 +240,8 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
                     onChangeText={(value) =>
                       updateIngredient(index, 'name', value)
                     }
-                    style={styles.ingredientName}
+                    editable={true}
+                    containerStyle={styles.ingredientName}
                   />
                   <View style={styles.amountRow}>
                     <BasicInput
@@ -248,7 +251,8 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
                         updateIngredient(index, 'amount', value)
                       }
                       keyboardType="numeric"
-                      style={styles.amountInput}
+                      editable={true}
+                      containerStyle={styles.amountInput}
                     />
                     <BasicInput
                       placeholder="Unit"
@@ -256,7 +260,8 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
                       onChangeText={(value) =>
                         updateIngredient(index, 'unit', value)
                       }
-                      style={styles.unitInput}
+                      editable={true}
+                      containerStyle={styles.unitInput}
                     />
                   </View>
                   <Button
@@ -414,7 +419,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   amountInput: {
-    flex: 1,
+    flex: 2,
   },
   unitInput: {
     flex: 1,
