@@ -11,7 +11,9 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
@@ -27,6 +29,8 @@ interface TimelineStep {
 
 export default function TimelineCalculatorScreen() {
   const [targetTime, setTargetTime] = useState('');
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date());
   const [steps, setSteps] = useState<TimelineStep[]>([
     { name: 'Mix dough', duration: '0.5' },
     { name: 'Bulk fermentation', duration: '4' },
@@ -91,6 +95,16 @@ export default function TimelineCalculatorScreen() {
     ]);
   };
 
+  const handleTimeChange = (event: any, time?: Date) => {
+    setShowTimePicker(Platform.OS === 'ios');
+    if (time) {
+      setSelectedTime(time);
+      const hours = time.getHours().toString().padStart(2, '0');
+      const minutes = time.getMinutes().toString().padStart(2, '0');
+      setTargetTime(`${hours}:${minutes}`);
+    }
+  };
+
   const formatTime = (date: Date | undefined) => {
     if (!date) return '';
     return date.toLocaleTimeString('en-US', {
@@ -131,13 +145,27 @@ export default function TimelineCalculatorScreen() {
           {/* Target Time */}
           <Card variant="elevated">
             <Text style={styles.sectionTitle}>When do you want to finish?</Text>
-            <BasicInput
-              label="Target Finish Time"
-              placeholder="e.g., 18:00"
-              value={targetTime}
-              onChangeText={setTargetTime}
-              helperText="Enter time in HH:MM format (e.g., 16:00)"
-            />
+            <Text style={styles.label}>Target Finish Time</Text>
+            <TouchableOpacity
+              style={styles.timePickerButton}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Icon name="clock-outline" size={20} color={theme.colors.primary[600]} />
+              <Text style={styles.timePickerText}>
+                {targetTime || 'Select time'}
+              </Text>
+              <Icon name="chevron-down" size={20} color={theme.colors.text.tertiary} />
+            </TouchableOpacity>
+            <Text style={styles.helperText}>Tap to select your target finish time</Text>
+            {showTimePicker && (
+              <DateTimePicker
+                value={selectedTime}
+                mode="time"
+                is24Hour={false}
+                display="default"
+                onChange={handleTimeChange}
+              />
+            )}
           </Card>
 
           {/* Steps */}
@@ -154,14 +182,16 @@ export default function TimelineCalculatorScreen() {
                       placeholder="Step name"
                       value={step.name}
                       onChangeText={(value) => updateStep(index, 'name', value)}
-                      style={styles.stepNameInput}
+                      editable={true}
+                      containerStyle={styles.stepNameInput}
                     />
                     <BasicInput
                       placeholder="Hours"
                       value={step.duration}
                       onChangeText={(value) => updateStep(index, 'duration', value)}
                       keyboardType="numeric"
-                      style={styles.stepDurationInput}
+                      editable={true}
+                      containerStyle={styles.stepDurationInput}
                     />
                   </View>
                   <Button
@@ -282,6 +312,34 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.weights.semibold as any,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.sm,
+  },
+  label: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium as any,
+    color: theme.colors.text.primary,
+    marginBottom: theme.spacing.xs,
+  },
+  timePickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.border.main,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.white,
+    paddingHorizontal: theme.spacing.md,
+    minHeight: 48,
+    gap: theme.spacing.sm,
+  },
+  timePickerText: {
+    flex: 1,
+    fontSize: theme.typography.sizes.base,
+    color: theme.colors.text.primary,
+  },
+  helperText: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.text.tertiary,
+    marginTop: theme.spacing.xs,
+    marginLeft: theme.spacing.xs,
   },
   stepCard: {
     marginBottom: theme.spacing.sm,
