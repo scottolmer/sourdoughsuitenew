@@ -37,6 +37,7 @@ export default function TimelineCalculatorScreen() {
     { name: 'Shape', duration: '0.25' },
     { name: 'Final proof', duration: '3' },
     { name: 'Bake', duration: '0.75' },
+    { name: 'Cool down', duration: '1' },
   ]);
 
   const calculateTimeline = () => {
@@ -92,6 +93,7 @@ export default function TimelineCalculatorScreen() {
       { name: 'Shape', duration: '0.25' },
       { name: 'Final proof', duration: '3' },
       { name: 'Bake', duration: '0.75' },
+      { name: 'Cool down', duration: '1' },
     ]);
   };
 
