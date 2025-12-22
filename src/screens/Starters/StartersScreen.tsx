@@ -3,7 +3,7 @@
  * List and manage sourdough starters
  */
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   ScrollView,
   RefreshControl,
   Alert,
+  InteractionManager,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,6 +25,7 @@ import { SkeletonList } from '../../components/SkeletonLoader';
 import { theme } from '../../theme';
 import { starterStorage } from '../../services/starterStorage';
 import { feedingLogStorage } from '../../services/feedingLogStorage';
+import { initializeNotifications } from '../../services/notificationService';
 import { QUERY_KEYS } from '../../constants';
 import { Starter } from '../../types';
 
@@ -37,6 +39,7 @@ type StartersStackParamList = {
 type NavigationProp = NativeStackNavigationProp<StartersStackParamList>;
 
 export default function StartersScreen() {
+  const notificationsInitialized = useRef(false);
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
 
@@ -62,6 +65,23 @@ export default function StartersScreen() {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.STARTERS] });
     },
   });
+
+  // Initialize notifications lazily (after screen is interactive)
+  useEffect(() => {
+    if (notificationsInitialized.current) return;
+
+    const task = InteractionManager.runAfterInteractions(async () => {
+      try {
+        await initializeNotifications();
+        notificationsInitialized.current = true;
+        console.log('Notifications initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize notifications:', error);
+      }
+    });
+
+    return () => task.cancel();
+  }, []);
 
   const handleAddStarter = () => {
     navigation.navigate('AddStarter');
