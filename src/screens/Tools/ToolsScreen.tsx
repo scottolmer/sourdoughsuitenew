@@ -22,6 +22,7 @@ type ToolsStackParamList = {
   StarterPercentageCalculator: undefined;
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
+  RecipeRescueCalculator: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
@@ -63,6 +64,13 @@ export default function ToolsScreen() {
       description: 'Calculate ingredient ratios',
       color: theme.colors.primary[600],
       onPress: () => navigation.navigate('BakersCalculator'),
+    },
+    {
+      icon: 'lifebuoy',
+      title: 'Recipe Rescue',
+      description: 'Fix ingredient mistakes',
+      color: theme.colors.error.main,
+      onPress: () => navigation.navigate('RecipeRescueCalculator'),
     },
     {
       icon: 'flask-outline',
@@ -127,7 +135,7 @@ export default function ToolsScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Baking Tools</Text>
         <Text style={styles.headerSubtitle}>
-          Professional calculators and AI-powered tools
+          10 professional calculators for perfect baking
         </Text>
       </View>
 

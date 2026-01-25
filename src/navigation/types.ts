@@ -22,6 +22,7 @@ export type ToolsStackParamList = {
   StarterPercentageCalculator: undefined;
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
+  RecipeRescueCalculator: undefined;
 };
 
 export type StartersStackParamList = {

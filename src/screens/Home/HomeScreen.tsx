@@ -17,7 +17,7 @@ export default function HomeScreen() {
     {
       icon: 'calculator',
       title: 'Calculators',
-      description: '9 professional tools',
+      description: '10 professional tools',
       color: theme.colors.primary[500],
       onPress: () => navigation.navigate('ToolsTab' as never),
     },

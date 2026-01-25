@@ -28,6 +28,7 @@ import LevainBuilderScreen from '../screens/Tools/LevainBuilderScreen';
 import StarterPercentageCalculatorScreen from '../screens/Tools/StarterPercentageCalculatorScreen';
 import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScreen';
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
+import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -104,6 +105,11 @@ function ToolsStack() {
         name="DoughWeightCalculator"
         component={DoughWeightCalculatorScreen}
         options={{ title: 'Dough Weight Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="RecipeRescueCalculator"
+        component={RecipeRescueCalculatorScreen}
+        options={{ title: 'Recipe Rescue Calculator' }}
       />
     </ToolsStackNav.Navigator>
   );
