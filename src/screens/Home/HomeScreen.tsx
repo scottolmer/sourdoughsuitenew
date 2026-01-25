@@ -22,11 +22,18 @@ export default function HomeScreen() {
       onPress: () => navigation.navigate('ToolsTab' as never),
     },
     {
-      icon: 'bacteria',
+      icon: 'flask',
       title: 'My Starters',
       description: 'Track your starters',
       color: theme.colors.success.main,
       onPress: () => navigation.navigate('StartersTab' as never),
+    },
+    {
+      icon: 'book-open-variant',
+      title: 'My Recipes',
+      description: 'Saved formulas & recipes',
+      color: theme.colors.warning.main,
+      onPress: () => navigation.navigate('RecipesTab' as never),
     },
   ];
 
@@ -90,7 +97,7 @@ export default function HomeScreen() {
             <Text style={styles.infoTitle}>Welcome!</Text>
           </View>
           <Text style={styles.infoText}>
-            Use the tabs below to navigate between Calculators and Starters.
+            Use the tabs below to navigate between Calculators, Starters, and Recipes.
             All your data is stored locally on your device.
           </Text>
         </Card>
