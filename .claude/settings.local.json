@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(npm install)",
+      "Bash(npx tsc:*)",
+      "Bash(adb devices:*)",
+      "Bash(emulator -list-avds:*)",
+      "Bash(timeout 30 bash:*)",
+      "Bash(npm run android:*)",
+      "Bash(gradlew.bat app:installDebug:*)",
+      "Bash(./gradlew.bat app:installDebug -PreactNativeDevServerPort=8081)",
+      "Bash(adb shell:*)",
+      "Bash(adb logcat:*)",
+      "Bash(cat:*)",
+      "Bash(npm start)",
+      "Bash(npx react-native:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(./gradlew app:installDebug:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(adb reverse:*)",
+      "Bash(./gradlew assembleRelease:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(git remote:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 5 bash:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

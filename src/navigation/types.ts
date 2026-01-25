@@ -19,7 +19,7 @@ export type ToolsStackParamList = {
   ScalingCalculator: undefined;
   TemperatureCalculator: undefined;
   LevainBuilder: undefined;
-  InoculationCalculator: undefined;
+  StarterPercentageCalculator: undefined;
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
 };

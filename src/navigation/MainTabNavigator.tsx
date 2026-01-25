@@ -26,7 +26,7 @@ import TimelineCalculatorScreen from '../screens/Tools/TimelineCalculatorScreen'
 import ScalingCalculatorScreen from '../screens/Tools/ScalingCalculatorScreen';
 import TemperatureCalculatorScreen from '../screens/Tools/TemperatureCalculatorScreen';
 import LevainBuilderScreen from '../screens/Tools/LevainBuilderScreen';
-import InoculationCalculatorScreen from '../screens/Tools/InoculationCalculatorScreen';
+import StarterPercentageCalculatorScreen from '../screens/Tools/StarterPercentageCalculatorScreen';
 import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScreen';
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
@@ -99,9 +99,9 @@ function ToolsStack() {
         options={{ title: 'Levain Builder' }}
       />
       <ToolsStackNav.Screen
-        name="InoculationCalculator"
-        component={InoculationCalculatorScreen}
-        options={{ title: 'Inoculation Calculator' }}
+        name="StarterPercentageCalculator"
+        component={StarterPercentageCalculatorScreen}
+        options={{ title: 'Starter Percentage Calculator' }}
       />
       <ToolsStackNav.Screen
         name="PrefermentCalculator"

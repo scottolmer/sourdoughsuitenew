@@ -19,7 +19,7 @@ type ToolsStackParamList = {
   TemperatureCalculator: undefined;
   ScalingCalculator: undefined;
   LevainBuilder: undefined;
-  InoculationCalculator: undefined;
+  StarterPercentageCalculator: undefined;
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
 };
@@ -72,11 +72,11 @@ export default function ToolsScreen() {
       onPress: () => navigation.navigate('LevainBuilder'),
     },
     {
-      icon: 'bacteria',
-      title: 'Inoculation Calculator',
+      icon: 'percent-circle',
+      title: 'Starter Percentage Calculator',
       description: 'Calculate fermentation speed',
       color: theme.colors.success.dark,
-      onPress: () => navigation.navigate('InoculationCalculator'),
+      onPress: () => navigation.navigate('StarterPercentageCalculator'),
     },
     {
       icon: 'water',

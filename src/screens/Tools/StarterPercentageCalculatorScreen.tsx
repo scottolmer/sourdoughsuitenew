@@ -1,5 +1,5 @@
 /**
- * Inoculation Calculator
+ * Starter Percentage Calculator
  * Calculate starter percentage relative to total flour
  */
 
@@ -18,20 +18,20 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 
-export default function InoculationCalculatorScreen() {
+export default function StarterPercentageCalculatorScreen() {
   const [totalFlour, setTotalFlour] = useState('');
   const [starterAmount, setStarterAmount] = useState('');
   const [starterHydration, setStarterHydration] = useState('100');
   const [calculated, setCalculated] = useState(false);
   const [result, setResult] = useState({
-    inoculationPercent: 0,
+    starterPercent: 0,
     starterFlour: 0,
     starterWater: 0,
     fermentationSpeed: '',
     recommendation: '',
   });
 
-  const calculateInoculation = () => {
+  const calculateStarterPercentage = () => {
     const flour = parseFloat(totalFlour);
     const starter = parseFloat(starterAmount);
     const hydration = parseFloat(starterHydration);
@@ -43,23 +43,23 @@ export default function InoculationCalculatorScreen() {
     const starterFlourAmount = (starter / (1 + hydration / 100));
     const starterWaterAmount = starter - starterFlourAmount;
 
-    // Inoculation percentage = (flour in starter / total flour) * 100
-    const inoculation = (starterFlourAmount / flour) * 100;
+    // Starter percentage = (flour in starter / total flour) * 100
+    const starterPercentage = (starterFlourAmount / flour) * 100;
 
     // Determine fermentation speed and recommendation
     let speed = '';
     let recommendation = '';
 
-    if (inoculation < 5) {
+    if (starterPercentage < 5) {
       speed = 'Very Slow';
       recommendation = 'Long bulk fermentation (12-24 hours). Great for developing complex flavors.';
-    } else if (inoculation < 10) {
+    } else if (starterPercentage < 10) {
       speed = 'Slow';
       recommendation = 'Extended bulk fermentation (8-12 hours). Good flavor development.';
-    } else if (inoculation < 15) {
+    } else if (starterPercentage < 15) {
       speed = 'Moderate';
       recommendation = 'Standard bulk fermentation (6-8 hours). Balanced flavor and timing.';
-    } else if (inoculation < 25) {
+    } else if (starterPercentage < 25) {
       speed = 'Fast';
       recommendation = 'Shorter bulk fermentation (4-6 hours). Less sour, convenient timing.';
     } else {
@@ -68,7 +68,7 @@ export default function InoculationCalculatorScreen() {
     }
 
     setResult({
-      inoculationPercent: parseFloat(inoculation.toFixed(2)),
+      starterPercent: parseFloat(starterPercentage.toFixed(2)),
       starterFlour: parseFloat(starterFlourAmount.toFixed(1)),
       starterWater: parseFloat(starterWaterAmount.toFixed(1)),
       fermentationSpeed: speed,
@@ -85,9 +85,9 @@ export default function InoculationCalculatorScreen() {
   };
 
   const getSpeedColor = () => {
-    if (result.inoculationPercent < 10) return theme.colors.info.main;
-    if (result.inoculationPercent < 20) return theme.colors.success.main;
-    if (result.inoculationPercent < 30) return theme.colors.warning.main;
+    if (result.starterPercent < 10) return theme.colors.info.main;
+    if (result.starterPercent < 20) return theme.colors.success.main;
+    if (result.starterPercent < 30) return theme.colors.warning.main;
     return theme.colors.error.main;
   };
 
@@ -102,8 +102,8 @@ export default function InoculationCalculatorScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
-          <Icon name="bacteria" size={48} color={theme.colors.primary[600]} />
-          <Text style={styles.headerTitle}>Inoculation Calculator</Text>
+          <Icon name="percent-circle" size={48} color={theme.colors.primary[600]} />
+          <Text style={styles.headerTitle}>Starter Percentage Calculator</Text>
           <Text style={styles.headerSubtitle}>
             Calculate starter percentage and predict fermentation speed
           </Text>
@@ -138,8 +138,8 @@ export default function InoculationCalculatorScreen() {
 
         <View style={styles.buttonContainer}>
           <Button
-            title="Calculate Inoculation"
-            onPress={calculateInoculation}
+            title="Calculate"
+            onPress={calculateStarterPercentage}
             leftIcon="calculator"
             fullWidth
           />
@@ -157,12 +157,12 @@ export default function InoculationCalculatorScreen() {
             <Card variant="elevated" padding="lg" style={[styles.card, styles.resultCard]}>
               <View style={styles.resultHeader}>
                 <Icon name="gauge" size={32} color={getSpeedColor()} />
-                <Text style={styles.resultTitle}>Inoculation Rate</Text>
+                <Text style={styles.resultTitle}>Starter Percentage</Text>
               </View>
 
               <View style={styles.percentageBox}>
                 <Text style={[styles.percentageValue, { color: getSpeedColor() }]}>
-                  {result.inoculationPercent}%
+                  {result.starterPercent}%
                 </Text>
                 <Text style={styles.percentageLabel}>of total flour</Text>
               </View>
@@ -200,21 +200,21 @@ export default function InoculationCalculatorScreen() {
         )}
 
         <Card variant="filled" padding="lg" style={styles.card}>
-          <Text style={styles.guideTitle}>Understanding Inoculation</Text>
+          <Text style={styles.guideTitle}>Understanding Starter Percentage</Text>
           <Text style={styles.guideText}>
-            <Text style={styles.bold}>Inoculation percentage</Text> is the amount of starter flour
+            <Text style={styles.bold}>Starter percentage</Text> is the amount of starter flour
             compared to total flour in your recipe.
           </Text>
           <Text style={styles.guideText}>
-            <Text style={styles.bold}>Low inoculation (5-10%):</Text> Longer fermentation, more
+            <Text style={styles.bold}>Low percentage (5-10%):</Text> Longer fermentation, more
             complex flavors, better for cold overnight proofs.
           </Text>
           <Text style={styles.guideText}>
-            <Text style={styles.bold}>Medium inoculation (10-20%):</Text> Standard timing, balanced
+            <Text style={styles.bold}>Medium percentage (10-20%):</Text> Standard timing, balanced
             flavor, most common in recipes.
           </Text>
           <Text style={styles.guideText}>
-            <Text style={styles.bold}>High inoculation (20%+):</Text> Fast fermentation, milder
+            <Text style={styles.bold}>High percentage (20%+):</Text> Fast fermentation, milder
             flavor, convenient for same-day baking.
           </Text>
         </Card>
