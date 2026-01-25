@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeNavigationProp } from '@react-navigation/native';
@@ -22,6 +23,8 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import { ToolsStackParamList, MainTabParamList } from '../../navigation/types';
+
+type CalculationMode = 'flour' | 'total';
 
 interface Ingredient {
   name: string;
@@ -86,7 +89,9 @@ const RECIPE_PRESETS = [
 ];
 
 export default function BakersCalculatorScreen({ navigation }: Props) {
+  const [calculationMode, setCalculationMode] = useState<CalculationMode>('flour');
   const [flourWeight, setFlourWeight] = useState('');
+  const [totalWeight, setTotalWeight] = useState('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { name: 'Water', percentage: '70', amount: '' },
     { name: 'Salt', percentage: '2', amount: '' },
@@ -95,20 +100,91 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
   const [showResults, setShowResults] = useState(false);
 
   const calculateAmounts = () => {
-    const flourWeightNum = parseFloat(flourWeight);
-    if (!flourWeightNum || flourWeightNum <= 0) {
-      Alert.alert('Error', 'Please enter a valid flour weight');
-      return;
+    if (calculationMode === 'flour') {
+      // Flour-based calculation (existing behavior)
+      const flourWeightNum = parseFloat(flourWeight);
+      if (!flourWeightNum || flourWeightNum <= 0) {
+        Alert.alert('Error', 'Please enter a valid flour weight');
+        return;
+      }
+
+      const updatedIngredients = ingredients.map((ing) => {
+        const percentage = parseFloat(ing.percentage) || 0;
+        const amount = ((flourWeightNum * percentage) / 100).toFixed(1);
+        return { ...ing, amount };
+      });
+
+      setIngredients(updatedIngredients);
+
+      // Calculate and update total weight
+      const totalPercentage = ingredients.reduce(
+        (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
+        100
+      );
+      const calculatedTotal = (flourWeightNum * totalPercentage / 100).toFixed(1);
+      setTotalWeight(calculatedTotal);
+
+      setShowResults(true);
+    } else {
+      // Total weight-based calculation (new feature)
+      const totalWeightNum = parseFloat(totalWeight);
+      if (!totalWeightNum || totalWeightNum <= 0) {
+        Alert.alert('Error', 'Please enter a valid total dough weight');
+        return;
+      }
+
+      // Calculate total percentage
+      const totalPercentage = ingredients.reduce(
+        (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
+        100 // flour is always 100%
+      );
+
+      // Work backwards to find flour weight
+      const calculatedFlour = totalWeightNum / (totalPercentage / 100);
+      setFlourWeight(calculatedFlour.toFixed(1));
+
+      // Calculate all ingredient amounts based on calculated flour weight
+      const updatedIngredients = ingredients.map((ing) => {
+        const percentage = parseFloat(ing.percentage) || 0;
+        const amount = ((calculatedFlour * percentage) / 100).toFixed(1);
+        return { ...ing, amount };
+      });
+
+      setIngredients(updatedIngredients);
+      setShowResults(true);
+    }
+  };
+
+  const handleModeChange = (newMode: CalculationMode) => {
+    if (newMode === calculationMode) return;
+
+    if (newMode === 'total' && flourWeight) {
+      // Switching from flour to total - calculate current total
+      const flourWeightNum = parseFloat(flourWeight);
+      const totalPercentage = ingredients.reduce(
+        (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
+        100
+      );
+      const calculatedTotal = (flourWeightNum * totalPercentage / 100).toFixed(1);
+      setTotalWeight(calculatedTotal);
+    } else if (newMode === 'flour' && totalWeight) {
+      // Switching from total to flour - calculate flour needed
+      const totalWeightNum = parseFloat(totalWeight);
+      const totalPercentage = ingredients.reduce(
+        (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
+        100
+      );
+      const calculatedFlour = (totalWeightNum / (totalPercentage / 100)).toFixed(1);
+      setFlourWeight(calculatedFlour);
     }
 
-    const updatedIngredients = ingredients.map((ing) => {
-      const percentage = parseFloat(ing.percentage) || 0;
-      const amount = ((flourWeightNum * percentage) / 100).toFixed(1);
-      return { ...ing, amount };
-    });
+    setCalculationMode(newMode);
+    setShowResults(false);
+  };
 
-    setIngredients(updatedIngredients);
-    setShowResults(true);
+  const setPresetTotalWeight = (weight: number) => {
+    setTotalWeight(weight.toString());
+    setShowResults(false);
   };
 
   const addIngredient = () => {
@@ -130,6 +206,7 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
 
   const clearAll = () => {
     setFlourWeight('');
+    setTotalWeight('');
     setIngredients([
       { name: 'Water', percentage: '70', amount: '' },
       { name: 'Salt', percentage: '2', amount: '' },
@@ -199,11 +276,6 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
     100 // Include flour at 100%
   );
 
-  const totalWeight = ingredients.reduce(
-    (sum, ing) => sum + (parseFloat(ing.amount) || 0),
-    parseFloat(flourWeight) || 0
-  );
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -218,11 +290,68 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
           <Icon name="percent" size={48} color={theme.colors.primary[600]} />
           <Text style={styles.headerTitle}>Baker's Percentage</Text>
           <Text style={styles.headerSubtitle}>
-            Enter flour weight and percentages to calculate ingredient amounts
+            Calculate by flour weight or total dough weight
           </Text>
         </View>
 
         <View style={styles.content}>
+          {/* Calculation Mode Toggle */}
+          <Card variant="outlined" style={styles.modeCard}>
+            <Text style={styles.modeLabel}>Calculate by:</Text>
+            <View style={styles.modeToggle}>
+              <TouchableOpacity
+                style={[
+                  styles.modeButton,
+                  calculationMode === 'flour' && styles.modeButtonActive,
+                ]}
+                onPress={() => handleModeChange('flour')}
+              >
+                <Icon
+                  name="grain"
+                  size={20}
+                  color={
+                    calculationMode === 'flour'
+                      ? theme.colors.white
+                      : theme.colors.text.secondary
+                  }
+                />
+                <Text
+                  style={[
+                    styles.modeButtonText,
+                    calculationMode === 'flour' && styles.modeButtonTextActive,
+                  ]}
+                >
+                  Flour Weight
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.modeButton,
+                  calculationMode === 'total' && styles.modeButtonActive,
+                ]}
+                onPress={() => handleModeChange('total')}
+              >
+                <Icon
+                  name="scale-balance"
+                  size={20}
+                  color={
+                    calculationMode === 'total'
+                      ? theme.colors.white
+                      : theme.colors.text.secondary
+                  }
+                />
+                <Text
+                  style={[
+                    styles.modeButtonText,
+                    calculationMode === 'total' && styles.modeButtonTextActive,
+                  ]}
+                >
+                  Total Weight
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Card>
+
           {/* Recipe Presets */}
           <Card variant="outlined" style={styles.presetsCard}>
             <Text style={styles.presetTitle}>Quick Presets</Text>
@@ -240,17 +369,64 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
             </View>
           </Card>
 
-          {/* Flour Weight Input */}
+          {/* Total Weight Presets (only show in total mode) */}
+          {calculationMode === 'total' && (
+            <Card variant="outlined" style={styles.presetsCard}>
+              <Text style={styles.presetTitle}>Common Loaf Sizes</Text>
+              <View style={styles.presetButtons}>
+                {[500, 750, 1000, 1500, 2000].map((weight) => (
+                  <Button
+                    key={weight}
+                    title={`${weight}g`}
+                    variant="outline"
+                    size="small"
+                    onPress={() => setPresetTotalWeight(weight)}
+                    style={styles.presetButton}
+                  />
+                ))}
+              </View>
+            </Card>
+          )}
+
+          {/* Dynamic Input - Flour or Total Weight */}
           <Card variant="elevated">
-            <Text style={styles.sectionTitle}>Flour Weight (Base at 100%)</Text>
-            <BasicInput
-              label="Total Flour"
-              placeholder="e.g., 500"
-              value={flourWeight}
-              onChangeText={setFlourWeight}
-              keyboardType="numeric"
-              helperText="Weight in grams"
-            />
+            {calculationMode === 'flour' ? (
+              <>
+                <Text style={styles.sectionTitle}>Flour Weight (Base at 100%)</Text>
+                <BasicInput
+                  label="Total Flour"
+                  placeholder="e.g., 500"
+                  value={flourWeight}
+                  onChangeText={setFlourWeight}
+                  keyboardType="numeric"
+                  helperText="Weight in grams"
+                />
+              </>
+            ) : (
+              <>
+                <Text style={styles.sectionTitle}>Total Dough Weight</Text>
+                <BasicInput
+                  label="Desired Total Weight"
+                  placeholder="e.g., 1000"
+                  value={totalWeight}
+                  onChangeText={setTotalWeight}
+                  keyboardType="numeric"
+                  helperText="Final dough weight in grams"
+                />
+                {showResults && flourWeight && (
+                  <View style={styles.calculatedFlourInfo}>
+                    <Icon
+                      name="information"
+                      size={16}
+                      color={theme.colors.primary[600]}
+                    />
+                    <Text style={styles.calculatedFlourText}>
+                      Uses {flourWeight}g flour to reach {totalWeight}g total
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
           </Card>
 
           {/* Ingredients */}
@@ -305,7 +481,12 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
               <Text style={styles.resultsTitle}>Recipe</Text>
               <View style={styles.resultsList}>
                 <View style={styles.resultItem}>
-                  <Text style={styles.resultName}>Flour</Text>
+                  <View style={styles.resultNameContainer}>
+                    <Text style={styles.resultName}>Flour</Text>
+                    {calculationMode === 'total' && (
+                      <Text style={styles.calculatedBadge}>(calculated)</Text>
+                    )}
+                  </View>
                   <Text style={styles.resultAmount}>{flourWeight}g</Text>
                 </View>
                 {ingredients.map((ingredient, index) => (
@@ -323,15 +504,28 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
           {/* Results Summary */}
           {showResults && (
             <Card variant="filled" style={styles.summaryCard}>
-              <Text style={styles.summaryTitle}>Total</Text>
+              <Text style={styles.summaryTitle}>Summary</Text>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Total Percentage:</Text>
                 <Text style={styles.summaryValue}>{totalPercentage.toFixed(1)}%</Text>
               </View>
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Total Dough Weight:</Text>
-                <Text style={styles.summaryValue}>{totalWeight.toFixed(1)}g</Text>
+                <View style={styles.resultNameContainer}>
+                  <Text style={styles.summaryLabel}>Total Dough Weight:</Text>
+                  {calculationMode === 'flour' && (
+                    <Text style={styles.calculatedBadge}>(calculated)</Text>
+                  )}
+                </View>
+                <Text style={styles.summaryValue}>{totalWeight}g</Text>
               </View>
+              {calculationMode === 'total' && (
+                <View style={styles.yieldEstimate}>
+                  <Icon name="bread-slice" size={16} color={theme.colors.text.secondary} />
+                  <Text style={styles.yieldText}>
+                    ≈ {Math.round(parseFloat(totalWeight) / 500)} standard loaves (500g each)
+                  </Text>
+                </View>
+              )}
             </Card>
           )}
 
@@ -368,7 +562,9 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
               • Flour is always 100%{'\n'}
               • Water at 70% = 70g per 100g flour{'\n'}
               • Salt at 2% = 2g per 100g flour{'\n\n'}
-              Enter your flour weight and percentages, then tap Calculate to get precise amounts.
+              <Text style={styles.infoBold}>Flour Weight Mode:</Text> Enter flour amount, get total weight{'\n'}
+              <Text style={styles.infoBold}>Total Weight Mode:</Text> Enter desired total, get flour amount needed{'\n\n'}
+              Perfect when a recipe says "makes 1000g dough" but doesn't specify ingredient amounts.
             </Text>
           </Card>
         </View>
@@ -528,5 +724,87 @@ const styles = StyleSheet.create({
     flex: 0,
     minWidth: 0,
     paddingHorizontal: theme.spacing.md,
+  },
+  modeCard: {
+    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.white,
+  },
+  modeLabel: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.semibold as any,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.sm,
+  },
+  modeToggle: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+  },
+  modeButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 2,
+    borderColor: theme.colors.border.default,
+    backgroundColor: theme.colors.white,
+    gap: theme.spacing.xs,
+  },
+  modeButtonActive: {
+    backgroundColor: theme.colors.primary[600],
+    borderColor: theme.colors.primary[600],
+  },
+  modeButtonText: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium as any,
+    color: theme.colors.text.secondary,
+  },
+  modeButtonTextActive: {
+    color: theme.colors.white,
+    fontWeight: theme.typography.weights.semibold as any,
+  },
+  calculatedFlourInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing.sm,
+    padding: theme.spacing.sm,
+    backgroundColor: theme.colors.primary[50],
+    borderRadius: theme.borderRadius.sm,
+    gap: theme.spacing.xs,
+  },
+  calculatedFlourText: {
+    flex: 1,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.primary[700],
+  },
+  resultNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.xs,
+  },
+  calculatedBadge: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.text.tertiary,
+    fontStyle: 'italic',
+  },
+  yieldEstimate: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: theme.spacing.sm,
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border.light,
+    gap: theme.spacing.xs,
+  },
+  yieldText: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+    fontStyle: 'italic',
+  },
+  infoBold: {
+    fontWeight: theme.typography.weights.semibold as any,
+    color: theme.colors.text.primary,
   },
 });
