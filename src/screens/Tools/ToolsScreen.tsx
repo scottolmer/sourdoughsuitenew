@@ -23,6 +23,9 @@ type ToolsStackParamList = {
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
+  UnitConverter: undefined;
+  FlourBlendCalculator: undefined;
+  BulkFermentationCalculator: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
@@ -128,6 +131,27 @@ export default function ToolsScreen() {
       color: theme.colors.error.main,
       onPress: () => navigation.navigate('ScalingCalculator'),
     },
+    {
+      icon: 'swap-horizontal',
+      title: 'Unit Converter',
+      description: 'Convert baking measurements',
+      color: theme.colors.info.main,
+      onPress: () => navigation.navigate('UnitConverter'),
+    },
+    {
+      icon: 'grain',
+      title: 'Flour Blend Calculator',
+      description: 'Mix flours for target protein',
+      color: theme.colors.warning.dark,
+      onPress: () => navigation.navigate('FlourBlendCalculator'),
+    },
+    {
+      icon: 'timer-sand',
+      title: 'Bulk Fermentation Calculator',
+      description: 'Estimate fermentation time',
+      color: theme.colors.success.main,
+      onPress: () => navigation.navigate('BulkFermentationCalculator'),
+    },
   ];
 
   return (
@@ -135,7 +159,7 @@ export default function ToolsScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Baking Tools</Text>
         <Text style={styles.headerSubtitle}>
-          10 professional calculators for perfect baking
+          13 professional calculators for perfect baking
         </Text>
       </View>
 

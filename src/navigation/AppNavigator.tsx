@@ -29,6 +29,9 @@ import StarterPercentageCalculatorScreen from '../screens/Tools/StarterPercentag
 import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScreen';
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
+import UnitConverterScreen from '../screens/Tools/UnitConverterScreen';
+import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScreen';
+import BulkFermentationCalculatorScreen from '../screens/Tools/BulkFermentationCalculatorScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -110,6 +113,21 @@ function ToolsStack() {
         name="RecipeRescueCalculator"
         component={RecipeRescueCalculatorScreen}
         options={{ title: 'Recipe Rescue Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="UnitConverter"
+        component={UnitConverterScreen}
+        options={{ title: 'Unit Converter' }}
+      />
+      <ToolsStackNav.Screen
+        name="FlourBlendCalculator"
+        component={FlourBlendCalculatorScreen}
+        options={{ title: 'Flour Blend Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="BulkFermentationCalculator"
+        component={BulkFermentationCalculatorScreen}
+        options={{ title: 'Bulk Fermentation Calculator' }}
       />
     </ToolsStackNav.Navigator>
   );

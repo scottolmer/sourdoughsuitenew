@@ -23,6 +23,9 @@ export type ToolsStackParamList = {
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
+  UnitConverter: undefined;
+  FlourBlendCalculator: undefined;
+  BulkFermentationCalculator: undefined;
 };
 
 export type StartersStackParamList = {
