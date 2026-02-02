@@ -17,6 +17,11 @@ import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import {
+  decomposeLevain,
+  calculateStarterPercentage,
+  roundTo,
+} from '../../utils/sourdoughCalculations';
 
 export default function StarterPercentageCalculatorScreen() {
   const [totalFlour, setTotalFlour] = useState('');
@@ -31,20 +36,18 @@ export default function StarterPercentageCalculatorScreen() {
     recommendation: '',
   });
 
-  const calculateStarterPercentage = () => {
+  const calculateStarterPercentageHandler = () => {
     const flour = parseFloat(totalFlour);
     const starter = parseFloat(starterAmount);
     const hydration = parseFloat(starterHydration);
 
     if (!flour || flour <= 0 || !starter || starter <= 0 || !hydration || hydration <= 0) return;
 
-    // Calculate flour in starter
-    // If starter is 100% hydration: 100g starter = 50g flour + 50g water
-    const starterFlourAmount = (starter / (1 + hydration / 100));
-    const starterWaterAmount = starter - starterFlourAmount;
+    // Decompose starter into flour and water components
+    const { flour: starterFlourAmount, water: starterWaterAmount } = decomposeLevain(starter, hydration);
 
-    // Starter percentage = (flour in starter / total flour) * 100
-    const starterPercentage = (starterFlourAmount / flour) * 100;
+    // Calculate starter percentage relative to total flour
+    const starterPercentage = calculateStarterPercentage(starterFlourAmount, flour);
 
     // Determine fermentation speed and recommendation
     let speed = '';
@@ -68,9 +71,9 @@ export default function StarterPercentageCalculatorScreen() {
     }
 
     setResult({
-      starterPercent: parseFloat(starterPercentage.toFixed(2)),
-      starterFlour: parseFloat(starterFlourAmount.toFixed(1)),
-      starterWater: parseFloat(starterWaterAmount.toFixed(1)),
+      starterPercent: roundTo(starterPercentage, 2),
+      starterFlour: roundTo(starterFlourAmount, 1),
+      starterWater: roundTo(starterWaterAmount, 1),
       fermentationSpeed: speed,
       recommendation,
     });
@@ -139,7 +142,7 @@ export default function StarterPercentageCalculatorScreen() {
         <View style={styles.buttonContainer}>
           <Button
             title="Calculate"
-            onPress={calculateStarterPercentage}
+            onPress={calculateStarterPercentageHandler}
             leftIcon="calculator"
             fullWidth
           />

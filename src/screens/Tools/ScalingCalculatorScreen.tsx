@@ -21,6 +21,7 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import { ToolsStackParamList, MainTabParamList } from '../../navigation/types';
+import { calculateScaleFactor, scaleAmount, roundTo } from '../../utils/sourdoughCalculations';
 
 interface Ingredient {
   name: string;
@@ -54,12 +55,12 @@ export default function ScalingCalculatorScreen({ navigation }: Props) {
 
     if (!original || !target || original <= 0) return;
 
-    const scaleFactor = target / original;
+    const scaleFactor = calculateScaleFactor(original, target);
 
     const scaled = ingredients.map((ing) => {
       const amount = parseFloat(ing.amount) || 0;
-      const scaledAmount = (amount * scaleFactor).toFixed(1);
-      return { ...ing, scaled: scaledAmount };
+      const scaledAmount = roundTo(scaleAmount(amount, scaleFactor), 1);
+      return { ...ing, scaled: scaledAmount.toString() };
     });
 
     setIngredients(scaled);

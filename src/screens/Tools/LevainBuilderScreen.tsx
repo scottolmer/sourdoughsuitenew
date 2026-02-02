@@ -17,6 +17,7 @@ import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import { roundTo } from '../../utils/sourdoughCalculations';
 
 export default function LevainBuilderScreen() {
   const [recipeStarter, setRecipeStarter] = useState('');
@@ -55,11 +56,11 @@ export default function LevainBuilderScreen() {
     const discardAmount = currentAmount > starterNeeded ? currentAmount - starterNeeded : 0;
 
     setResult({
-      starterNeeded: parseFloat(starterNeeded.toFixed(1)),
-      flourNeeded: parseFloat(flourNeeded.toFixed(1)),
-      waterNeeded: parseFloat(waterNeeded.toFixed(1)),
-      totalLevain: parseFloat(recipeAmount.toFixed(1)),
-      discardAmount: parseFloat(discardAmount.toFixed(1)),
+      starterNeeded: roundTo(starterNeeded, 1),
+      flourNeeded: roundTo(flourNeeded, 1),
+      waterNeeded: roundTo(waterNeeded, 1),
+      totalLevain: roundTo(recipeAmount, 1),
+      discardAmount: roundTo(discardAmount, 1),
     });
     setCalculated(true);
   };

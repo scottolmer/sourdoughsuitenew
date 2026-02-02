@@ -18,6 +18,7 @@ import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import { calculatePrefermentFlour, roundTo } from '../../utils/sourdoughCalculations';
 
 type PrefermentType = 'poolish' | 'biga' | 'pate';
 
@@ -44,7 +45,7 @@ export default function PrefermentCalculatorScreen() {
     if (!flour || flour <= 0 || !percent || percent <= 0 || percent > 100) return;
 
     // Calculate preferment flour
-    const prefFlour = (flour * percent) / 100;
+    const prefFlour = calculatePrefermentFlour(flour, percent);
 
     // Hydration and other ingredients vary by type
     let prefWater = 0;
@@ -74,13 +75,13 @@ export default function PrefermentCalculatorScreen() {
     const mainFlour = flour - prefFlour;
 
     setResult({
-      prefermentFlour: parseFloat(prefFlour.toFixed(1)),
-      prefermentWater: parseFloat(prefWater.toFixed(1)),
-      prefermentYeast: parseFloat(prefYeast.toFixed(2)),
-      prefermentSalt: parseFloat(prefSalt.toFixed(1)),
-      mainDoughFlour: parseFloat(mainFlour.toFixed(1)),
+      prefermentFlour: roundTo(prefFlour, 1),
+      prefermentWater: roundTo(prefWater, 1),
+      prefermentYeast: roundTo(prefYeast, 2),
+      prefermentSalt: roundTo(prefSalt, 1),
+      mainDoughFlour: roundTo(mainFlour, 1),
       mainDoughWater: 0, // User calculates based on target hydration
-      totalPreferment: parseFloat(totalPref.toFixed(1)),
+      totalPreferment: roundTo(totalPref, 1),
       hydration,
     });
     setCalculated(true);

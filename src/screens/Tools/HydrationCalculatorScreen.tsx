@@ -21,6 +21,12 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import { ToolsStackParamList, MainTabParamList } from '../../navigation/types';
+import {
+  calculateHydrationPercent,
+  calculateWaterNeeded,
+  calculateFlourNeeded,
+  roundTo,
+} from '../../utils/sourdoughCalculations';
 
 type HydrationCalculatorNavigationProp = CompositeNavigationProp<
   NativeStackScreenProps<ToolsStackParamList, 'HydrationCalculator'>['navigation'],
@@ -43,14 +49,14 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
     const water = parseFloat(waterWeight);
 
     if (flour && water && flour > 0) {
-      const calculatedHydration = ((water / flour) * 100).toFixed(1);
-      setHydration(calculatedHydration);
+      const calculatedHydration = roundTo(calculateHydrationPercent(water, flour), 1);
+      setHydration(calculatedHydration.toString());
     } else {
       setHydration('');
     }
   }, [flourWeight, waterWeight]);
 
-  const calculateWaterNeeded = () => {
+  const getWaterNeeded = () => {
     const flour = parseFloat(flourWeight);
     const target = parseFloat(targetHydration);
 
@@ -58,11 +64,11 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
       return null;
     }
 
-    const waterNeeded = (flour * target) / 100;
-    return waterNeeded.toFixed(1);
+    const waterNeeded = calculateWaterNeeded(flour, target);
+    return roundTo(waterNeeded, 1).toString();
   };
 
-  const calculateFlourNeeded = () => {
+  const getFlourNeeded = () => {
     const water = parseFloat(waterWeight);
     const target = parseFloat(targetHydration);
 
@@ -70,8 +76,8 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
       return null;
     }
 
-    const flourNeeded = (water * 100) / target;
-    return flourNeeded.toFixed(1);
+    const flourNeeded = calculateFlourNeeded(water, target);
+    return roundTo(flourNeeded, 1).toString();
   };
 
   const adjustToTarget = () => {
@@ -79,8 +85,8 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
     const target = parseFloat(targetHydration);
 
     if (flour && target) {
-      const waterNeeded = (flour * target) / 100;
-      setWaterWeight(waterNeeded.toFixed(1));
+      const waterNeeded = calculateWaterNeeded(flour, target);
+      setWaterWeight(roundTo(waterNeeded, 1).toString());
     }
   };
 
@@ -116,8 +122,8 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
     return { label: 'Very High', color: theme.colors.primary[600] };
   };
 
-  const waterNeeded = calculateWaterNeeded();
-  const flourNeeded = calculateFlourNeeded();
+  const waterNeeded = getWaterNeeded();
+  const flourNeeded = getFlourNeeded();
   const hydrationLevel = getHydrationLevel();
 
   return (

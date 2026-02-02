@@ -23,6 +23,7 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import { ToolsStackParamList, MainTabParamList } from '../../navigation/types';
+import { calculateAmountFromPercentage, roundTo } from '../../utils/sourdoughCalculations';
 
 type CalculationMode = 'flour' | 'total';
 
@@ -110,7 +111,7 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
 
       const updatedIngredients = ingredients.map((ing) => {
         const percentage = parseFloat(ing.percentage) || 0;
-        const amount = ((flourWeightNum * percentage) / 100).toFixed(1);
+        const amount = roundTo(calculateAmountFromPercentage(flourWeightNum, percentage), 1).toString();
         return { ...ing, amount };
       });
 
@@ -121,8 +122,8 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
         (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
         100
       );
-      const calculatedTotal = (flourWeightNum * totalPercentage / 100).toFixed(1);
-      setTotalWeight(calculatedTotal);
+      const calculatedTotal = roundTo(calculateAmountFromPercentage(flourWeightNum, totalPercentage), 1);
+      setTotalWeight(calculatedTotal.toString());
 
       setShowResults(true);
     } else {
@@ -146,7 +147,7 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
       // Calculate all ingredient amounts based on calculated flour weight
       const updatedIngredients = ingredients.map((ing) => {
         const percentage = parseFloat(ing.percentage) || 0;
-        const amount = ((calculatedFlour * percentage) / 100).toFixed(1);
+        const amount = roundTo(calculateAmountFromPercentage(calculatedFlour, percentage), 1).toString();
         return { ...ing, amount };
       });
 
@@ -165,8 +166,8 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
         (sum, ing) => sum + (parseFloat(ing.percentage) || 0),
         100
       );
-      const calculatedTotal = (flourWeightNum * totalPercentage / 100).toFixed(1);
-      setTotalWeight(calculatedTotal);
+      const calculatedTotal = roundTo(calculateAmountFromPercentage(flourWeightNum, totalPercentage), 1);
+      setTotalWeight(calculatedTotal.toString());
     } else if (newMode === 'flour' && totalWeight) {
       // Switching from total to flour - calculate flour needed
       const totalWeightNum = parseFloat(totalWeight);

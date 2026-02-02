@@ -19,6 +19,14 @@ import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import { Picker } from '@react-native-picker/picker';
+import {
+  calculatePercentageFromAmount,
+  calculateAmountFromPercentage,
+  calculateFlourNeeded,
+  calculateScaleFactor,
+  scaleAmount,
+  roundTo,
+} from '../../utils/sourdoughCalculations';
 
 type ProblemType = 'too_much' | 'not_enough';
 type Ingredient = 'flour' | 'water' | 'salt' | 'starter';
@@ -73,9 +81,9 @@ export default function RecipeRescueCalculatorScreen() {
     }
 
     // Calculate original percentages
-    const waterPercent = (water / flour) * 100;
-    const saltPercent = (salt / flour) * 100;
-    const starterPercent = (starter / flour) * 100;
+    const waterPercent = calculatePercentageFromAmount(water, flour);
+    const saltPercent = calculatePercentageFromAmount(salt, flour);
+    const starterPercent = calculatePercentageFromAmount(starter, flour);
 
     if (problemType === 'too_much') {
       // Added too much - scale up other ingredients
@@ -86,84 +94,106 @@ export default function RecipeRescueCalculatorScreen() {
       let newStarter = starter;
 
       if (problemIngredient === 'flour') {
-        scaleFactor = actual / flour;
+        scaleFactor = calculateScaleFactor(flour, actual);
         newFlour = actual;
-        newWater = newFlour * (waterPercent / 100);
-        newSalt = newFlour * (saltPercent / 100);
-        newStarter = newFlour * (starterPercent / 100);
+        newWater = calculateAmountFromPercentage(newFlour, waterPercent);
+        newSalt = calculateAmountFromPercentage(newFlour, saltPercent);
+        newStarter = calculateAmountFromPercentage(newFlour, starterPercent);
       } else if (problemIngredient === 'water') {
         // Water added too much - need more flour to maintain hydration
         newWater = actual;
-        newFlour = newWater / (waterPercent / 100);
-        newSalt = newFlour * (saltPercent / 100);
-        newStarter = newFlour * (starterPercent / 100);
+        newFlour = calculateFlourNeeded(newWater, waterPercent);
+        newSalt = calculateAmountFromPercentage(newFlour, saltPercent);
+        newStarter = calculateAmountFromPercentage(newFlour, starterPercent);
       } else if (problemIngredient === 'salt') {
         newSalt = actual;
-        newFlour = newSalt / (saltPercent / 100);
-        newWater = newFlour * (waterPercent / 100);
-        newStarter = newFlour * (starterPercent / 100);
+        newFlour = calculateFlourNeeded(newSalt, saltPercent);
+        newWater = calculateAmountFromPercentage(newFlour, waterPercent);
+        newStarter = calculateAmountFromPercentage(newFlour, starterPercent);
       } else if (problemIngredient === 'starter') {
         newStarter = actual;
-        newFlour = newStarter / (starterPercent / 100);
-        newWater = newFlour * (waterPercent / 100);
-        newSalt = newFlour * (saltPercent / 100);
+        newFlour = calculateFlourNeeded(newStarter, starterPercent);
+        newWater = calculateAmountFromPercentage(newFlour, waterPercent);
+        newSalt = calculateAmountFromPercentage(newFlour, saltPercent);
       }
 
       // Solution 1: Fix forward (add more)
       setSolutions({
         fixForward: {
-          flour: parseFloat(newFlour.toFixed(1)),
-          water: parseFloat(newWater.toFixed(1)),
-          salt: parseFloat(newSalt.toFixed(1)),
-          starter: parseFloat(newStarter.toFixed(1)),
-          total: parseFloat((newFlour + newWater + newSalt + newStarter).toFixed(1)),
-          addFlour: parseFloat((newFlour - flour).toFixed(1)),
-          addWater: parseFloat((newWater - water).toFixed(1)),
-          addSalt: parseFloat((newSalt - salt).toFixed(1)),
-          addStarter: parseFloat((newStarter - starter).toFixed(1)),
+          flour: roundTo(newFlour, 1),
+          water: roundTo(newWater, 1),
+          salt: roundTo(newSalt, 1),
+          starter: roundTo(newStarter, 1),
+          total: roundTo(newFlour + newWater + newSalt + newStarter, 1),
+          addFlour: roundTo(newFlour - flour, 1),
+          addWater: roundTo(newWater - water, 1),
+          addSalt: roundTo(newSalt - salt, 1),
+          addStarter: roundTo(newStarter - starter, 1),
         },
         acceptChange: {
           flour: problemIngredient === 'flour' ? actual : flour,
           water: problemIngredient === 'water' ? actual : water,
           salt: problemIngredient === 'salt' ? actual : salt,
           starter: problemIngredient === 'starter' ? actual : starter,
-          total: parseFloat((
+          total: roundTo(
             (problemIngredient === 'flour' ? actual : flour) +
             (problemIngredient === 'water' ? actual : water) +
             (problemIngredient === 'salt' ? actual : salt) +
-            (problemIngredient === 'starter' ? actual : starter)
-          ).toFixed(1)),
-          waterPercent: parseFloat(((problemIngredient === 'water' ? actual : water) / (problemIngredient === 'flour' ? actual : flour) * 100).toFixed(1)),
-          saltPercent: parseFloat(((problemIngredient === 'salt' ? actual : salt) / (problemIngredient === 'flour' ? actual : flour) * 100).toFixed(2)),
-          starterPercent: parseFloat(((problemIngredient === 'starter' ? actual : starter) / (problemIngredient === 'flour' ? actual : flour) * 100).toFixed(1)),
+            (problemIngredient === 'starter' ? actual : starter),
+            1
+          ),
+          waterPercent: roundTo(
+            calculatePercentageFromAmount(
+              problemIngredient === 'water' ? actual : water,
+              problemIngredient === 'flour' ? actual : flour
+            ),
+            1
+          ),
+          saltPercent: roundTo(
+            calculatePercentageFromAmount(
+              problemIngredient === 'salt' ? actual : salt,
+              problemIngredient === 'flour' ? actual : flour
+            ),
+            2
+          ),
+          starterPercent: roundTo(
+            calculatePercentageFromAmount(
+              problemIngredient === 'starter' ? actual : starter,
+              problemIngredient === 'flour' ? actual : flour
+            ),
+            1
+          ),
         },
       });
     } else {
       // Don't have enough - scale everything down
       let scaleFactor = 1;
+      let originalAmount = 0;
 
       if (problemIngredient === 'flour') {
-        scaleFactor = actual / flour;
+        originalAmount = flour;
       } else if (problemIngredient === 'water') {
-        scaleFactor = actual / water;
+        originalAmount = water;
       } else if (problemIngredient === 'salt') {
-        scaleFactor = actual / salt;
+        originalAmount = salt;
       } else if (problemIngredient === 'starter') {
-        scaleFactor = actual / starter;
+        originalAmount = starter;
       }
 
-      const scaledFlour = flour * scaleFactor;
-      const scaledWater = water * scaleFactor;
-      const scaledSalt = salt * scaleFactor;
-      const scaledStarter = starter * scaleFactor;
+      scaleFactor = calculateScaleFactor(originalAmount, actual);
+
+      const scaledFlour = scaleAmount(flour, scaleFactor);
+      const scaledWater = scaleAmount(water, scaleFactor);
+      const scaledSalt = scaleAmount(salt, scaleFactor);
+      const scaledStarter = scaleAmount(starter, scaleFactor);
 
       setSolutions({
         fixForward: {
-          flour: parseFloat(scaledFlour.toFixed(1)),
-          water: parseFloat(scaledWater.toFixed(1)),
-          salt: parseFloat(scaledSalt.toFixed(1)),
-          starter: parseFloat(scaledStarter.toFixed(1)),
-          total: parseFloat((scaledFlour + scaledWater + scaledSalt + scaledStarter).toFixed(1)),
+          flour: roundTo(scaledFlour, 1),
+          water: roundTo(scaledWater, 1),
+          salt: roundTo(scaledSalt, 1),
+          starter: roundTo(scaledStarter, 1),
+          total: roundTo(scaledFlour + scaledWater + scaledSalt + scaledStarter, 1),
           addFlour: 0,
           addWater: 0,
           addSalt: 0,
@@ -174,7 +204,7 @@ export default function RecipeRescueCalculatorScreen() {
           water: scaledWater,
           salt: scaledSalt,
           starter: scaledStarter,
-          total: parseFloat((scaledFlour + scaledWater + scaledSalt + scaledStarter).toFixed(1)),
+          total: roundTo(scaledFlour + scaledWater + scaledSalt + scaledStarter, 1),
           waterPercent: waterPercent,
           saltPercent: saltPercent,
           starterPercent: starterPercent,

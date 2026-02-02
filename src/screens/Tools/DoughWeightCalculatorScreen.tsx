@@ -17,6 +17,7 @@ import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import { calculatePreBakeWeight, calculateWeightLoss, roundTo } from '../../utils/sourdoughCalculations';
 
 export default function DoughWeightCalculatorScreen() {
   const [numberOfLoaves, setNumberOfLoaves] = useState('');
@@ -43,19 +44,17 @@ export default function DoughWeightCalculatorScreen() {
     const totalPostBake = loaves * weight;
 
     // Calculate pre-bake weight accounting for baking loss
-    // If 15% loss, then post-bake is 85% of pre-bake
-    // So pre-bake = post-bake / 0.85
-    const preBakePerLoaf = weight / (1 - loss / 100);
+    const preBakePerLoaf = calculatePreBakeWeight(weight, loss);
     const totalPreBake = loaves * preBakePerLoaf;
-    const totalLoss = totalPreBake - totalPostBake;
+    const totalLoss = calculateWeightLoss(totalPreBake, totalPostBake);
 
     setResult({
-      preBakeWeight: parseFloat(totalPreBake.toFixed(0)),
-      postBakeWeight: parseFloat(totalPostBake.toFixed(0)),
-      totalDoughNeeded: parseFloat(totalPreBake.toFixed(0)),
-      weightLoss: parseFloat(totalLoss.toFixed(0)),
-      perLoafPreBake: parseFloat(preBakePerLoaf.toFixed(0)),
-      perLoafPostBake: parseFloat(weight.toFixed(0)),
+      preBakeWeight: roundTo(totalPreBake, 0),
+      postBakeWeight: roundTo(totalPostBake, 0),
+      totalDoughNeeded: roundTo(totalPreBake, 0),
+      weightLoss: roundTo(totalLoss, 0),
+      perLoafPreBake: roundTo(preBakePerLoaf, 0),
+      perLoafPostBake: roundTo(weight, 0),
     });
     setCalculated(true);
   };
