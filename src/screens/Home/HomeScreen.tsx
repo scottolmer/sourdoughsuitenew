@@ -3,8 +3,8 @@
  * Main dashboard for the app
  */
 
-import React from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
 import Card from '../../components/Card';
@@ -12,6 +12,15 @@ import {theme} from '../../theme';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   const quickActions = [
     {
@@ -38,16 +47,17 @@ export default function HomeScreen() {
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Icon name="bread-slice" size={40} color={theme.colors.primary[500]} />
-          <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Sourdough Suite</Text>
-            <Text style={styles.headerSubtitle}>Your baking companion</Text>
+    <Animated.View style={{flex: 1, opacity: fadeAnim}}>
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Icon name="bread-slice" size={48} color={theme.colors.primary[500]} />
+            <View style={styles.headerText}>
+              <Text style={styles.headerTitle}>Sourdough Suite</Text>
+              <Text style={styles.headerSubtitle}>Let's bake something amazing today 🍞</Text>
+            </View>
           </View>
         </View>
-      </View>
 
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
@@ -103,6 +113,7 @@ export default function HomeScreen() {
         </Card>
       </View>
     </ScrollView>
+    </Animated.View>
   );
 }
 
@@ -112,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.paper,
   },
   header: {
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.cardBg.warm,
     padding: theme.spacing.xl,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
@@ -125,21 +136,25 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.md,
   },
   headerTitle: {
-    fontSize: theme.typography.sizes['2xl'],
+    fontSize: theme.typography.sizes['4xl'],
+    fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
+    letterSpacing: theme.typography.letterSpacing.tight,
   },
   headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
-    marginTop: theme.spacing.xs,
+    marginTop: theme.spacing.sm,
   },
   content: {
     padding: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: theme.typography.sizes.xl,
-    fontWeight: theme.typography.weights.bold,
+    fontSize: theme.typography.sizes['2xl'],
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
   },
@@ -163,12 +178,14 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },
   actionDescription: {
     fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
   },
   infoCard: {
@@ -181,12 +198,14 @@ const styles = StyleSheet.create({
   },
   infoTitle: {
     fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.sm,
   },
   infoText: {
     fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     lineHeight: 24,
   },
