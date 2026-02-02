@@ -182,10 +182,9 @@ export default function RecipesScreen() {
                   size={64}
                   color={theme.colors.text.disabled}
                 />
-                <Text style={styles.emptyStateTitle}>No recipes yet</Text>
+                <Text style={styles.emptyStateTitle}>Your recipe book is ready!</Text>
                 <Text style={styles.emptyStateText}>
-                  Create your first recipe or save one from the Baker's
-                  Calculator
+                  Build your collection of favorite formulas. Create from scratch or save directly from any calculator 📖
                 </Text>
                 <Button
                   title="Add Recipe"
@@ -232,17 +231,21 @@ const styles = StyleSheet.create({
     padding: theme.spacing['3xl'],
   },
   emptyStateTitle: {
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes['2xl'],
+    fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.lg,
     marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
   emptyStateText: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: theme.spacing.xl,
+    lineHeight: 28,
   },
   button: {
     minWidth: 120,

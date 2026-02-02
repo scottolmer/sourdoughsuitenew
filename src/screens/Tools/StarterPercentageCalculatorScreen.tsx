@@ -269,13 +269,16 @@ const styles = StyleSheet.create({
     paddingTop: theme.spacing.md,
   },
   headerTitle: {
-    fontSize: theme.typography.sizes['2xl'],
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
+    letterSpacing: theme.typography.letterSpacing.tight,
   },
   headerSubtitle: {
     fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginTop: theme.spacing.xs,
@@ -284,7 +287,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.xl,
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
@@ -305,7 +309,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.lg,
   },
   resultTitle: {
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes['2xl'],
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.md,
@@ -318,11 +323,14 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   percentageValue: {
-    fontSize: 56,
+    fontSize: theme.typography.sizes['5xl'],
+    fontFamily: theme.typography.fonts.bold,
     fontWeight: theme.typography.weights.bold,
+    letterSpacing: theme.typography.letterSpacing.tight,
   },
   percentageLabel: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     marginTop: theme.spacing.xs,
   },
@@ -334,10 +342,12 @@ const styles = StyleSheet.create({
   },
   speedLabel: {
     fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
   },
   speedValue: {
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes['2xl'],
+    fontFamily: theme.typography.fonts.bold,
     fontWeight: theme.typography.weights.bold,
   },
   divider: {
@@ -351,7 +361,8 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
   },
   breakdownTitle: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.sm,
@@ -363,10 +374,12 @@ const styles = StyleSheet.create({
   },
   breakdownLabel: {
     fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
   },
   breakdownValue: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
   },

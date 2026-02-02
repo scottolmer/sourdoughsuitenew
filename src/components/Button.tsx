@@ -97,13 +97,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: theme.borderRadius.xl,
   },
 
   // Variants
   primary: {
     backgroundColor: theme.colors.primary[500],
-    ...theme.shadows.md,
+    ...theme.shadows.lg,
+    shadowColor: theme.colors.primary[600],
   },
   secondary: {
     backgroundColor: theme.colors.secondary[600],
@@ -113,6 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     borderWidth: 2,
     borderColor: theme.colors.primary[500],
+    ...theme.shadows.sm,
   },
   ghost: {
     backgroundColor: 'transparent',
@@ -145,9 +147,10 @@ const styles = StyleSheet.create({
 
   // Text styles
   text: {
-    fontWeight: theme.typography.weights.bold,
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold,
     textAlign: 'center',
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
   primaryText: {
     color: theme.colors.white,

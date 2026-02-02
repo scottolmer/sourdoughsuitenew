@@ -156,10 +156,9 @@ export default function StartersScreen() {
                 size={64}
                 color={theme.colors.text.disabled}
               />
-              <Text style={styles.emptyStateTitle}>No starters yet</Text>
+              <Text style={styles.emptyStateTitle}>Your starter collection awaits!</Text>
               <Text style={styles.emptyStateText}>
-                Create your first starter to begin tracking feedings and
-                performance
+                Create your first bubbly friend and start your sourdough journey. Track feedings, monitor health, and watch your starter thrive 🍞
               </Text>
               <Button
                 title="Add Starter"
@@ -266,17 +265,21 @@ const styles = StyleSheet.create({
     padding: theme.spacing['3xl'],
   },
   emptyStateTitle: {
-    fontSize: theme.typography.sizes.xl,
+    fontSize: theme.typography.sizes['2xl'],
+    fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold as any,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.lg,
     marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
   emptyStateText: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.lg,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: theme.spacing.xl,
+    lineHeight: 28,
   },
   addButton: {
     minWidth: 200,
