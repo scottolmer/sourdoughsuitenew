@@ -91,6 +91,25 @@ export const colors = {
     success: ['#a3e635', '#65a30d'],
     warm: ['#fef8ed', '#fdefd5'],
     sunset: ['#f7a73f', '#dc2626'],
+    dough: ['#fef3c7', '#fed7aa'],     // Creamy dough gradient
+    crust: ['#d17d1e', '#7f4712'],     // Brown crust gradient
+  },
+
+  // Sourdough-themed colors for personality
+  sourdough: {
+    crust: '#8B4513',        // Brown bread crust
+    crumb: '#F5DEB3',        // Wheat/cream interior
+    flour: '#FFFAF0',        // Off-white flour
+    rye: '#6B4423',          // Dark rye bread
+    scoring: '#A0522D',      // Scoring marks
+  },
+
+  // Card backgrounds with warm tints
+  cardBg: {
+    warm: '#fffbf5',         // Warm white
+    cream: '#fef8f0',        // Cream
+    wheat: '#fef6e7',        // Wheat tone
+    neutral: '#fafaf9',      // Subtle neutral
   },
 
   // Special colors
