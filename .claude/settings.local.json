@@ -29,7 +29,9 @@
       "Bash(git fetch:*)",
       "Bash(git remote:*)",
       "Bash(npm install:*)",
-      "Bash(timeout 5 bash:*)"
+      "Bash(timeout 5 bash:*)",
+      "Bash(npm test:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
