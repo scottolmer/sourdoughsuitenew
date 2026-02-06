@@ -59,6 +59,13 @@ export default function ToolsScreen() {
 
   const tools = [
     {
+      icon: 'clock-outline',
+      title: 'Timeline Calculator',
+      description: 'Plan your baking schedule',
+      color: theme.colors.info.main,
+      onPress: () => navigation.navigate('TimelineCalculator'),
+    },
+    {
       icon: 'percent',
       title: "Baker's Percentage",
       description: 'Calculate ingredient ratios',
@@ -108,13 +115,6 @@ export default function ToolsScreen() {
       onPress: () => navigation.navigate('PrefermentCalculator'),
     },
     {
-      icon: 'clock-outline',
-      title: 'Timeline Calculator',
-      description: 'Plan your baking schedule',
-      color: theme.colors.info.main,
-      onPress: () => navigation.navigate('TimelineCalculator'),
-    },
-    {
       icon: 'weight-gram',
       title: 'Dough Weight Calculator',
       description: 'Calculate dough portions',
@@ -132,13 +132,6 @@ export default function ToolsScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Baking Tools</Text>
-        <Text style={styles.headerSubtitle}>
-          10 professional calculators for perfect baking
-        </Text>
-      </View>
-
       <View style={styles.content}>
         {tools.map((tool, index) => (
           <View key={index} style={styles.toolContainer}>

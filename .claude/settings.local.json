@@ -31,7 +31,17 @@
       "Bash(npm install:*)",
       "Bash(timeout 5 bash:*)",
       "Bash(npm test:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(gradlew.bat clean:*)",
+      "Bash(./gradlew:*)",
+      "Bash(taskkill:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(xargs:*)",
+      "Bash(emulator:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(curl:*)",
+      "Bash(npx react-native-asset)"
     ],
     "deny": [],
     "ask": []

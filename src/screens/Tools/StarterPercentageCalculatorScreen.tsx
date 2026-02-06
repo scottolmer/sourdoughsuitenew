@@ -430,19 +430,19 @@ const styles = StyleSheet.create({
   },
   referencePercent: {
     flex: 1,
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
   },
   referenceTime: {
     flex: 1,
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     textAlign: 'center',
   },
   referenceFlavor: {
     flex: 1,
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     textAlign: 'right',
   },

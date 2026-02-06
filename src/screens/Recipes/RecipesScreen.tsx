@@ -166,13 +166,6 @@ export default function RecipesScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Recipes</Text>
-          <Text style={styles.headerSubtitle}>
-            Your saved recipes and formulas
-          </Text>
-        </View>
-
         <View style={styles.content}>
           {recipes.length === 0 ? (
             <Card variant="outlined">

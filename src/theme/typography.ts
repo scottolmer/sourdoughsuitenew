@@ -10,17 +10,17 @@
 export const typography = {
   // Font families - Custom fonts for premium feel
   fonts: {
-    // Body text and UI elements
-    regular: 'Inter_400Regular',
-    medium: 'Inter_500Medium',
-    semibold: 'Inter_600SemiBold',
-    bold: 'Inter_700Bold',
+    // Body text and UI elements - Inter font family
+    regular: 'Inter-Regular',
+    medium: 'Inter-Medium',
+    semibold: 'Inter-SemiBold',
+    bold: 'Inter-Bold',
 
-    // Headings and emphasis
-    heading: 'PlayfairDisplay_700Bold',
-    headingRegular: 'PlayfairDisplay_400Regular',
+    // Headings and emphasis - Playfair Display
+    heading: 'PlayfairDisplay-Bold',
+    headingRegular: 'PlayfairDisplay-Regular',
 
-    // Fallback to system fonts if custom fonts fail to load
+    // Fallback to system fonts
     system: 'System',
   },
 

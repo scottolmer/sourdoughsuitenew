@@ -110,9 +110,6 @@ export default function StartersScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Starters</Text>
-        </View>
         <SkeletonList count={3} />
       </View>
     );
@@ -141,12 +138,6 @@ export default function StartersScreen() {
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
       >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Starters</Text>
-          <Text style={styles.headerSubtitle}>
-            Track and manage your sourdough starters
-          </Text>
-        </View>
 
         <View style={styles.content}>
           <Card variant="outlined">
@@ -175,16 +166,6 @@ export default function StartersScreen() {
   // List of starters
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.headerTitle}>My Starters</Text>
-            <Text style={styles.headerSubtitle}>
-              {starters.length} starter{starters.length !== 1 ? 's' : ''}
-            </Text>
-          </View>
-        </View>
-      </View>
 
       <ScrollView
         style={styles.scrollContent}

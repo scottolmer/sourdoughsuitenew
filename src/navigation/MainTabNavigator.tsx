@@ -55,7 +55,7 @@ function HomeStack() {
       <HomeStackNav.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: 'SourdoughSuite' }}
+        options={{ headerShown: false }}
       />
     </HomeStackNav.Navigator>
   );
@@ -235,9 +235,9 @@ export default function MainTabNavigator() {
           backgroundColor: theme.colors.white,
           borderTopColor: theme.colors.border.light,
           borderTopWidth: 1,
-          paddingBottom: 8,
+          paddingBottom: 24,
           paddingTop: 8,
-          height: 65,
+          height: 80,
           ...theme.shadows.sm,
         },
         tabBarItemStyle: {

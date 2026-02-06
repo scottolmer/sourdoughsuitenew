@@ -3,12 +3,12 @@
  * Main dashboard for the app
  */
 
-import React, {useEffect, useRef} from 'react';
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Card from '../../components/Card';
-import {theme} from '../../theme';
+import { theme } from '../../theme';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -47,72 +47,65 @@ export default function HomeScreen() {
   ];
 
   return (
-    <Animated.View style={{flex: 1, opacity: fadeAnim}}>
+    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <ScrollView style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <Icon name="bread-slice" size={48} color={theme.colors.primary[500]} />
-            <View style={styles.headerText}>
-              <Text style={styles.headerTitle}>Sourdough Suite</Text>
-              <Text style={styles.headerSubtitle}>Let's bake something amazing today 🍞</Text>
-            </View>
-          </View>
+          <Text style={styles.headerTitle}>SourdoughSuite</Text>
         </View>
 
-      <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        {quickActions.map((action, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={action.onPress}
-            activeOpacity={0.7}
-          >
-            <Card
-              variant="elevated"
-              padding="lg"
-              style={styles.actionCard}
+        <View style={styles.content}>
+          {quickActions.map((action, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={action.onPress}
+              activeOpacity={0.7}
             >
-              <View style={styles.actionContent}>
-                <View
-                  style={[
-                    styles.actionIcon,
-                    {backgroundColor: action.color + '20'},
-                  ]}
-                >
-                  <Icon name={action.icon} size={32} color={action.color} />
+              <Card
+                variant="elevated"
+                padding="lg"
+                style={styles.actionCard}
+              >
+                <View style={styles.actionContent}>
+                  <View
+                    style={[
+                      styles.actionIcon,
+                      { backgroundColor: action.color + '20' },
+                    ]}
+                  >
+                    <Icon name={action.icon} size={32} color={action.color} />
+                  </View>
+                  <View style={styles.actionInfo}>
+                    <Text style={styles.actionTitle}>{action.title}</Text>
+                    <Text style={styles.actionDescription}>
+                      {action.description}
+                    </Text>
+                  </View>
+                  <Icon
+                    name="chevron-right"
+                    size={24}
+                    color={theme.colors.text.disabled}
+                  />
                 </View>
-                <View style={styles.actionInfo}>
-                  <Text style={styles.actionTitle}>{action.title}</Text>
-                  <Text style={styles.actionDescription}>
-                    {action.description}
-                  </Text>
-                </View>
-                <Icon
-                  name="chevron-right"
-                  size={24}
-                  color={theme.colors.text.disabled}
-                />
-              </View>
-            </Card>
-          </TouchableOpacity>
-        ))}
+              </Card>
+            </TouchableOpacity>
+          ))}
 
-        <Card variant="filled" padding="lg" style={styles.infoCard}>
-          <View style={styles.infoHeader}>
-            <Icon
-              name="information"
-              size={24}
-              color={theme.colors.info.main}
-            />
-            <Text style={styles.infoTitle}>Welcome!</Text>
-          </View>
-          <Text style={styles.infoText}>
-            Use the tabs below to navigate between Calculators, Starters, and Recipes.
-            All your data is stored locally on your device.
-          </Text>
-        </Card>
-      </View>
-    </ScrollView>
+          <Card variant="filled" padding="lg" style={styles.infoCard}>
+            <View style={styles.infoHeader}>
+              <Icon
+                name="information"
+                size={24}
+                color={theme.colors.info.main}
+              />
+              <Text style={styles.infoTitle}>Welcome!</Text>
+            </View>
+            <Text style={styles.infoText}>
+              Use the tabs below to navigate between Calculators, Starters, and Recipes.
+              All your data is stored locally on your device.
+            </Text>
+          </Card>
+        </View>
+      </ScrollView>
     </Animated.View>
   );
 }
@@ -123,10 +116,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.paper,
   },
   header: {
-    backgroundColor: theme.colors.cardBg.warm,
-    padding: theme.spacing.xl,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
+    paddingTop: 60,
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
   },
   headerContent: {
     flexDirection: 'row',
@@ -136,11 +128,10 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing.md,
   },
   headerTitle: {
-    fontSize: theme.typography.sizes['4xl'],
-    fontFamily: theme.typography.fonts.heading,
-    fontWeight: theme.typography.weights.bold,
+    fontSize: 32,
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    letterSpacing: theme.typography.letterSpacing.tight,
   },
   headerSubtitle: {
     fontSize: theme.typography.sizes.lg,
