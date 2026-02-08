@@ -75,6 +75,7 @@ export default function DoughWeightCalculatorScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="weight-gram" size={48} color={theme.colors.primary[600]} />
@@ -84,6 +85,7 @@ export default function DoughWeightCalculatorScreen() {
           </Text>
         </View>
 
+        <View style={styles.content}>
         <Card variant="elevated" padding="lg" style={styles.card}>
           <Text style={styles.sectionTitle}>Loaf Details</Text>
           <BasicInput
@@ -255,6 +257,7 @@ export default function DoughWeightCalculatorScreen() {
 
         <Card variant="filled" padding="lg" style={styles.card}>
           <Text style={styles.guideTitle}>Common Loaf Sizes</Text>
+
           <View style={styles.sizeTable}>
             <View style={styles.sizeRow}>
               <Text style={styles.sizeName}>Small boule</Text>
@@ -278,6 +281,7 @@ export default function DoughWeightCalculatorScreen() {
             </View>
           </View>
         </Card>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -286,44 +290,44 @@ export default function DoughWeightCalculatorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.paper,
+    backgroundColor: theme.colors.background.default,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: theme.spacing.md,
+    flexGrow: 1,
   },
   header: {
+    padding: theme.spacing.xl,
+    backgroundColor: theme.colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.light,
     alignItems: 'center',
-    marginBottom: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
   },
   headerTitle: {
-    fontSize: theme.typography.sizes['3xl'],
-    fontFamily: theme.typography.fonts.heading,
-    fontWeight: theme.typography.weights.bold,
+    fontSize: theme.typography.sizes['2xl'],
+    fontWeight: theme.typography.weights.bold as any,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
-    letterSpacing: theme.typography.letterSpacing.tight,
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
-    fontFamily: theme.typography.fonts.regular,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginTop: theme.spacing.xs,
-    paddingHorizontal: theme.spacing.lg,
+  },
+  content: {
+    padding: theme.spacing.lg,
   },
   card: {
     marginBottom: theme.spacing.md,
   },
   sectionTitle: {
-    fontSize: theme.typography.sizes.xl,
-    fontFamily: theme.typography.fonts.semibold,
-    fontWeight: theme.typography.weights.semibold,
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.semibold as any,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   lossExamples: {
     marginTop: theme.spacing.md,

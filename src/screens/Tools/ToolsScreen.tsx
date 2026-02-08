@@ -23,6 +23,7 @@ type ToolsStackParamList = {
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
+  FlourBlendCalculator: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
@@ -54,8 +55,18 @@ function ToolCard({ icon, title, description, color, onPress }: ToolCardProps) {
   );
 }
 
+import { useHaptics } from '../../hooks/useHaptics';
+
+// ... (existing helper types)
+
 export default function ToolsScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const haptics = useHaptics();
+
+  const handleToolPress = (route: keyof ToolsStackParamList) => {
+    haptics.selection();
+    navigation.navigate(route);
+  };
 
   const tools = [
     {
@@ -63,70 +74,77 @@ export default function ToolsScreen() {
       title: 'Timeline Calculator',
       description: 'Plan your baking schedule',
       color: theme.colors.info.main,
-      onPress: () => navigation.navigate('TimelineCalculator'),
+      onPress: () => handleToolPress('TimelineCalculator'),
     },
     {
       icon: 'percent',
       title: "Baker's Percentage",
       description: 'Calculate ingredient ratios',
       color: theme.colors.primary[600],
-      onPress: () => navigation.navigate('BakersCalculator'),
+      onPress: () => handleToolPress('BakersCalculator'),
     },
     {
       icon: 'lifebuoy',
       title: 'Recipe Rescue',
       description: 'Fix ingredient mistakes',
       color: theme.colors.error.main,
-      onPress: () => navigation.navigate('RecipeRescueCalculator'),
+      onPress: () => handleToolPress('RecipeRescueCalculator'),
     },
     {
       icon: 'flask-outline',
       title: 'Levain Builder',
       description: 'Build starter for your recipe',
       color: theme.colors.primary[500],
-      onPress: () => navigation.navigate('LevainBuilder'),
+      onPress: () => handleToolPress('LevainBuilder'),
     },
     {
       icon: 'percent-circle',
       title: 'Starter Percentage Calculator',
       description: 'Calculate fermentation speed',
       color: theme.colors.success.dark,
-      onPress: () => navigation.navigate('StarterPercentageCalculator'),
+      onPress: () => handleToolPress('StarterPercentageCalculator'),
     },
     {
       icon: 'water',
       title: 'Hydration Converter',
       description: 'Adjust dough hydration',
       color: theme.colors.success.main,
-      onPress: () => navigation.navigate('HydrationCalculator'),
+      onPress: () => handleToolPress('HydrationCalculator'),
     },
     {
       icon: 'thermometer',
       title: 'Temperature Calculator',
       description: 'Control dough temperature',
       color: theme.colors.warning.main,
-      onPress: () => navigation.navigate('TemperatureCalculator'),
+      onPress: () => handleToolPress('TemperatureCalculator'),
     },
     {
       icon: 'clock-time-four',
       title: 'Preferment Calculator',
       description: 'Poolish, biga, pâte fermentée',
       color: theme.colors.info.dark,
-      onPress: () => navigation.navigate('PrefermentCalculator'),
+      onPress: () => handleToolPress('PrefermentCalculator'),
     },
     {
       icon: 'weight-gram',
       title: 'Dough Weight Calculator',
       description: 'Calculate dough portions',
       color: theme.colors.secondary[600],
-      onPress: () => navigation.navigate('DoughWeightCalculator'),
+      onPress: () => handleToolPress('DoughWeightCalculator'),
     },
     {
       icon: 'resize',
       title: 'Recipe Scaler',
       description: 'Scale recipes up or down',
       color: theme.colors.error.main,
-      onPress: () => navigation.navigate('ScalingCalculator'),
+      onPress: () => handleToolPress('ScalingCalculator'),
+    },
+    {
+      icon: 'grain',
+      title: 'Flour Blend Calculator',
+      description: 'Mix flours to target protein %',
+      color: theme.colors.warning.main,
+      onPress: () => handleToolPress('FlourBlendCalculator'),
     },
   ];
 
@@ -154,7 +172,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: theme.typography.sizes['2xl'],
-    fontWeight: theme.typography.weights.bold,
+    fontFamily: theme.typography.fonts.heading,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },

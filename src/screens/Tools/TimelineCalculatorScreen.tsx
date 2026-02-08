@@ -3,7 +3,7 @@
  * Plan baking schedule and timing
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -97,15 +97,17 @@ export default function TimelineCalculatorScreen() {
     ]);
   };
 
-  const handleTimeChange = (event: any, time?: Date) => {
-    setShowTimePicker(Platform.OS === 'ios');
-    if (time) {
+  const handleTimeChange = useCallback((event: any, time?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowTimePicker(false);
+    }
+    if (event.type === 'set' && time) {
       setSelectedTime(time);
       const hours = time.getHours().toString().padStart(2, '0');
       const minutes = time.getMinutes().toString().padStart(2, '0');
       setTargetTime(`${hours}:${minutes}`);
     }
-  };
+  }, []);
 
   const formatTime = (date: Date | undefined) => {
     if (!date) return '';
@@ -134,6 +136,7 @@ export default function TimelineCalculatorScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="clock-outline" size={48} color={theme.colors.info.main} />
@@ -164,7 +167,8 @@ export default function TimelineCalculatorScreen() {
                 value={selectedTime}
                 mode="time"
                 is24Hour={false}
-                display="default"
+                display="spinner"
+                themeVariant="light"
                 onChange={handleTimeChange}
               />
             )}
@@ -365,13 +369,11 @@ const styles = StyleSheet.create({
   },
   stepInputs: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   stepNameInput: {
-    flex: 2,
   },
   stepDurationInput: {
-    flex: 1,
   },
   removeButton: {
     minWidth: 40,

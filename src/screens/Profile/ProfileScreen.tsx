@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Alert, Linking, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // import { useAuth } from '../../hooks/useAuth';
 import Button from '../../components/Button';
@@ -14,7 +14,7 @@ import { theme } from '../../theme';
 export default function ProfileScreen() {
   // const { user, logout } = useAuth();
   const user: any = null; // Temporary: auth disabled
-  const logout = async () => {}; // Temporary: auth disabled
+  const logout = async () => { }; // Temporary: auth disabled
 
   const handleLogout = () => {
     Alert.alert(
@@ -37,6 +37,10 @@ export default function ProfileScreen() {
     );
   };
 
+  const handleSocialPress = (url: string) => {
+    Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -53,6 +57,7 @@ export default function ProfileScreen() {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Account</Text>
         <Card variant="outlined" padding="none">
+          {/* ... existing account items ... */}
           <View style={styles.menuItem}>
             <Icon name="account-edit" size={24} color={theme.colors.text.secondary} />
             <Text style={styles.menuItemText}>Edit Profile</Text>
@@ -64,6 +69,43 @@ export default function ProfileScreen() {
             <Text style={styles.menuItemText}>Settings</Text>
             <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
           </View>
+        </Card>
+
+        <Text style={[styles.sectionTitle, { marginTop: theme.spacing.xl }]}>
+          Community
+        </Text>
+        <Card variant="outlined" padding="none">
+          <TouchableOpacity onPress={() => handleSocialPress('https://youtube.com/@SourdoughSuite')}>
+            <View style={styles.menuItem}>
+              <Icon name="youtube" size={24} color="#FF0000" />
+              <Text style={styles.menuItemText}>Subscribe on YouTube</Text>
+              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.divider} />
+          <TouchableOpacity onPress={() => handleSocialPress('https://instagram.com/sourdoughsuite')}>
+            <View style={styles.menuItem}>
+              <Icon name="instagram" size={24} color="#E1306C" />
+              <Text style={styles.menuItemText}>Follow on Instagram</Text>
+              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.divider} />
+          <TouchableOpacity onPress={() => handleSocialPress('https://facebook.com/sourdoughsuite')}>
+            <View style={styles.menuItem}>
+              <Icon name="facebook" size={24} color="#1877F2" />
+              <Text style={styles.menuItemText}>Like us on Facebook</Text>
+              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
+          <View style={styles.divider} />
+          <TouchableOpacity onPress={() => handleSocialPress('https://tiktok.com/@sourdoughsuite')}>
+            <View style={styles.menuItem}>
+              <Icon name="music-note-eighth" size={24} color="#000000" />
+              <Text style={styles.menuItemText}>Follow on TikTok</Text>
+              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
         </Card>
 
         <Text style={[styles.sectionTitle, { marginTop: theme.spacing.xl }]}>

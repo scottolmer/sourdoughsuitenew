@@ -9,6 +9,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 // Stack param lists
 export type HomeStackParamList = {
   Home: undefined;
+  Learn: undefined;
 };
 
 export type ToolsStackParamList = {
@@ -23,6 +24,7 @@ export type ToolsStackParamList = {
   PrefermentCalculator: undefined;
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
+  FlourBlendCalculator: undefined;
 };
 
 export type StartersStackParamList = {

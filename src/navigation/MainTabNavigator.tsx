@@ -30,6 +30,7 @@ import StarterPercentageCalculatorScreen from '../screens/Tools/StarterPercentag
 import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScreen';
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
+import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -49,6 +50,10 @@ const RecipesStackNav = createNativeStackNavigator<RecipesStackParamList>();
 const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
 // Stack navigators for each tab
+import LearnScreen from '../screens/Learn/LearnScreen';
+
+// ...
+
 function HomeStack() {
   return (
     <HomeStackNav.Navigator>
@@ -56,6 +61,11 @@ function HomeStack() {
         name="Home"
         component={HomeScreen}
         options={{ headerShown: false }}
+      />
+      <HomeStackNav.Screen
+        name="Learn"
+        component={LearnScreen}
+        options={{ title: 'Sourdough Academy' }}
       />
     </HomeStackNav.Navigator>
   );
@@ -118,6 +128,11 @@ function ToolsStack() {
         name="RecipeRescueCalculator"
         component={RecipeRescueCalculatorScreen}
         options={{ title: 'Recipe Rescue Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="FlourBlendCalculator"
+        component={FlourBlendCalculatorScreen}
+        options={{ title: 'Flour Blend Calculator' }}
       />
     </ToolsStackNav.Navigator>
   );
@@ -222,10 +237,10 @@ export default function MainTabNavigator() {
               iconName = 'circle';
           }
 
-          return <Icon name={iconName} size={focused ? 26 : 24} color={color} />;
+          return <Icon name={iconName} size={focused ? 30 : 28} color={color} />;
         },
         tabBarActiveTintColor: theme.colors.primary[500],
-        tabBarInactiveTintColor: theme.colors.text.disabled,
+        tabBarInactiveTintColor: theme.colors.text.secondary, // Darker than disabled
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
@@ -235,9 +250,9 @@ export default function MainTabNavigator() {
           backgroundColor: theme.colors.white,
           borderTopColor: theme.colors.border.light,
           borderTopWidth: 1,
-          paddingBottom: 24,
-          paddingTop: 8,
-          height: 80,
+          paddingBottom: 32, // Increased spacing for standard devices
+          paddingTop: 12,
+          height: 96, // Increased height from 80
           ...theme.shadows.sm,
         },
         tabBarItemStyle: {

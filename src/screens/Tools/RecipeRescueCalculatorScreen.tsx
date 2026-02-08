@@ -253,6 +253,7 @@ export default function RecipeRescueCalculatorScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="lifebuoy" size={48} color={theme.colors.error.main} />

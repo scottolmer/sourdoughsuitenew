@@ -74,6 +74,7 @@ export default function TemperatureCalculatorScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="thermometer" size={48} color={theme.colors.warning.main} />

@@ -14,6 +14,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { theme } from '../theme';
 
+import { useHaptics } from '../hooks/useHaptics';
+
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -34,8 +36,17 @@ export default function Button({
   rightIcon,
   disabled,
   style,
+  onPress,
   ...props
 }: ButtonProps) {
+  const haptics = useHaptics();
+
+  const handlePress = (e: any) => {
+    if (disabled || loading) return;
+    haptics.light();
+    onPress?.(e);
+  };
+
   const buttonStyles = [
     styles.button,
     styles[variant],
@@ -63,6 +74,7 @@ export default function Button({
       style={buttonStyles}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      onPress={handlePress}
       {...props}
     >
       {loading ? (

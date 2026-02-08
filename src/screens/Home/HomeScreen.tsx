@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import Card from '../../components/Card';
@@ -22,11 +22,22 @@ export default function HomeScreen() {
     }).start();
   }, []);
 
+  const handleSocialPress = (url: string) => {
+    Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
+  };
+
+  const socialLinks = [
+    { icon: 'youtube', url: 'https://youtube.com/@SourdoughSuite', color: '#FF0000' },
+    { icon: 'instagram', url: 'https://instagram.com/sourdoughsuite', color: '#E1306C' },
+    { icon: 'facebook', url: 'https://facebook.com/sourdoughsuite', color: '#1877F2' },
+    { icon: 'music-note-eighth', url: 'https://tiktok.com/@sourdoughsuite', color: '#000000' }, // TikTok replacement
+  ];
+
   const quickActions = [
     {
       icon: 'calculator',
       title: 'Calculators',
-      description: '10 professional tools',
+      description: '11 professional tools',
       color: theme.colors.primary[500],
       onPress: () => navigation.navigate('ToolsTab' as never),
     },
@@ -43,6 +54,13 @@ export default function HomeScreen() {
       description: 'Saved formulas & recipes',
       color: theme.colors.warning.main,
       onPress: () => navigation.navigate('RecipesTab' as never),
+    },
+    {
+      icon: 'school',
+      title: 'Academy',
+      description: 'Master the craft',
+      color: theme.colors.info.main,
+      onPress: () => navigation.navigate('Learn' as never),
     },
   ];
 
@@ -90,20 +108,20 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ))}
 
-          <Card variant="filled" padding="lg" style={styles.infoCard}>
-            <View style={styles.infoHeader}>
-              <Icon
-                name="information"
-                size={24}
-                color={theme.colors.info.main}
-              />
-              <Text style={styles.infoTitle}>Welcome!</Text>
+
+          <View style={styles.socialFooter}>
+            <View style={styles.socialIcons}>
+              {socialLinks.map((link, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.socialButton}
+                  onPress={() => handleSocialPress(link.url)}
+                >
+                  <Icon name={link.icon} size={28} color={link.color} />
+                </TouchableOpacity>
+              ))}
             </View>
-            <Text style={styles.infoText}>
-              Use the tabs below to navigate between Calculators, Starters, and Recipes.
-              All your data is stored locally on your device.
-            </Text>
-          </Card>
+          </View>
         </View>
       </ScrollView>
     </Animated.View>
@@ -129,8 +147,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 32,
-    fontFamily: theme.typography.fonts.semibold,
-    fontWeight: theme.typography.weights.semibold,
+    fontFamily: theme.typography.fonts.heading,
+    fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
   },
   headerSubtitle: {
@@ -144,8 +162,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: theme.typography.sizes['2xl'],
-    fontFamily: theme.typography.fonts.semibold,
-    fontWeight: theme.typography.weights.semibold,
+    fontFamily: theme.typography.fonts.heading,
+    fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
   },
@@ -199,5 +217,24 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     lineHeight: 24,
+  },
+  socialFooter: {
+    marginTop: theme.spacing.sm, // Reduced from lg to sm
+    alignItems: 'center',
+    paddingBottom: 0,
+    marginBottom: -theme.spacing.md, // Pull closer to bottom
+  },
+  socialIcons: {
+    flexDirection: 'row',
+    gap: theme.spacing.lg,
+  },
+  socialButton: {
+    width: 48,
+    height: 48,
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: theme.colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...theme.shadows.sm,
   },
 });

@@ -1,8 +1,9 @@
 /**
- * Basic Input Component - Simple and functional
+ * Basic Input Component
+ * Modern, clean, and accessible
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
@@ -28,21 +29,29 @@ export default function BasicInput({
   style,
   ...props
 }: BasicInputProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={[styles.wrapper, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputContainer}>
+      <View style={[
+        styles.inputContainer,
+        isFocused && styles.inputContainerFocused,
+      ]}>
         {leftIcon && (
           <Icon
             name={leftIcon}
             size={20}
-            color={theme.colors.text.tertiary}
+            color={isFocused ? theme.colors.primary[500] : theme.colors.text.tertiary}
             style={styles.leftIcon}
           />
         )}
         <TextInput
           style={[styles.input, leftIcon && styles.inputWithIcon, style]}
           placeholderTextColor={theme.colors.text.disabled}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          selectionColor={theme.colors.primary[500]}
           {...props}
         />
       </View>
@@ -57,27 +66,38 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.medium as any,
-    color: theme.colors.text.primary,
+    fontFamily: theme.typography.fonts.medium,
+    color: theme.colors.text.secondary,
     marginBottom: theme.spacing.xs,
+    marginLeft: theme.spacing.xs, // Slight alignment with input
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.white,
+    borderRadius: theme.borderRadius.lg, // More rounded
+    backgroundColor: theme.colors.background.paper,
     paddingHorizontal: theme.spacing.md,
-    minHeight: 48,
+    minHeight: 52, // Taller touch target
+    ...theme.shadows.sm,
+    shadowOpacity: 0.02, // Very subtle depth
+  },
+  inputContainerFocused: {
+    borderColor: theme.colors.primary[400],
+    backgroundColor: theme.colors.white,
+    ...theme.shadows.md,
+    shadowColor: theme.colors.primary[200],
+    shadowOpacity: 0.2,
   },
   leftIcon: {
-    marginRight: theme.spacing.xs,
+    marginRight: theme.spacing.sm,
   },
   input: {
     flex: 1,
     paddingVertical: theme.spacing.md,
     fontSize: theme.typography.sizes.base,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.primary,
   },
   inputWithIcon: {
@@ -85,6 +105,7 @@ const styles = StyleSheet.create({
   },
   helperText: {
     fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.tertiary,
     marginTop: theme.spacing.xs,
     marginLeft: theme.spacing.xs,

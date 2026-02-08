@@ -1,122 +1,110 @@
 /**
  * Color palette for SourdoughSuite
- * Modern, cohesive color scheme with gradients
+ * Premium Artisan Theme - Warm, organic, and elegant
  */
 
 export const colors = {
-  // Primary brand colors - Enhanced warm bread tones
+  // Primary - Rich Amber / Bronzed Crust
   primary: {
-    50: '#fef8ed',
-    100: '#fdefd5',
-    200: '#fbd9a0',
-    300: '#f9c470',
-    400: '#f7a73f',
-    500: '#e8942a', // Main bread color - warmer
-    600: '#d17d1e',
-    700: '#a85f17',
-    800: '#7f4712',
-    900: '#56300c',
+    50: '#fffbf0',
+    100: '#fef2d6',
+    200: '#fce3ad',
+    300: '#fad280',
+    400: '#f7b955',
+    500: '#f59e0b', // Base Primary
+    600: '#d97706',
+    700: '#b45309',
+    800: '#92400e',
+    900: '#78350f',
   },
 
-  // Secondary colors - Modern grays with warmth
+  // Secondary - Warm Neutrals / Stone
   secondary: {
-    50: '#f8f9fa',
-    100: '#f1f3f5',
-    200: '#e9ecef',
-    300: '#dee2e6',
-    400: '#ced4da',
-    500: '#adb5bd',
-    600: '#868e96',
-    700: '#495057',
-    800: '#343a40',
-    900: '#212529',
+    50: '#fafaf9',
+    100: '#f5f5f4',
+    200: '#e7e5e4',
+    300: '#d6d3d1',
+    400: '#a8a29e',
+    500: '#78716c',
+    600: '#57534e',
+    700: '#44403c',
+    800: '#292524',
+    900: '#1c1917',
   },
 
-  // Success - Vibrant green for healthy starters
+  // Functional Colors - Earthy but distinctive
   success: {
-    light: '#a3e635',
-    main: '#65a30d',
-    dark: '#4d7c0f',
+    light: '#dcfce7',
+    main: '#4ade80', // Fresh Starter Green
+    dark: '#15803d',
   },
 
-  // Warning - Eye-catching amber
   warning: {
-    light: '#fbbf24',
-    main: '#f59e0b',
-    dark: '#d97706',
+    light: '#fef3c7',
+    main: '#f59e0b', // Golden Wheat
+    dark: '#b45309',
   },
 
-  // Error - Bold red
   error: {
-    light: '#f87171',
-    main: '#dc2626',
+    light: '#fee2e2',
+    main: '#ef4444', // Scorched Red
     dark: '#991b1b',
   },
 
-  // Info - Modern blue
   info: {
-    light: '#60a5fa',
-    main: '#2563eb',
+    light: '#e0f2fe',
+    main: '#3b82f6', // Clean Water
     dark: '#1e40af',
   },
 
-  // Background - Subtle warmth
+  // Backgrounds - Warm & Organic
   background: {
-    default: '#ffffff',
-    paper: '#fafaf9',
-    subtle: '#f5f5f4',
-    dark: '#1c1917',
+    default: '#FDFBF7',   // Floral White / Warm Flour
+    paper: '#FFFFFF',     // Pure White
+    subtle: '#FAF6F0',    // Very light beige
+    dark: '#2A2826',      // Dark Loaf
   },
 
-  // Text - Better contrast
+  // Card Backgrounds
+  cardBg: {
+    warm: '#FDFBF7',
+    cream: '#FFF9F0',
+    wheat: '#FEF3E6',
+    neutral: '#F5F5F4',
+  },
+
+  // Text - High Contrast but Softer
   text: {
-    primary: '#0c0a09',
-    secondary: '#57534e',
-    tertiary: '#78716c',
-    disabled: '#a8a29e',
-    inverse: '#ffffff',
+    primary: '#2A2826',   // Soft Black / Dark Crust
+    secondary: '#57534e', // Warm Gray
+    tertiary: '#888481',  // Light Gray
+    disabled: '#d6d3d1',
+    inverse: '#FFFFFF',
   },
 
-  // Borders - Refined
+  // Borders
   border: {
-    light: '#e7e5e4',
-    main: '#d6d3d1',
-    dark: '#a8a29e',
+    light: '#F0EBE6',
+    main: '#E5E0DC',
+    dark: '#D6D3D1',
   },
+
+  // Special Effects
+  glass: 'rgba(255, 255, 255, 0.7)',
+  glassBorder: 'rgba(255, 255, 255, 0.5)',
+  overlay: 'rgba(42, 40, 38, 0.4)',
 
   // Gradients
   gradients: {
-    primary: ['#f7a73f', '#e8942a'],
-    secondary: ['#868e96', '#495057'],
-    success: ['#a3e635', '#65a30d'],
-    warm: ['#fef8ed', '#fdefd5'],
-    sunset: ['#f7a73f', '#dc2626'],
-    dough: ['#fef3c7', '#fed7aa'],     // Creamy dough gradient
-    crust: ['#d17d1e', '#7f4712'],     // Brown crust gradient
+    primary: ['#f59e0b', '#d97706'],
+    secondary: ['#78716c', '#57534e'],
+    warmResult: ['#fffbf0', '#fef2d6'],
+    golden: ['#fcd34d', '#f59e0b'],
   },
 
-  // Sourdough-themed colors for personality
-  sourdough: {
-    crust: '#8B4513',        // Brown bread crust
-    crumb: '#F5DEB3',        // Wheat/cream interior
-    flour: '#FFFAF0',        // Off-white flour
-    rye: '#6B4423',          // Dark rye bread
-    scoring: '#A0522D',      // Scoring marks
-  },
-
-  // Card backgrounds with warm tints
-  cardBg: {
-    warm: '#fffbf5',         // Warm white
-    cream: '#fef8f0',        // Cream
-    wheat: '#fef6e7',        // Wheat tone
-    neutral: '#fafaf9',      // Subtle neutral
-  },
-
-  // Special colors
   transparent: 'transparent',
   white: '#ffffff',
   black: '#000000',
-  overlay: 'rgba(0, 0, 0, 0.5)',
 };
 
 export type ColorPalette = typeof colors;

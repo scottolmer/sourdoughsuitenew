@@ -135,6 +135,7 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="water" size={48} color={theme.colors.success.main} />
@@ -291,23 +292,20 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: theme.spacing.xl,
-    backgroundColor: theme.colors.cardBg.cream,
+    backgroundColor: theme.colors.white,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border.light,
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: theme.typography.sizes['3xl'],
-    fontFamily: theme.typography.fonts.heading,
+    fontSize: theme.typography.sizes['2xl'],
     fontWeight: theme.typography.weights.bold as any,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.xs,
-    letterSpacing: theme.typography.letterSpacing.tight,
   },
   headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
-    fontFamily: theme.typography.fonts.regular,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     textAlign: 'center',
   },
@@ -315,11 +313,10 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: theme.typography.sizes.xl,
-    fontFamily: theme.typography.fonts.semibold,
+    fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semibold as any,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   resultCard: {
     alignItems: 'center',

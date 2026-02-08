@@ -81,6 +81,7 @@ export default function LevainBuilderScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
           <Icon name="flask-outline" size={48} color={theme.colors.primary[600]} />
@@ -90,6 +91,7 @@ export default function LevainBuilderScreen() {
           </Text>
         </View>
 
+        <View style={styles.content}>
         <Card variant="elevated" padding="lg" style={styles.card}>
           <Text style={styles.sectionTitle}>Recipe Requirements</Text>
           <BasicInput
@@ -208,6 +210,7 @@ export default function LevainBuilderScreen() {
             or 1:2:2 or higher for building a large levain.
           </Text>
         </Card>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -216,39 +219,44 @@ export default function LevainBuilderScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.paper,
+    backgroundColor: theme.colors.background.default,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: theme.spacing.md,
+    flexGrow: 1,
   },
   header: {
+    padding: theme.spacing.xl,
+    backgroundColor: theme.colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border.light,
     alignItems: 'center',
-    marginBottom: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
   },
   headerTitle: {
     fontSize: theme.typography.sizes['2xl'],
-    fontWeight: theme.typography.weights.bold,
+    fontWeight: theme.typography.weights.bold as any,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
+    fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     textAlign: 'center',
-    marginTop: theme.spacing.xs,
+  },
+  content: {
+    padding: theme.spacing.lg,
   },
   card: {
     marginBottom: theme.spacing.md,
   },
   sectionTitle: {
     fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.semibold,
+    fontWeight: theme.typography.weights.semibold as any,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   helperText: {
     fontSize: theme.typography.sizes.sm,
