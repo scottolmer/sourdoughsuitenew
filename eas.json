@@ -20,6 +20,10 @@
         "appleId": "",
         "ascAppId": "",
         "appleTeamId": ""
+      },
+      "android": {
+        "serviceAccountKeyPath": "",
+        "track": "production"
       }
     }
   }
