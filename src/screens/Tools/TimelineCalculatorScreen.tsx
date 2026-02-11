@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes['2xl'],
     fontWeight: theme.typography.weights.bold as any,
     color: theme.colors.text.primary,
+    textAlign: 'center',
     marginTop: theme.spacing.md,
     marginBottom: theme.spacing.xs,
   },
