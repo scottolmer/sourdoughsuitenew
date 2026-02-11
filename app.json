@@ -1,11 +1,17 @@
 {
-  "name": "SourdoughSuiteNew",
-  "displayName": "SourdoughSuiteNew",
+  "name": "Sourdough Suite",
+  "displayName": "Sourdough Suite",
   "expo": {
-    "name": "SourdoughSuiteNew",
-    "slug": "sourdough-suite-new",
+    "name": "Sourdough Suite",
+    "slug": "sourdough-suite",
     "version": "1.0.0",
     "entryPoint": "./index.js",
+    "icon": "./assets/app-icon.png",
+    "splash": {
+      "image": "./assets/app-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "assetBundlePatterns": [
       "**/*"
     ]
