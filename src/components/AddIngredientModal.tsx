@@ -11,6 +11,9 @@ import {
   Modal,
   TouchableOpacity,
   Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from './Button';
@@ -80,7 +83,10 @@ export default function AddIngredientModal({ visible, onClose, onAdd }: Props) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <KeyboardAvoidingView
+        style={styles.overlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
         <TouchableOpacity
           style={styles.backdrop}
           activeOpacity={1}
@@ -94,53 +100,58 @@ export default function AddIngredientModal({ visible, onClose, onAdd }: Props) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.form}>
-            <BasicInput
-              label="Ingredient Name"
-              placeholder="e.g., Sunflower Seeds, Olive Oil"
-              value={name}
-              onChangeText={setName}
-            />
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.scrollContent}
+          >
+            <View style={styles.form}>
+              <BasicInput
+                label="Ingredient Name"
+                placeholder="e.g., Sunflower Seeds, Olive Oil"
+                value={name}
+                onChangeText={setName}
+              />
 
-            <BasicInput
-              label="Amount"
-              placeholder="100"
-              value={amount}
-              onChangeText={setAmount}
-              keyboardType="numeric"
-            />
+              <BasicInput
+                label="Amount"
+                placeholder="100"
+                value={amount}
+                onChangeText={setAmount}
+                keyboardType="numeric"
+              />
 
-            <Picker
-              label="Unit"
-              value={unit}
-              options={unitOptions}
-              onValueChange={setUnit}
-            />
+              <Picker
+                label="Unit"
+                value={unit}
+                options={unitOptions}
+                onValueChange={setUnit}
+              />
 
-            <Picker
-              label="Type"
-              value={type || 'other'}
-              options={typeOptions}
-              onValueChange={(value) => setType(value as RecipeIngredient['type'])}
-            />
-          </View>
+              <Picker
+                label="Type"
+                value={type || 'other'}
+                options={typeOptions}
+                onValueChange={(value) => setType(value as RecipeIngredient['type'])}
+              />
+            </View>
 
-          <View style={styles.actions}>
-            <Button
-              title="Cancel"
-              variant="outline"
-              onPress={onClose}
-              style={styles.button}
-            />
-            <Button
-              title="Add Ingredient"
-              onPress={handleAdd}
-              style={styles.button}
-              leftIcon="plus"
-            />
-          </View>
+            <View style={styles.actions}>
+              <Button
+                title="Cancel"
+                variant="outline"
+                onPress={onClose}
+                style={styles.button}
+              />
+              <Button
+                title="Add"
+                onPress={handleAdd}
+                style={styles.button}
+                leftIcon="plus"
+              />
+            </View>
+          </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -165,6 +176,9 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: '80%',
     ...theme.shadows.lg,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   header: {
     flexDirection: 'row',

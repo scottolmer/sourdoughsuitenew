@@ -41,6 +41,10 @@ import RecipeDetailScreen from '../screens/Recipes/RecipeDetailScreen';
 import AddRecipeScreen from '../screens/Recipes/AddRecipeScreen';
 import EditRecipeScreen from '../screens/Recipes/EditRecipeScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
+import HelpFaqScreen from '../screens/Profile/HelpFaqScreen';
+import AboutScreen from '../screens/Profile/AboutScreen';
+import PrivacyPolicyScreen from '../screens/Profile/PrivacyPolicyScreen';
+import TermsOfServiceScreen from '../screens/Profile/TermsOfServiceScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
@@ -204,6 +208,26 @@ function ProfileStack() {
         name="Profile"
         component={ProfileScreen}
         options={{ title: 'Profile' }}
+      />
+      <ProfileStackNav.Screen
+        name="HelpFaq"
+        component={HelpFaqScreen}
+        options={{ title: 'Help & FAQ' }}
+      />
+      <ProfileStackNav.Screen
+        name="About"
+        component={AboutScreen}
+        options={{ title: 'About' }}
+      />
+      <ProfileStackNav.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{ title: 'Privacy Policy' }}
+      />
+      <ProfileStackNav.Screen
+        name="TermsOfService"
+        component={TermsOfServiceScreen}
+        options={{ title: 'Terms of Service' }}
       />
     </ProfileStackNav.Navigator>
   );

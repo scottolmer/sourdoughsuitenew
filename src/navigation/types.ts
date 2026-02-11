@@ -57,6 +57,10 @@ export type RecipesStackParamList = {
 
 export type ProfileStackParamList = {
   Profile: undefined;
+  HelpFaq: undefined;
+  About: undefined;
+  PrivacyPolicy: undefined;
+  TermsOfService: undefined;
 };
 
 // Tab param list

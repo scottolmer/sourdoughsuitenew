@@ -12,6 +12,8 @@ import {
   Alert,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
@@ -155,8 +157,13 @@ export default function AddRecipeScreen({ navigation, route }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.content}>
           <Card style={styles.section}>
             <Text style={styles.sectionTitle}>Basic Info</Text>
@@ -245,7 +252,7 @@ export default function AddRecipeScreen({ navigation, route }: Props) {
           {/* Additional Ingredients Section */}
           <Card style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Additional Ingredients</Text>
+              <Text style={[styles.sectionTitle, styles.sectionHeaderTitle]}>Additional Ingredients</Text>
               <Button
                 title="Add"
                 size="small"
@@ -335,7 +342,7 @@ export default function AddRecipeScreen({ navigation, route }: Props) {
         onClose={() => setShowIngredientModal(false)}
         onAdd={handleAddIngredient}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -401,6 +408,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: theme.spacing.sm,
+  },
+  sectionHeaderTitle: {
+    flex: 1,
+    marginBottom: 0,
   },
   ingredientsList: {
     gap: theme.spacing.sm,

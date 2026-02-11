@@ -1,42 +1,19 @@
 /**
  * Profile Screen
- * User profile and settings
+ * App profile and settings
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { useAuth } from '../../hooks/useAuth';
-import Button from '../../components/Button';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import type { ProfileStackParamList } from '../../navigation/types';
 
-export default function ProfileScreen() {
-  // const { user, logout } = useAuth();
-  const user: any = null; // Temporary: auth disabled
-  const logout = async () => { }; // Temporary: auth disabled
+type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await logout();
-            } catch (error) {
-              console.error('Logout error:', error);
-            }
-          },
-        },
-      ]
-    );
-  };
-
+export default function ProfileScreen({ navigation }: Props) {
   const handleSocialPress = (url: string) => {
     Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
   };
@@ -44,36 +21,15 @@ export default function ProfileScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          <Icon name="account-circle" size={80} color={theme.colors.primary[600]} />
+        <View style={styles.logoContainer}>
+          <Icon name="bread-slice" size={64} color={theme.colors.primary[600]} />
         </View>
-        <Text style={styles.username}>{user?.username}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{user?.role?.toUpperCase() || 'FREE'}</Text>
-        </View>
+        <Text style={styles.appName}>Sourdough Suite</Text>
+        <Text style={styles.appTagline}>Your sourdough baking companion</Text>
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <Card variant="outlined" padding="none">
-          {/* ... existing account items ... */}
-          <View style={styles.menuItem}>
-            <Icon name="account-edit" size={24} color={theme.colors.text.secondary} />
-            <Text style={styles.menuItemText}>Edit Profile</Text>
-            <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.menuItem}>
-            <Icon name="cog" size={24} color={theme.colors.text.secondary} />
-            <Text style={styles.menuItemText}>Settings</Text>
-            <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
-          </View>
-        </Card>
-
-        <Text style={[styles.sectionTitle, { marginTop: theme.spacing.xl }]}>
-          Community
-        </Text>
+        <Text style={styles.sectionTitle}>Community</Text>
         <Card variant="outlined" padding="none">
           <TouchableOpacity onPress={() => handleSocialPress('https://youtube.com/@SourdoughSuite')}>
             <View style={styles.menuItem}>
@@ -112,26 +68,22 @@ export default function ProfileScreen() {
           Support
         </Text>
         <Card variant="outlined" padding="none">
-          <View style={styles.menuItem}>
-            <Icon name="help-circle" size={24} color={theme.colors.text.secondary} />
-            <Text style={styles.menuItemText}>Help & FAQ</Text>
-            <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('HelpFaq')}>
+            <View style={styles.menuItem}>
+              <Icon name="help-circle" size={24} color={theme.colors.text.secondary} />
+              <Text style={styles.menuItemText}>Help & FAQ</Text>
+              <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
           <View style={styles.divider} />
-          <View style={styles.menuItem}>
-            <Icon name="information" size={24} color={theme.colors.text.secondary} />
-            <Text style={styles.menuItemText}>About</Text>
-            <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('About')}>
+            <View style={styles.menuItem}>
+              <Icon name="information" size={24} color={theme.colors.text.secondary} />
+              <Text style={styles.menuItemText}>About</Text>
+              <Icon name="chevron-right" size={24} color={theme.colors.text.disabled} />
+            </View>
+          </TouchableOpacity>
         </Card>
-
-        <Button
-          title="Logout"
-          variant="outline"
-          onPress={handleLogout}
-          fullWidth
-          style={styles.logoutButton}
-        />
 
         <Text style={styles.version}>Version 1.0.0</Text>
       </View>
@@ -149,30 +101,18 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     alignItems: 'center',
   },
-  avatarContainer: {
+  logoContainer: {
     marginBottom: theme.spacing.md,
   },
-  username: {
+  appName: {
     fontSize: theme.typography.sizes['2xl'],
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },
-  email: {
+  appTagline: {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.md,
-  },
-  badge: {
-    backgroundColor: theme.colors.primary[100],
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.full,
-  },
-  badgeText: {
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.primary[700],
   },
   content: {
     padding: theme.spacing.xl,
@@ -199,9 +139,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: theme.colors.border.light,
     marginLeft: theme.spacing.lg + 24 + theme.spacing.md,
-  },
-  logoutButton: {
-    marginTop: theme.spacing['2xl'],
   },
   version: {
     fontSize: theme.typography.sizes.sm,

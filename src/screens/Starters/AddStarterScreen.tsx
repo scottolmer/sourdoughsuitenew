@@ -188,7 +188,6 @@ export default function AddStarterScreen({ navigation }: Props) {
               <Text style={styles.helpTitle}>Quick Tips</Text>
               <Text style={styles.helpText}>
                 • Give your starter a memorable name{'\n'}
-                • Choose the type that matches your culture{'\n'}
                 • Set feeding frequency based on your schedule{'\n'}
                 • Common ratios: 1:1:1 (maintenance), 1:5:5 (build){'\n'}
                 • You'll receive reminders when feeding is due
