@@ -239,6 +239,39 @@ Return:
 - exact demo steps
 ```
 
+## Prompt 11: Stretch Feature - Baker's Log
+
+Use only if Photo Rescue and Bake Day Copilot are working.
+
+```text
+Implement the Baker's Log stretch feature from:
+
+- replit/specs/bakers-log-addendum.md
+
+Requirements:
+- Treat one Baker's Log entry as one bake.
+- Add Baker's Log under the Recipes stack. Add a Home shortcut only if straightforward.
+- Let users save Photo Rescue diagnoses to a log entry.
+- Let users save Bake Day Copilot plans to a log entry.
+- Show active bake first, then past bakes.
+- Let users add final outcome fields:
+  - loaf photo URI
+  - crumb photo URI
+  - oven spring
+  - crumb
+  - crust
+  - flavor
+  - notes
+  - next time changes
+- Persist all log data locally with AsyncStorage.
+- Do not require account/auth.
+- Do not store base64 images in AsyncStorage.
+- Do not add remote photo storage.
+- Keep AI reflection as optional stretch after core logging works.
+
+Run focused storage tests if the repo test setup supports them, then verify the save-from-diagnosis and save-from-plan flows manually.
+```
+
 ## Cutline Reminder
 
 If time gets tight, protect:
