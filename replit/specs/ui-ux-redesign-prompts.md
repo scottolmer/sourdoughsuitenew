@@ -1,6 +1,13 @@
 # Replit Agent UI/UX Redesign Prompt Sequence
 
-Use these prompts after the agent has read the existing hackathon docs. This sequence assumes the goal is to redo the app UI/UX for the hackathon while preserving the existing product functionality.
+Use these prompts after the agent has read `replit/START_HERE.md` and the existing hackathon docs. This sequence assumes the goal is to redo the app UI/UX for the hackathon while preserving the existing product functionality.
+
+The selected landing page direction is Oven Light:
+
+- `replit/landing-oven-light.html`
+- `replit/landing-oven-light.png`
+
+Do not adapt the landing page into `docs/index.html` until the app golden path works.
 
 ## Prompt 1: UI/UX Orientation Only
 
@@ -10,12 +17,19 @@ Read the project before editing.
 This is SourdoughSuite, an Expo / React Native sourdough companion app. The goal is to redesign the UI/UX so it feels like a premium baker's bench, not a generic utility app.
 
 Read these files:
+- replit/START_HERE.md
 - replit/specs/ui-ux-style-guide.md
 - replit/specs/ui-ux-redesign-plan.md
+- replit/specs/demo-runbook.md
+- replit/specs/environment-checklist.md
+- replit/specs/final-qa-checklist.md
+- replit/specs/scope-cutline.md
 - replit/ui-ux-review-board.png
 - replit/photo-rescue-input.png
 - replit/dough-diagnosis-result.png
 - replit/bake-day-copilot.png
+- replit/landing-oven-light.html
+- replit/landing-oven-light.png
 - replit/specs/prd.md
 - replit/specs/technical-spec.md
 - src/theme/colors.ts
@@ -49,6 +63,7 @@ Constraints:
 - Do not add a large UI kit.
 - Do not hardcode API keys.
 - Preserve Replit web demo compatibility.
+- Work autonomously after orientation unless you hit a stop condition from replit/START_HERE.md.
 ```
 
 ## Prompt 2: Implement Design Foundation
@@ -350,6 +365,9 @@ Manual QA:
 - Learn.
 - Profile.
 - Bottom tab navigation.
+- Oven Light landing page:
+  - replit/landing-oven-light.html
+  - replit/landing-oven-light.png
 
 Check:
 - No text overlaps on mobile viewport.
@@ -366,4 +384,32 @@ Return:
 - what failed
 - known risks
 - exact demo steps
+```
+
+## Prompt 12: Adapt Selected Landing Page
+
+Use this only after the app golden path works.
+
+```text
+Adapt the selected Oven Light landing page direction for judge-facing use.
+
+Source files:
+- replit/landing-oven-light.html
+- replit/landing-oven-light.png
+
+Requirements:
+- Keep the Oven Light visual direction.
+- Preserve the static privacy and terms pages.
+- Prefer adapting this into docs/index.html if the project uses docs as the public static site.
+- Replace the demo CTA href if the final Replit preview URL is known.
+- If the final URL is unknown, leave a clear placeholder comment in the HTML and document where to update it.
+- Do not block app verification for landing-page polish.
+
+Manual QA:
+- Open docs/index.html if updated.
+- Open replit/landing-oven-light.html.
+- Confirm images load.
+- Confirm the CTA is either correct or easy to replace.
+
+Stop after this phase and report files changed and QA.
 ```

@@ -2,6 +2,15 @@
 
 Use these prompts in order. The strategy is thin vertical slice first: prove the real Gemini Photo Rescue loop before expanding the product.
 
+Before using this sequence, read `replit/START_HERE.md`. It contains the autonomous execution rules, stop conditions, document map, golden demo path, and selected landing-page direction.
+
+The selected landing page direction is:
+
+- `replit/landing-oven-light.html`
+- `replit/landing-oven-light.png`
+
+Do not spend time adapting the landing page until the app golden path works.
+
 ## Prompt 1: Orientation Only
 
 ```text
@@ -9,12 +18,19 @@ Read the project structure before editing.
 
 This is SourdoughSuite, an Expo / React Native app. The hackathon features are Photo Rescue and Bake Day Copilot. Use these files as product and technical source of truth:
 
+- replit/START_HERE.md
 - replit/specs/prd.md
 - replit/specs/technical-spec.md
 - replit/specs/ai-prompts.md
+- replit/specs/environment-checklist.md
+- replit/specs/demo-runbook.md
+- replit/specs/final-qa-checklist.md
+- replit/specs/scope-cutline.md
 - replit/photo-rescue-input.png
 - replit/dough-diagnosis-result.png
 - replit/bake-day-copilot.png
+- replit/landing-oven-light.html
+- replit/landing-oven-light.png
 
 Do not edit files yet.
 
@@ -34,6 +50,7 @@ Important constraints:
 - Do not call Gemini from the client.
 - Do not hardcode API keys.
 - Keep the first demo path browser-friendly in Replit.
+- Work autonomously after orientation unless you hit a stop condition from replit/START_HERE.md.
 ```
 
 ## Prompt 2: Create The Thin Vertical Slice Plan
@@ -209,6 +226,10 @@ Requirements:
 - Ensure confidence is low/medium/high only.
 - Ensure no UI claims exact certainty.
 - Ensure app remains usable without Gemini.
+- Ensure the selected Oven Light landing page exists and can be opened:
+  - replit/landing-oven-light.html
+  - replit/landing-oven-light.png
+- If the app golden path is stable, adapt the Oven Light landing direction into docs/index.html or clearly document how judges should open it.
 - Run tests and Expo web verification.
 
 Do not spend time on unrelated refactors.
@@ -227,6 +248,7 @@ Verify:
 - Diagnosis result screen renders all required fields.
 - Bake Day Copilot creates overnight cold proof timeline.
 - Reminder toggle does not break web.
+- Oven Light landing page opens.
 - Existing calculators still open.
 - No auth gate blocks the demo.
 - No API keys are committed.
