@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1400" viewBox="0 0 1800 1400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffaf0"/>
+      <stop offset="0.5" stop-color="#f8efe1"/>
+      <stop offset="1" stop-color="#efe0c8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d9a441"/>
+      <stop offset="1" stop-color="#9a640f"/>
+    </linearGradient>
+    <linearGradient id="bench" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fffdf8"/>
+      <stop offset="1" stop-color="#f6ead9"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#3d240d" flood-opacity="0.12"/>
+    </filter>
+    <filter id="smallShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="9" flood-color="#3d240d" flood-opacity="0.12"/>
+    </filter>
+    <pattern id="grain" width="64" height="64" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="11" r="1.2" fill="#c99a4b" opacity="0.16"/>
+      <circle cx="48" cy="22" r="0.9" fill="#4b2a16" opacity="0.08"/>
+      <circle cx="29" cy="52" r="1.1" fill="#c99a4b" opacity="0.12"/>
+      <path d="M2 40 C20 35 35 45 62 38" fill="none" stroke="#4b2a16" stroke-width="0.5" opacity="0.05"/>
+    </pattern>
+    <style>
+      .serif { font-family: Georgia, 'Times New Roman', serif; }
+      .sans { font-family: Avenir, Helvetica, Arial, sans-serif; }
+      .title { font-size: 68px; fill: #3b2112; font-weight: 700; }
+      .subtitle { font-size: 24px; fill: #6a5142; }
+      .section { font-size: 26px; fill: #3b2112; font-weight: 700; }
+      .label { font-size: 16px; fill: #926417; font-weight: 800; text-transform: uppercase; }
+      .body { font-size: 19px; fill: #4d392f; }
+      .small { font-size: 15px; fill: #725d50; }
+      .phoneTitle { font-size: 28px; fill: #3b2112; font-weight: 700; }
+      .phoneText { font-size: 16px; fill: #4d392f; }
+      .chipText { font-size: 15px; fill: #3b2112; font-weight: 700; }
+      .white { fill: #fffdf8; }
+      .line { stroke: #e4d2b5; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1400" fill="url(#bg)"/>
+  <rect width="1800" height="1400" fill="url(#grain)" opacity="0.85"/>
+
+  <g transform="translate(90 76)">
+    <text class="serif title" x="0" y="0" dominant-baseline="hanging">SourdoughSuite UI/UX Review</text>
+    <text class="sans subtitle" x="3" y="88">Visual-first product direction: less generic utility list, more tactile baking bench.</text>
+  </g>
+
+  <g transform="translate(90 210)">
+    <rect width="1620" height="170" rx="30" fill="#fffdf8" filter="url(#softShadow)" opacity="0.95"/>
+    <g transform="translate(42 38)">
+      <text class="sans label" x="0" y="0">Current feel</text>
+      <text class="serif section" x="0" y="44">Warm but flat</text>
+      <text class="sans body" x="0" y="84">Repeated white cards, icon boxes,</text>
+      <text class="sans body" x="0" y="112">and long vertical forms.</text>
+    </g>
+    <g transform="translate(560 38)">
+      <text class="sans label" x="0" y="0">Opportunity</text>
+      <text class="serif section" x="0" y="44">Turn tasks into instruments</text>
+      <text class="sans body" x="0" y="84">Calculators, starter health, recipes,</text>
+      <text class="sans body" x="0" y="112">and bake timing become visual tools.</text>
+    </g>
+    <g transform="translate(1160 38)">
+      <text class="sans label" x="0" y="0">North star</text>
+      <text class="serif section" x="0" y="44">The baker's bench</text>
+      <text class="sans body" x="0" y="84">Cream paper, dark crust type, copper</text>
+      <text class="sans body" x="0" y="112">controls, and real dough imagery.</text>
+    </g>
+  </g>
+
+  <g transform="translate(90 440)">
+    <text class="serif section" x="0" y="0">1. Replace the plain home menu with a command center</text>
+    <text class="sans small" x="0" y="34">Current Home is four similar action cards. It does not answer "what should I do next?"</text>
+
+    <g transform="translate(0 76)">
+      <rect width="295" height="550" rx="42" fill="#2f1d13" filter="url(#softShadow)"/>
+      <rect x="16" y="16" width="263" height="518" rx="32" fill="url(#bench)"/>
+      <text class="serif phoneTitle" x="42" y="74">Good morning</text>
+      <text class="sans phoneText" x="42" y="105">Your bake bench is ready.</text>
+      <rect x="42" y="136" width="211" height="120" rx="24" fill="#fffdf8" stroke="#e2ceb0"/>
+      <text class="sans label" x="64" y="166">Next up</text>
+      <text class="serif phoneTitle" x="64" y="204">Feed Mabel</text>
+      <text class="sans phoneText" x="64" y="232">Due in 42 minutes</text>
+      <circle cx="224" cy="194" r="23" fill="url(#gold)"/>
+      <text class="sans" x="224" y="201" text-anchor="middle" font-size="24" fill="#fff">+</text>
+      <g transform="translate(42 286)">
+        <rect width="96" height="72" rx="18" fill="#f6e6ca"/>
+        <rect x="116" width="96" height="72" rx="18" fill="#f6e6ca"/>
+        <text class="sans chipText" x="20" y="31">75%</text>
+        <text class="sans small" x="20" y="53">hydration</text>
+        <text class="sans chipText" x="136" y="31">70F</text>
+        <text class="sans small" x="136" y="53">room</text>
+      </g>
+      <g transform="translate(42 394)">
+        <rect width="211" height="46" rx="23" fill="url(#gold)"/>
+        <text class="sans" x="106" y="30" text-anchor="middle" font-size="17" fill="#fff" font-weight="700">Start bake plan</text>
+        <rect y="62" width="211" height="46" rx="23" fill="#fffdf8" stroke="#d7bd90"/>
+        <text class="sans" x="106" y="92" text-anchor="middle" font-size="17" fill="#5a3519" font-weight="700">Open calculators</text>
+      </g>
+    </g>
+
+    <g transform="translate(340 76)">
+      <rect width="330" height="550" rx="30" fill="#fffdf8" filter="url(#smallShadow)" stroke="#e4d2b5"/>
+      <text class="sans label" x="34" y="44">Make it better</text>
+      <text class="serif section" x="34" y="86">Home should be alive</text>
+      <text class="sans body" x="34" y="132">Show the user's next baking</text>
+      <text class="sans body" x="34" y="160">action, not just destinations.</text>
+      <line class="line" x1="34" y1="184" x2="296" y2="184"/>
+      <text class="sans body" x="34" y="224">- Next starter feeding</text>
+      <text class="sans body" x="34" y="264">- Active bake timeline</text>
+      <text class="sans body" x="34" y="304">- Recently used calculator</text>
+      <text class="sans body" x="34" y="344">- Saved recipe shortcut</text>
+      <text class="sans body" x="34" y="384">- One prominent "Bake Plan"</text>
+      <rect x="34" y="418" width="262" height="74" rx="20" fill="#f7e8cd"/>
+      <text class="sans small" x="58" y="448">Primary UX win</text>
+      <text class="sans body" x="58" y="476">Less hunting, more guidance.</text>
+    </g>
+  </g>
+
+  <g transform="translate(900 440)">
+    <text class="serif section" x="0" y="0">2. Make calculators feel like workbenches</text>
+    <text class="sans small" x="0" y="34">The current calculators are capable, but long forms hide the payoff below the fold.</text>
+
+    <g transform="translate(0 76)">
+      <rect width="295" height="550" rx="42" fill="#2f1d13" filter="url(#softShadow)"/>
+      <rect x="16" y="16" width="263" height="518" rx="32" fill="url(#bench)"/>
+      <text class="serif phoneTitle" x="40" y="72">Formula</text>
+      <text class="sans phoneText" x="40" y="103">Country loaf preset</text>
+      <g transform="translate(40 130)">
+        <circle cx="106" cy="106" r="88" fill="none" stroke="#eddabb" stroke-width="18"/>
+        <path d="M106 18 A88 88 0 1 1 35 158" fill="none" stroke="#be8422" stroke-width="18" stroke-linecap="round"/>
+        <text class="serif" x="106" y="100" text-anchor="middle" font-size="42" fill="#3b2112" font-weight="700">72%</text>
+        <text class="sans small" x="106" y="128" text-anchor="middle">hydration</text>
+      </g>
+      <g transform="translate(38 322)">
+        <rect width="217" height="46" rx="14" fill="#fffdf8" stroke="#e2ceb0"/>
+        <text class="sans phoneText" x="18" y="30">Flour</text><text class="sans phoneText" x="178" y="30" text-anchor="end">500g</text>
+        <rect y="56" width="217" height="46" rx="14" fill="#fffdf8" stroke="#e2ceb0"/>
+        <text class="sans phoneText" x="18" y="86">Water</text><text class="sans phoneText" x="178" y="86" text-anchor="end">360g</text>
+        <rect y="112" width="217" height="46" rx="14" fill="#fffdf8" stroke="#e2ceb0"/>
+        <text class="sans phoneText" x="18" y="142">Starter</text><text class="sans phoneText" x="178" y="142" text-anchor="end">100g</text>
+      </g>
+    </g>
+
+    <g transform="translate(340 76)">
+      <rect width="330" height="550" rx="30" fill="#fffdf8" filter="url(#smallShadow)" stroke="#e4d2b5"/>
+      <text class="sans label" x="34" y="44">Make it better</text>
+      <text class="serif section" x="34" y="86">Put output first</text>
+      <text class="sans body" x="34" y="132">Every calculator should show</text>
+      <text class="sans body" x="34" y="160">a live result preview first.</text>
+      <line class="line" x1="34" y1="184" x2="296" y2="184"/>
+      <text class="sans body" x="34" y="224">- Sticky result summary</text>
+      <text class="sans body" x="34" y="264">- Preset chips near inputs</text>
+      <text class="sans body" x="34" y="304">- Inline validation, no alerts</text>
+      <text class="sans body" x="34" y="344">- Save/share beside output</text>
+      <text class="sans body" x="34" y="384">- Visual meters for ratios/time</text>
+      <rect x="34" y="418" width="262" height="74" rx="20" fill="#f7e8cd"/>
+      <text class="sans small" x="58" y="448">Primary UX win</text>
+      <text class="sans body" x="58" y="476">Users see the answer immediately.</text>
+    </g>
+  </g>
+
+  <g transform="translate(90 1120)">
+    <rect width="438" height="170" rx="28" fill="#fffdf8" filter="url(#smallShadow)" stroke="#e4d2b5"/>
+    <text class="sans label" x="34" y="42">Starter tracking</text>
+    <text class="serif section" x="34" y="84">Show fermentation state</text>
+    <text class="sans body" x="34" y="124">Use rise level, last feed, discard amount,</text>
+    <text class="sans body" x="34" y="150">and next feeding as a status card.</text>
+
+    <rect x="582" width="438" height="170" rx="28" fill="#fffdf8" filter="url(#smallShadow)" stroke="#e4d2b5"/>
+    <text class="sans label" x="616" y="42">Recipes</text>
+    <text class="serif section" x="616" y="84">Make cards scannable</text>
+    <text class="sans body" x="616" y="124">Use formula tiles, yield badges, starter</text>
+    <text class="sans body" x="616" y="150">badges, and last-baked context.</text>
+
+    <rect x="1164" width="350" height="170" rx="28" fill="url(#gold)" filter="url(#smallShadow)"/>
+    <text class="sans" x="1198" y="45" font-size="16" fill="#fff7e9" font-weight="800">Design thesis</text>
+    <text class="serif" x="1198" y="89" font-size="30" fill="#fff" font-weight="700">Less app.</text>
+    <text class="serif" x="1198" y="126" font-size="30" fill="#fff" font-weight="700">More bakery.</text>
+  </g>
+</svg>
