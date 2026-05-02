@@ -1,12 +1,12 @@
 /**
- * Home Screen — Modernist Command Sheet
+ * Home Screen — Modernist Bench Command Sheet
  *
- * Answers "what should I do next?" in the first screenful:
- * - Serif title + status line
+ * Editorial landing for the Sourdough Suite:
+ * - Kicker + serif title + subtitle
  * - NEXT UP sheet (most pressing item: overdue feed, imminent bake step,
  *   feed soon, or empty state)
- * - STATUS table (Starter / Recipe / Timeline)
- * - QUICK ACTIONS cell grid
+ * - Horizontal 4-cell FACTS strip (Starter / Recipes / Last Plan / Rescue)
+ * - QUICK ACTIONS 2-column grid of six purposeful destinations
  * - RECENT row (recipe and/or diagnosis) when data exists
  */
 
@@ -31,6 +31,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import ModernistScreen from '../../components/ModernistScreen';
 import FormulaSheet from '../../components/FormulaSheet';
 import RuleHeader from '../../components/RuleHeader';
+import FactStrip, { FactCell } from '../../components/FactStrip';
 import { theme } from '../../theme';
 import type { MaterialCommunityIconName } from '../../types/icons';
 import type {
@@ -45,16 +46,13 @@ import type {
 } from '../../types/photoRescue';
 import { starterStorage } from '../../services/starterStorage';
 import { getAllRecipes } from '../../services/recipeStorage';
-import { feedingLogStorage } from '../../services/feedingLogStorage';
 import { bakePlanStorage } from '../../services/bakePlanStorage';
 import { diagnosisStorage } from '../../services/diagnosisStorage';
 import {
-  calculateAvgActivityLevel,
   getNextFeedingText,
   isFeedingOverdue,
 } from '../../utils/starterHealth';
 import {
-  STEP_ICON_MAP,
   formatStepDay,
   formatStepTime,
 } from '../../utils/bakeDayTimeline';
@@ -66,7 +64,7 @@ type HomeNavProp = CompositeNavigationProp<
 
 const SCREEN_HORIZONTAL_PADDING = theme.spacing.lg;
 const ACTION_GRID_GAP = theme.spacing.sm;
-const ACTION_GRID_COLUMNS = 4;
+const ACTION_GRID_COLUMNS = 2;
 const ACTION_CELL_MIN_HEIGHT = 72;
 const NEXT_BAKE_STEP_HORIZON_MS = 6 * 60 * 60 * 1000; // 6h
 
@@ -96,14 +94,6 @@ interface NavCmd {
 interface QuickAction {
   icon: MaterialCommunityIconName;
   label: string;
-  cmd: NavCmd;
-}
-
-interface StatusRow {
-  label: string;
-  primary: string;
-  meta?: string;
-  tone?: StatusTone;
   cmd: NavCmd;
 }
 
@@ -142,12 +132,40 @@ function formatRelativeFrom(iso: string): string {
   return ms >= 0 ? `in ${days}d` : `${days}d ago`;
 }
 
+/** Compact relative label suited to a 4-cell fact strip ("In 4h", "2d ago"). */
+function formatFactRelative(iso: string): string {
+  const ms = new Date(iso).getTime() - Date.now();
+  const future = ms >= 0;
+  const abs = Math.abs(ms);
+  const minutes = Math.round(abs / 60000);
+  if (minutes < 60) {
+    return future ? `In ${minutes}m` : `${minutes}m ago`;
+  }
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) {
+    return future ? `In ${hours}h` : `${hours}h ago`;
+  }
+  const days = Math.round(hours / 24);
+  return future ? `In ${days}d` : `${days}d ago`;
+}
+
+/** Calendar-aware label for the Rescue cell ("Today", "Yesterday", "Nd ago"). */
+function formatDiagnosisRelative(iso: string): string {
+  const then = new Date(iso);
+  const now = new Date();
+  const startOf = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const diffDays = Math.round((startOf(now) - startOf(then)) / 86400000);
+  if (diffDays <= 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return `${diffDays}d ago`;
+}
+
 export default function HomeScreen() {
   const navigation = useNavigation<HomeNavProp>();
   const { width: windowWidth } = useWindowDimensions();
   const [soonestStarter, setSoonestStarter] = useState<Starter | null>(null);
-  const [starterCount, setStarterCount] = useState(0);
-  const [activityPct, setActivityPct] = useState<number | null>(null);
+  const [activeStarters, setActiveStarters] = useState<Starter[]>([]);
   const [recentRecipe, setRecentRecipe] = useState<Recipe | null>(null);
   const [recipeCount, setRecipeCount] = useState(0);
   const [activePlan, setActivePlan] = useState<SavedBakePlanRecord | null>(
@@ -174,35 +192,20 @@ export default function HomeScreen() {
         ]);
         if (cancelled) return;
 
-        setStarterCount(starters.length);
         setActivePlan(plan);
         setRecentDiagnosis(diag);
 
-        const active = starters.filter((s) => s.isActive && s.nextFeedingDue);
-        const sorted = [...active].sort(
-          (a, b) =>
-            new Date(a.nextFeedingDue!).getTime() -
-            new Date(b.nextFeedingDue!).getTime()
-        );
-        const nextStarter = sorted[0] ?? null;
-        setSoonestStarter(nextStarter);
+        const active = starters.filter((s) => s.isActive);
+        setActiveStarters(active);
 
-        if (nextStarter) {
-          if (typeof nextStarter.avgActivityLevel === 'number') {
-            setActivityPct(
-              Math.round((nextStarter.avgActivityLevel / 5) * 100)
-            );
-          } else {
-            const logs = await feedingLogStorage.getByStarterId(nextStarter.id);
-            if (cancelled) return;
-            const avg = calculateAvgActivityLevel(logs);
-            setActivityPct(
-              avg !== undefined ? Math.round((avg / 5) * 100) : null
-            );
-          }
-        } else {
-          setActivityPct(null);
-        }
+        const dueSorted = active
+          .filter((s) => s.nextFeedingDue)
+          .sort(
+            (a, b) =>
+              new Date(a.nextFeedingDue!).getTime() -
+              new Date(b.nextFeedingDue!).getTime()
+          );
+        setSoonestStarter(dueSorted[0] ?? null);
 
         setRecipeCount(recipes.length);
         const sortedRecipes = [...recipes].sort((a, b) => {
@@ -260,20 +263,6 @@ export default function HomeScreen() {
     if (!nextStepInfo) return false;
     const ms = new Date(nextStepInfo.step.startsAt).getTime() - Date.now();
     return ms <= NEXT_BAKE_STEP_HORIZON_MS;
-  })();
-
-  const headerStatus = (() => {
-    if (overdue && soonestStarter)
-      return 'A starter is overdue. Begin with the feed below.';
-    if (nextStepImminent && nextStepInfo)
-      return 'A bake step is coming up. Stay close to the bench.';
-    if (dueSoon && soonestStarter)
-      return 'A feeding is due soon. Plan accordingly.';
-    if (soonestStarter || nextStepInfo)
-      return 'Bench is calm. Next move queued below.';
-    if (recipeCount > 0)
-      return 'No active starter. Pick up where you left off.';
-    return 'Welcome. Add a starter or recipe to begin.';
   })();
 
   const nextUp = (() => {
@@ -351,7 +340,7 @@ export default function HomeScreen() {
         } as NavCmd,
       };
     }
-    if (starterCount > 0) {
+    if (activeStarters.length > 0) {
       return {
         eyebrow: 'NO ACTIVE FEEDINGS',
         title: 'All starters paused',
@@ -374,126 +363,80 @@ export default function HomeScreen() {
     };
   })();
 
-  const statusRows: StatusRow[] = (() => {
-    const rows: StatusRow[] = [];
-
-    if (soonestStarter) {
-      const activityText =
-        activityPct !== null
-          ? `${activityPct}% activity`
-          : overdue
-          ? 'Overdue — feed soon'
-          : 'Awaiting first reading';
-      rows.push({
-        label: 'Starter',
-        primary: soonestStarter.name,
-        meta: activityText,
-        tone:
-          overdue
-            ? 'red'
-            : activityPct !== null && activityPct >= 70
-            ? 'green'
-            : 'muted',
-        cmd: {
-          type: 'starters',
-          target: 'StarterDetail',
-          params: { starterId: soonestStarter.id },
-        },
-      });
+  const facts: FactCell[] = (() => {
+    // Starter cell
+    let starterValue: string;
+    let starterTone: FactCell['tone'] = 'default';
+    if (activeStarters.length === 0) {
+      starterValue = 'None';
+      starterTone = 'default';
+    } else if (activeStarters.length === 1) {
+      starterValue = activeStarters[0].name;
+      starterTone = overdue ? 'red' : 'green';
     } else {
-      rows.push({
-        label: 'Starter',
-        primary: starterCount > 0 ? 'No active starter' : 'Not added',
-        meta: 'Tap to add one',
-        tone: 'muted',
-        cmd: {
-          type: 'starters',
-          target: starterCount > 0 ? 'StartersList' : 'AddStarter',
-        },
-      });
+      starterValue = `${activeStarters.length} active`;
+      starterTone = overdue ? 'red' : 'green';
     }
 
-    if (recentRecipe) {
-      rows.push({
-        label: 'Recipe',
-        primary: recentRecipe.name,
-        meta: `${Math.round(recentRecipe.hydration)}% hydration · ${Math.round(
-          recentRecipe.totalWeight
-        )}g`,
-        tone: 'blue',
-        cmd: {
-          type: 'tab',
-          target: 'RecipesTab',
-        },
-      });
-    } else {
-      rows.push({
-        label: 'Recipe',
-        primary: 'No saved recipes',
-        meta: 'Build a formula to begin',
-        tone: 'muted',
-        cmd: { type: 'tab', target: 'RecipesTab' },
-      });
-    }
+    // Recipes cell
+    const recipeValue =
+      recipeCount === 0 ? 'None' : `${recipeCount} saved`;
 
+    // Last Plan cell
+    let planValue: string;
+    let planTone: FactCell['tone'] = 'default';
     if (nextStepInfo) {
-      rows.push({
-        label: 'Timeline',
-        primary: `Step ${nextStepInfo.index + 1} of ${nextStepInfo.total} · ${nextStepInfo.step.title}`,
-        meta: `${formatStepDay(nextStepInfo.step.startsAt)} · ${formatStepTime(
-          nextStepInfo.step.startsAt
-        )}`,
-        tone: nextStepImminent ? 'amber' : 'muted',
-        cmd: {
-          type: 'tools',
-          target: 'BakeDayCopilot',
-          params: {},
-        },
-      });
+      planValue = formatFactRelative(nextStepInfo.step.startsAt);
+      planTone = nextStepImminent ? 'amber' : 'default';
     } else if (activePlan) {
       const last = activePlan.plan.steps[activePlan.plan.steps.length - 1];
-      rows.push({
-        label: 'Timeline',
-        primary: 'Plan complete',
-        meta: last
-          ? `Last step ${formatRelativeFrom(last.startsAt)}`
-          : 'Build a new plan',
-        tone: 'muted',
-        cmd: {
-          type: 'tools',
-          target: 'BakeDayCopilot',
-          params: {},
-        },
-      });
+      planValue = last ? formatFactRelative(last.startsAt) : 'None';
     } else {
-      rows.push({
-        label: 'Timeline',
-        primary: 'No active bake plan',
-        meta: 'Build one in the Bake Day Copilot',
-        tone: 'muted',
-        cmd: {
-          type: 'tools',
-          target: 'BakeDayCopilot',
-          params: {},
-        },
-      });
+      planValue = 'None';
     }
 
-    return rows;
+    // Rescue cell
+    const rescueValue = recentDiagnosis
+      ? formatDiagnosisRelative(recentDiagnosis.createdAt)
+      : 'None';
+
+    return [
+      {
+        label: 'Starter',
+        value: starterValue,
+        tone: starterTone,
+        onPress: () =>
+          goto(
+            activeStarters.length === 0
+              ? { type: 'starters', target: 'AddStarter' }
+              : { type: 'tab', target: 'StartersTab' }
+          ),
+        accessibilityLabel: `Starter: ${starterValue}`,
+      },
+      {
+        label: 'Recipes',
+        value: recipeValue,
+        onPress: () => goto({ type: 'tab', target: 'RecipesTab' }),
+        accessibilityLabel: `Recipes: ${recipeValue}`,
+      },
+      {
+        label: 'Last Plan',
+        value: planValue,
+        tone: planTone,
+        onPress: () =>
+          goto({ type: 'tools', target: 'BakeDayCopilot', params: {} }),
+        accessibilityLabel: `Last plan: ${planValue}`,
+      },
+      {
+        label: 'Rescue',
+        value: rescueValue,
+        onPress: () => goto({ type: 'tools', target: 'PhotoRescue' }),
+        accessibilityLabel: `Rescue: ${rescueValue}`,
+      },
+    ];
   })();
 
   const quickActions: QuickAction[] = [
-    {
-      icon: 'bacteria',
-      label: 'Feed',
-      cmd: soonestStarter
-        ? {
-            type: 'starters',
-            target: 'AddFeeding',
-            params: { starterId: soonestStarter.id },
-          }
-        : { type: 'tab', target: 'StartersTab' },
-    },
     {
       icon: 'camera-iris',
       label: 'Photo Rescue',
@@ -501,23 +444,13 @@ export default function HomeScreen() {
     },
     {
       icon: 'calendar-clock',
-      label: 'Bake Day',
+      label: 'Bake Planner',
       cmd: { type: 'tools', target: 'BakeDayCopilot', params: {} },
     },
     {
       icon: 'calculator-variant',
-      label: 'Formula',
+      label: 'Formulas',
       cmd: { type: 'tools', target: 'BakersCalculator' },
-    },
-    {
-      icon: 'clock-outline',
-      label: 'Timeline',
-      cmd: { type: 'tools', target: 'TimelineCalculator' },
-    },
-    {
-      icon: 'thermometer',
-      label: 'Temp',
-      cmd: { type: 'tools', target: 'TemperatureCalculator' },
     },
     {
       icon: 'book-open-variant',
@@ -525,8 +458,13 @@ export default function HomeScreen() {
       cmd: { type: 'tab', target: 'RecipesTab' },
     },
     {
+      icon: 'bacteria',
+      label: 'Starters',
+      cmd: { type: 'tab', target: 'StartersTab' },
+    },
+    {
       icon: 'school-outline',
-      label: 'Learn',
+      label: 'Academy',
       cmd: { type: 'home', target: 'Learn' },
     },
   ];
@@ -544,8 +482,11 @@ export default function HomeScreen() {
     <ModernistScreen background="paper">
       {/* Title block */}
       <View style={styles.titleBlock}>
-        <Text style={styles.title}>SourdoughSuite</Text>
-        <Text style={styles.statusLine}>{headerStatus}</Text>
+        <Text style={styles.kicker}>SOURDOUGH SUITE</Text>
+        <Text style={styles.title}>Bench command sheet</Text>
+        <Text style={styles.subtitle}>
+          Formula-first tools for rescue, planning, starters, and recipes.
+        </Text>
       </View>
 
       {/* NEXT UP */}
@@ -582,46 +523,9 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </FormulaSheet>
 
-      {/* STATUS */}
-      <View style={styles.section}>
-        <RuleHeader title="STATUS" />
-        <View style={styles.statusTable}>
-          {statusRows.map((row, idx) => {
-            const isLast = idx === statusRows.length - 1;
-            return (
-              <TouchableOpacity
-                key={`${row.label}-${idx}`}
-                accessibilityRole="button"
-                activeOpacity={0.78}
-                onPress={() => goto(row.cmd)}
-                style={[styles.statusRow, !isLast && styles.statusRowBorder]}
-              >
-                <Text style={styles.statusLabel}>{row.label}</Text>
-                <View style={styles.statusValueCol}>
-                  <Text style={styles.statusPrimary} numberOfLines={1}>
-                    {row.primary}
-                  </Text>
-                  {row.meta ? (
-                    <Text
-                      style={[
-                        styles.statusMeta,
-                        { color: toneColor(row.tone ?? 'muted') },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {row.meta}
-                    </Text>
-                  ) : null}
-                </View>
-                <Icon
-                  name="chevron-right"
-                  size={16}
-                  color={theme.colors.modernist.graphiteMuted}
-                />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+      {/* FACTS — single horizontal 4-cell strip */}
+      <View style={styles.factsWrap}>
+        <FactStrip facts={facts} />
       </View>
 
       {/* QUICK ACTIONS */}
@@ -771,20 +675,32 @@ const styles = StyleSheet.create({
   titleBlock: {
     marginBottom: theme.spacing.lg,
   },
+  kicker: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
   title: {
     fontFamily: theme.typography.roles.display,
-    fontSize: theme.typography.sizes['3xl'],
+    fontSize: 32,
+    lineHeight: 38,
     color: theme.colors.modernist.ink,
-    letterSpacing: -0.5,
+    letterSpacing: -0.4,
   },
-  statusLine: {
+  subtitle: {
     fontFamily: theme.typography.roles.body,
     fontSize: 13,
     color: theme.colors.modernist.graphiteMuted,
-    marginTop: 4,
+    marginTop: 6,
     lineHeight: 18,
   },
   section: {
+    marginTop: theme.spacing.lg,
+  },
+  factsWrap: {
     marginTop: theme.spacing.lg,
   },
   nextUpSheet: {
@@ -828,43 +744,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
     textTransform: 'uppercase',
   },
-  statusTable: {
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: theme.colors.modernist.hairline,
-  },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.md,
-    minHeight: 56,
-    gap: theme.spacing.sm,
-  },
-  statusRowBorder: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: theme.colors.modernist.hairline,
-  },
-  statusLabel: {
-    fontFamily: theme.typography.roles.bodySemibold,
-    fontSize: 11,
-    letterSpacing: 0.7,
-    textTransform: 'uppercase',
-    color: theme.colors.modernist.graphiteMuted,
-    width: 76,
-  },
-  statusValueCol: {
-    flex: 1,
-  },
-  statusPrimary: {
-    fontFamily: theme.typography.roles.bodyMedium,
-    fontSize: 15,
-    color: theme.colors.modernist.ink,
-  },
-  statusMeta: {
-    fontFamily: theme.typography.roles.body,
-    fontSize: 12,
-    marginTop: 2,
-    letterSpacing: 0.2,
-  },
   actionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -875,17 +754,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: theme.colors.modernist.hairline,
-    backgroundColor: theme.colors.modernist.porcelain,
+    backgroundColor: theme.colors.modernist.paper,
     paddingVertical: theme.spacing.sm,
-    paddingHorizontal: 4,
+    paddingHorizontal: theme.spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
   },
   actionLabel: {
     fontFamily: theme.typography.roles.bodyMedium,
-    fontSize: 11,
-    color: theme.colors.modernist.graphite,
+    fontSize: 12,
+    color: theme.colors.modernist.ink,
     letterSpacing: 0.3,
     textAlign: 'center',
   },

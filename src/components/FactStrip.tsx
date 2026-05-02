@@ -10,7 +10,14 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View, ViewStyle, StyleProp } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+  StyleProp,
+} from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
 import type { MaterialCommunityIconName } from '../types/icons';
@@ -21,6 +28,8 @@ export interface FactCell {
   icon?: MaterialCommunityIconName;
   numeric?: boolean;
   tone?: 'default' | 'copper' | 'teal' | 'green' | 'blue' | 'red' | 'amber';
+  onPress?: () => void;
+  accessibilityLabel?: string;
 }
 
 interface FactStripProps {
@@ -66,14 +75,12 @@ export default function FactStrip({ facts, wrap, style }: FactStripProps) {
     <View style={[styles.row, style]}>
       {facts.map((fact, idx) => {
         const valueColor = toneToColor(fact.tone);
-        return (
-          <View
-            key={`${fact.label}-${idx}`}
-            style={[
-              styles.cell,
-              idx > 0 ? styles.cellDivider : null,
-            ]}
-          >
+        const cellStyle = [
+          styles.cell,
+          idx > 0 ? styles.cellDivider : null,
+        ];
+        const inner = (
+          <>
             <View style={styles.headerRow}>
               {fact.icon ? (
                 <Icon
@@ -97,6 +104,25 @@ export default function FactStrip({ facts, wrap, style }: FactStripProps) {
             >
               {fact.value}
             </Text>
+          </>
+        );
+        if (fact.onPress) {
+          return (
+            <TouchableOpacity
+              key={`${fact.label}-${idx}`}
+              accessibilityRole="button"
+              accessibilityLabel={fact.accessibilityLabel ?? `${fact.label}: ${fact.value}`}
+              activeOpacity={0.78}
+              onPress={fact.onPress}
+              style={cellStyle}
+            >
+              {inner}
+            </TouchableOpacity>
+          );
+        }
+        return (
+          <View key={`${fact.label}-${idx}`} style={cellStyle}>
+            {inner}
           </View>
         );
       })}
@@ -116,7 +142,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   cellDivider: {
-    borderLeftWidth: 1,
+    borderLeftWidth: StyleSheet.hairlineWidth,
     borderLeftColor: theme.colors.modernist.hairline,
   },
   headerRow: {
