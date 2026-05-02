@@ -52,7 +52,7 @@ export default function BasicInput({
           placeholderTextColor={theme.colors.modernist.graphiteMuted}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          selectionColor={theme.colors.modernist.copper}
+          selectionColor={theme.colors.primary[600]}
           {...props}
         />
       </View>

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   default: {
     backgroundColor: theme.colors.background.paper,
     ...theme.shadows.sm,
-    shadowColor: '#5A3A25',
+    shadowColor: '#3A3A3A',
   },
   filled: {
     backgroundColor: theme.colors.background.subtle,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.paper,
     borderColor: theme.colors.bench.border,
     ...theme.shadows.md,
-    shadowColor: '#5A3A25',
+    shadowColor: '#3A3A3A',
   },
   flat: {
     backgroundColor: theme.colors.background.paper,

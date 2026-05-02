@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   eyebrow: {
     fontFamily: theme.typography.fonts.semibold,
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.copperDark,
+    color: theme.colors.primary[700],
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     marginBottom: theme.spacing.xs,

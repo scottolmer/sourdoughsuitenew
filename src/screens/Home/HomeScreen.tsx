@@ -79,7 +79,7 @@ const toneColor = (tone: StatusTone): string => {
     case 'red':
       return theme.colors.modernist.heatRed;
     case 'amber':
-      return theme.colors.modernist.warningAmber;
+      return theme.colors.modernist.ruleTeal;
     default:
       return theme.colors.modernist.graphiteMuted;
   }

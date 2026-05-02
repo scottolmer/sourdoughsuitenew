@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
   liveMetricValue: {
     fontFamily: theme.typography.fonts.heading,
     fontSize: theme.typography.sizes['3xl'],
-    color: theme.colors.bench.copper,
+    color: theme.colors.primary[600],
     lineHeight: 40,
   },
   liveMetricLabel: {

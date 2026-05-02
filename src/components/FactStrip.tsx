@@ -45,7 +45,7 @@ interface FactStripProps {
 const toneToColor = (tone: FactCell['tone']): string => {
   switch (tone) {
     case 'copper':
-      return theme.colors.modernist.copper;
+      return theme.colors.primary[600];
     case 'teal':
       return theme.colors.modernist.ruleTeal;
     case 'green':
@@ -55,7 +55,7 @@ const toneToColor = (tone: FactCell['tone']): string => {
     case 'red':
       return theme.colors.modernist.heatRed;
     case 'amber':
-      return theme.colors.modernist.warningAmber;
+      return theme.colors.modernist.ruleTeal;
     default:
       return theme.colors.modernist.graphite;
   }

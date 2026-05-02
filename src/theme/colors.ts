@@ -1,21 +1,21 @@
 /**
  * Color palette for SourdoughSuite
- * Premium Artisan Theme - Warm, organic, and elegant
+ * Premium Modernist Theme — Clean, editorial, teal-accented
  */
 
 export const colors = {
-  // Primary - Rich Amber / Bronzed Crust
+  // Primary - Teal
   primary: {
-    50: '#fffbf0',
-    100: '#fef2d6',
-    200: '#fce3ad',
-    300: '#fad280',
-    400: '#f7b955',
-    500: '#f59e0b', // Base Primary
-    600: '#d97706',
-    700: '#b45309',
-    800: '#92400e',
-    900: '#78350f',
+    50: '#F0FDFA',
+    100: '#CCFBF1',
+    200: '#99F6E4',
+    300: '#5EEAD4',
+    400: '#2DD4BF',
+    500: '#14B8A6', // Base Primary
+    600: '#0D9488',
+    700: '#0F766E',
+    800: '#115E59',
+    900: '#134E4A',
   },
 
   // Secondary - Warm Neutrals / Stone
@@ -41,7 +41,7 @@ export const colors = {
 
   warning: {
     light: '#fef3c7',
-    main: '#f59e0b', // Golden Wheat
+    main: '#f59e0b', // Golden Wheat — semantic status colour, unchanged
     dark: '#b45309',
   },
 
@@ -96,31 +96,31 @@ export const colors = {
 
   // Gradients
   gradients: {
-    primary: ['#f59e0b', '#d97706'],
+    primary: ['#3D3D3D', '#1F1F1F'],
     secondary: ['#78716c', '#57534e'],
-    warmResult: ['#fffbf0', '#fef2d6'],
-    golden: ['#fcd34d', '#f59e0b'],
+    warmResult: ['#F0FDFA', '#CCFBF1'],
+    golden: ['#3D3D3D', '#1F1F1F'],
   },
 
-  // Bench semantic palette — warm, artisan, sourdough-specific
+  // Bench semantic palette — modernist, sourdough-specific
   bench: {
     flour: '#FFF9ED',
     parchment: '#F8EEDC',
     linen: '#F2E2C9',
     crust: '#3B2112',
     crustSoft: '#5A3A25',
-    crumb: '#B9822B',
-    copper: '#C88A1D',
-    copperDark: '#8B5A11',
+    crumb: '#14B8A6',
+    copper: '#0D9488',
+    copperDark: '#0F766E',
     starterGreen: '#557A3B',
     waterBlue: '#4F7E8A',
     heatRed: '#A84E2E',
-    border: '#E3CDAA',
-    borderSoft: '#EADBC2',
+    border: '#C4C4C4',
+    borderSoft: '#DEDEDE',
   },
 
   // Modernist palette — precise editorial style for Modernist Formula Cards redesign.
-  // Color ratio target: ~70% paper/white, 20% ink/graphite, 7% teal rules, 3% copper or semantic state.
+  // Color ratio target: ~70% paper/white, 20% ink/graphite, 7% teal rules, 3% teal accent or semantic state.
   modernist: {
     paper: '#FFFDF8',
     paperWarm: '#F7F4EE',
@@ -132,12 +132,12 @@ export const colors = {
     hairlineDark: '#A9A49B',
     ruleTeal: '#2E7474',
     tealSoft: '#E6F0EF',
-    copper: '#B46F2B',
-    copperSoft: '#F2E1D0',
+    copper: '#0D9488',
+    copperSoft: '#CCEDEB',
     starterGreen: '#4D6F3A',
     waterBlue: '#356F8C',
     heatRed: '#9B3F2F',
-    warningAmber: '#B87A1D',
+    warningAmber: '#4E7E7B',
   },
 
   transparent: 'transparent',

@@ -186,7 +186,7 @@ export default function TimelineCalculatorScreen() {
           <View style={styles.resultSection}>
             <BenchCard variant="filled" padding="lg" style={styles.previewCard}>
               <View style={styles.previewRow}>
-                <Icon name="clock-outline" size={24} color={theme.colors.bench.copper} />
+                <Icon name="clock-outline" size={24} color={theme.colors.primary[600]} />
                 <View style={styles.previewInfo}>
                   <Text style={styles.previewTitle}>
                     {totalDuration.toFixed(1)} hours total
@@ -259,7 +259,7 @@ export default function TimelineCalculatorScreen() {
                 </View>
                 {calculated && step.startTime && step.endTime && (
                   <View style={styles.stepTiming}>
-                    <Icon name="clock-start" size={14} color={theme.colors.bench.copper} />
+                    <Icon name="clock-start" size={14} color={theme.colors.primary[600]} />
                     <Text style={styles.stepTime}>
                       {formatTime(step.startTime)} → {formatTime(step.endTime)}
                     </Text>
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.bench.copper,
+    backgroundColor: theme.colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
   },
   stepTime: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.copper,
+    color: theme.colors.primary[600],
     fontWeight: theme.typography.weights.medium as any,
   },
   actions: {

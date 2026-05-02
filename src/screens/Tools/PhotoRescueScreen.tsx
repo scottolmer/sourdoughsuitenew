@@ -245,7 +245,7 @@ export default function PhotoRescueScreen() {
       <ModernistScreen background="paper">
         <FormulaSheet topRule background="porcelain" padding="md" style={styles.modeBanner}>
           <View style={styles.bannerRow}>
-            <Icon name="clipboard-check-outline" size={16} color={theme.colors.modernist.copper} />
+            <Icon name="clipboard-check-outline" size={16} color={theme.colors.primary[600]} />
             <Text style={styles.bannerText}>Using quick rescue checklist</Text>
           </View>
           <Text style={styles.bannerSub}>Rule-based guidance — your photo was not analyzed.</Text>
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
   bannerText: {
     fontFamily: theme.typography.roles.bodySemibold,
     fontSize: 13,
-    color: theme.colors.modernist.copper,
+    color: theme.colors.primary[600],
     letterSpacing: 0.3,
   },
   bannerSub: {

@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   percentCell: {
-    color: theme.colors.modernist.copper,
+    color: theme.colors.primary[600],
   },
   cellText: {
     fontFamily: theme.typography.roles.body,

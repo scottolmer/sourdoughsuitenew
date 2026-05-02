@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.bench.border,
     overflow: 'hidden',
     ...theme.shadows.sm,
-    shadowColor: '#5A3A25',
+    shadowColor: '#3A3A3A',
   },
   heroRow: {
     flexDirection: 'row',
@@ -76,13 +76,13 @@ const styles = StyleSheet.create({
   hydrationValue: {
     fontFamily: theme.typography.fonts.heading,
     fontSize: theme.typography.sizes['4xl'],
-    color: theme.colors.bench.copper,
+    color: theme.colors.primary[600],
     lineHeight: 44,
   },
   hydrationLabel: {
     fontFamily: theme.typography.fonts.semibold,
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.copperDark,
+    color: theme.colors.primary[700],
     letterSpacing: 0.5,
     textTransform: 'uppercase',
     marginTop: 2,

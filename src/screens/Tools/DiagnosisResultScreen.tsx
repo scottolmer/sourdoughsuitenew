@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   fallbackLine: {
     fontFamily: theme.typography.roles.bodyMedium,
     fontSize: 13,
-    color: theme.colors.modernist.copper,
+    color: theme.colors.primary[600],
     marginTop: 6,
     letterSpacing: 0.3,
   },

@@ -20,7 +20,7 @@ const toneColor = (tone: MetricTileProps['tone']): string => {
     case 'red':
       return theme.colors.bench.heatRed;
     case 'copper':
-      return theme.colors.bench.copper;
+      return theme.colors.primary[600];
     default:
       return theme.colors.bench.crustSoft;
   }

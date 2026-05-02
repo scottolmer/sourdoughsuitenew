@@ -107,7 +107,7 @@ export default function RecipesScreen() {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.stat}>
-              <Icon name="scale" size={14} color={theme.colors.bench.copper} />
+              <Icon name="scale" size={14} color={theme.colors.primary[600]} />
               <Text style={styles.statValue}>{recipe.totalWeight}g</Text>
               <Text style={styles.statLabel}>total</Text>
             </View>
@@ -154,8 +154,8 @@ export default function RecipesScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={[theme.colors.bench.copper]}
-            tintColor={theme.colors.bench.copper}
+            colors={[theme.colors.primary[600]]}
+            tintColor={theme.colors.primary[600]}
           />
         }
       >
@@ -167,7 +167,7 @@ export default function RecipesScreen() {
                   <Icon
                     name="book-open-page-variant-outline"
                     size={40}
-                    color={theme.colors.bench.copper}
+                    color={theme.colors.primary[600]}
                   />
                 </View>
                 <Text style={styles.emptyStateTitle}>Your formula book is ready.</Text>

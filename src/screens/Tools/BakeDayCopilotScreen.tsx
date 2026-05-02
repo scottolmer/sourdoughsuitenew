@@ -237,7 +237,7 @@ export default function BakeDayCopilotScreen() {
             <Icon
               name="camera-outline"
               size={14}
-              color={theme.colors.modernist.copper}
+              color={theme.colors.primary[600]}
             />
             <Text style={styles.diagnosisLabel}>FROM PHOTO RESCUE</Text>
           </View>
@@ -362,7 +362,7 @@ export default function BakeDayCopilotScreen() {
               <Icon
                 name="alert-outline"
                 size={16}
-                color={theme.colors.modernist.warningAmber}
+                color={theme.colors.modernist.ruleTeal}
               />
             ) : (
               <Icon
@@ -379,7 +379,7 @@ export default function BakeDayCopilotScreen() {
                     plan.fermentationRisk === 'high'
                       ? theme.colors.modernist.heatRed
                       : plan.fermentationRisk === 'medium'
-                      ? theme.colors.modernist.warningAmber
+                      ? theme.colors.modernist.ruleTeal
                       : theme.colors.modernist.starterGreen,
                 },
               ]}
@@ -449,7 +449,7 @@ export default function BakeDayCopilotScreen() {
                 size={16}
                 color={
                   remindersEnabled
-                    ? theme.colors.modernist.copper
+                    ? theme.colors.primary[600]
                     : theme.colors.modernist.graphiteMuted
                 }
               />
@@ -462,7 +462,7 @@ export default function BakeDayCopilotScreen() {
                 value={remindersEnabled}
                 onValueChange={handleReminderToggle}
                 trackColor={{
-                  true: theme.colors.modernist.copper,
+                  true: theme.colors.primary[600],
                   false: theme.colors.modernist.hairlineDark,
                 }}
                 thumbColor={theme.colors.modernist.paper}
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
 
   diagnosisSheet: {
     marginBottom: theme.spacing.md,
-    borderColor: theme.colors.modernist.copperSoft,
+    borderColor: theme.colors.modernist.tealSoft,
   },
   diagnosisRow: {
     flexDirection: 'row',
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   diagnosisLabel: {
     fontFamily: theme.typography.roles.bodySemibold,
     fontSize: 11,
-    color: theme.colors.modernist.copper,
+    color: theme.colors.primary[600],
     letterSpacing: 0.6,
   },
   diagnosisDiag: {
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   },
 
   riskSheetWarn: {
-    borderColor: theme.colors.modernist.warningAmber,
+    borderColor: theme.colors.modernist.ruleTeal,
   },
   riskHeader: {
     flexDirection: 'row',
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   warnLine: {
-    color: theme.colors.modernist.warningAmber,
+    color: theme.colors.modernist.ruleTeal,
   },
 
   noteRow: {

@@ -17,7 +17,7 @@ interface ResultHeroProps {
 
 const toneColor: Record<ConfidenceTone, string> = {
   high: theme.colors.bench.starterGreen,
-  medium: theme.colors.bench.copper,
+  medium: theme.colors.primary[600],
   low: theme.colors.bench.heatRed,
 };
 
@@ -38,7 +38,7 @@ export default function ResultHero({
           <Image source={image} style={styles.image} resizeMode="cover" />
         ) : icon ? (
           <View style={styles.iconContainer}>
-            <Icon name={icon} size={56} color={theme.colors.bench.copper} />
+            <Icon name={icon} size={56} color={theme.colors.primary[600]} />
           </View>
         ) : null}
         {confidence !== undefined && (
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.bench.borderSoft,
     ...theme.shadows.md,
-    shadowColor: '#5A3A25',
+    shadowColor: '#3A3A3A',
   },
   heroArea: {
     width: '100%',

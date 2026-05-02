@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: theme.colors.background.paper,
     borderWidth: 1,
-    borderColor: theme.colors.bench.border,
+    borderColor: theme.colors.modernist.hairline,
     borderRadius: 22,
     padding: 4,
   },
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.xs,
   },
   optionActive: {
-    backgroundColor: theme.colors.bench.copper,
+    backgroundColor: theme.colors.primary[600],
   },
   label: {
     fontFamily: theme.typography.fonts.semibold,

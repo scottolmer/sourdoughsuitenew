@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     borderLeftColor: theme.colors.modernist.hairline,
   },
   optionActive: {
-    backgroundColor: theme.colors.modernist.copper,
+    backgroundColor: theme.colors.primary[600],
   },
   icon: {
     marginRight: 6,

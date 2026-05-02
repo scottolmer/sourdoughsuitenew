@@ -113,7 +113,7 @@ export default function ToolsScreen() {
       icon: 'calendar-clock',
       title: 'Bake Day Copilot',
       description: 'Personalized bake timeline',
-      color: theme.colors.bench.copper,
+      color: theme.colors.primary[600],
       onPress: goCopilot,
     },
   ];
@@ -124,17 +124,10 @@ export default function ToolsScreen() {
       title: 'Plan',
       tools: [
         {
-          icon: 'clock-outline',
-          title: 'Timeline Calculator',
-          description: 'Plan your baking schedule',
-          color: theme.colors.info.main,
-          route: 'TimelineCalculator',
-        },
-        {
           icon: 'calendar-clock',
           title: 'Bake Day Copilot',
           description: 'Personalized AI bake timeline',
-          color: theme.colors.bench.copper,
+          color: theme.colors.primary[600],
           onPress: goCopilot,
         },
       ],

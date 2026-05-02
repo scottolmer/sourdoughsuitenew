@@ -139,7 +139,7 @@ export default function StartersScreen() {
               <Icon
                 name="grain"
                 size={40}
-                color={theme.colors.bench.copper}
+                color={theme.colors.primary[600]}
               />
             </View>
             <Text style={styles.emptyStateTitle}>Your starters live here.</Text>
@@ -165,8 +165,8 @@ export default function StartersScreen() {
           <RefreshControl
             refreshing={isRefetching}
             onRefresh={refetch}
-            colors={[theme.colors.bench.copper]}
-            tintColor={theme.colors.bench.copper}
+            colors={[theme.colors.primary[600]]}
+            tintColor={theme.colors.primary[600]}
           />
         }
       >
@@ -185,7 +185,7 @@ export default function StartersScreen() {
       <FloatingActionButton
         icon="plus"
         onPress={handleAddStarter}
-        color={theme.colors.bench.copper}
+        color={theme.colors.primary[600]}
       />
     </View>
   );

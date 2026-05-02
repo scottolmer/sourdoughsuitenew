@@ -36,13 +36,13 @@ const RAIL_WIDTH = 1;
 const LEFT_COL_WIDTH = 28;
 
 const nodeFill: Record<TimelineStepState, string> = {
-  active: theme.colors.modernist.copper,
+  active: theme.colors.primary[600],
   past: theme.colors.modernist.ruleTeal,
   upcoming: theme.colors.modernist.paper,
 };
 
 const nodeBorder: Record<TimelineStepState, string> = {
-  active: theme.colors.modernist.copper,
+  active: theme.colors.primary[600],
   past: theme.colors.modernist.ruleTeal,
   upcoming: theme.colors.modernist.hairlineDark,
 };
@@ -54,7 +54,7 @@ const titleColor: Record<TimelineStepState, string> = {
 };
 
 const timeColor: Record<TimelineStepState, string> = {
-  active: theme.colors.modernist.copper,
+  active: theme.colors.primary[600],
   past: theme.colors.modernist.graphiteMuted,
   upcoming: theme.colors.modernist.graphiteMuted,
 };
@@ -90,7 +90,7 @@ export default function TimelineRail({ steps }: TimelineRailProps) {
                   size={14}
                   color={
                     state === 'active'
-                      ? theme.colors.modernist.copper
+                      ? theme.colors.primary[600]
                       : theme.colors.modernist.graphiteMuted
                   }
                   style={styles.headerIcon}
