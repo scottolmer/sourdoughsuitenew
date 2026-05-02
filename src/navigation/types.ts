@@ -4,7 +4,7 @@
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps } from '@react-navigation/native';
+import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 
 // Stack param lists
 export type HomeStackParamList = {
@@ -75,7 +75,7 @@ export type ProfileStackParamList = {
 // Tab param list
 export type MainTabParamList = {
   HomeTab: undefined;
-  ToolsTab: undefined;
+  ToolsTab: NavigatorScreenParams<ToolsStackParamList> | undefined;
   StartersTab: undefined;
   RecipesTab: undefined;
   ProfileTab: undefined;
