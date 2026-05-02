@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Image,
   TouchableOpacity,
 } from 'react-native';
@@ -13,9 +12,13 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 
 import { theme } from '../../theme';
 import Button from '../../components/Button';
-import BenchCard from '../../components/BenchCard';
-import ResultHero from '../../components/ResultHero';
-import SectionHeader from '../../components/SectionHeader';
+import ModernistScreen from '../../components/ModernistScreen';
+import FormulaSheet from '../../components/FormulaSheet';
+import RuleHeader from '../../components/RuleHeader';
+import FactStrip from '../../components/FactStrip';
+import type { FactCell } from '../../components/FactStrip';
+import StageDirections from '../../components/StageDirections';
+import type { StageDirection } from '../../components/StageDirections';
 import type { ToolsStackParamList } from '../../navigation/types';
 import type { Confidence } from '../../types/photoRescue';
 import { diagnosisStorage } from '../../services/diagnosisStorage';
@@ -23,16 +26,23 @@ import { diagnosisStorage } from '../../services/diagnosisStorage';
 type RouteType = RouteProp<ToolsStackParamList, 'DiagnosisResult'>;
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
 
-const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  high: 'High confidence',
-  medium: 'Medium confidence',
-  low: 'Low confidence — review carefully',
+const SUBJECT_LABEL: Record<string, string> = {
+  dough: 'Dough',
+  starter: 'Starter',
+  crumb: 'Crumb',
+  loaf: 'Loaf',
 };
 
-const CONFIDENCE_TONE: Record<Confidence, 'high' | 'medium' | 'low'> = {
-  high: 'high',
-  medium: 'medium',
-  low: 'low',
+const CONFIDENCE_WORD: Record<Confidence, string> = {
+  high: 'High',
+  medium: 'Medium',
+  low: 'Low',
+};
+
+const CONFIDENCE_TONE: Record<Confidence, FactCell['tone']> = {
+  high: 'green',
+  medium: 'copper',
+  low: 'red',
 };
 
 export default function DiagnosisResultScreen() {
@@ -50,281 +60,295 @@ export default function DiagnosisResultScreen() {
     navigation.navigate('BakeDayCopilot', { diagnosis });
   };
 
-  const imageSource = imageUri ? { uri: imageUri } : undefined;
+  const modeValue = isQuickRescue ? 'Quick rescue' : 'AI analysis';
+  const modeTone: FactCell['tone'] = isQuickRescue ? 'amber' : 'teal';
+
+  const facts: FactCell[] = [
+    {
+      label: 'SUBJECT',
+      value: SUBJECT_LABEL[diagnosis.subject] ?? diagnosis.subject,
+      icon: 'shape-outline',
+    },
+    {
+      label: 'STAGE',
+      value: diagnosis.stage ?? '—',
+      icon: 'progress-clock',
+    },
+    {
+      label: 'CONFIDENCE',
+      value: CONFIDENCE_WORD[diagnosis.confidence],
+      icon: 'gauge',
+      tone: CONFIDENCE_TONE[diagnosis.confidence],
+    },
+    {
+      label: 'MODE',
+      value: modeValue,
+      icon: isQuickRescue ? 'clipboard-check-outline' : 'robot-outline',
+      tone: modeTone,
+    },
+  ];
+
+  // Map "doNow" actions onto StageDirections rows. Action label is the narrow
+  // left column; details are the right column. Numbered as ACT 1, ACT 2…
+  const directions: StageDirection[] = diagnosis.doNow.map((a, i) => ({
+    stage: `ACT ${i + 1}`,
+    text: a.title,
+    detail: a.details,
+    duration:
+      a.minutesFromNow !== undefined && a.minutesFromNow > 0
+        ? `+${a.minutesFromNow} min`
+        : undefined,
+  }));
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {isQuickRescue && (
-        <BenchCard variant="filled" style={styles.quickRescueBanner}>
-          <View style={styles.bannerRow}>
-            <Icon name="clipboard-check-outline" size={18} color={theme.colors.bench.copper} />
-            <Text style={styles.bannerText}>Using quick rescue checklist</Text>
-          </View>
-          <Text style={styles.bannerSub}>Results below are rule-based — your photo was not analyzed by AI.</Text>
-        </BenchCard>
-      )}
-
-      <ResultHero
-        image={imageSource}
-        icon={imageSource ? undefined : 'grain'}
-        title={diagnosis.diagnosis}
-        confidence={1}
-        confidenceTone={CONFIDENCE_TONE[diagnosis.confidence]}
-        confidenceLabel={CONFIDENCE_LABEL[diagnosis.confidence]}
-      />
-
-      <View style={styles.section}>
-        <BenchCard variant="default">
-          <Text style={styles.summaryText}>{diagnosis.summary}</Text>
-        </BenchCard>
+    <ModernistScreen background="paper">
+      {/* Title block */}
+      <View style={styles.titleBlock}>
+        <Text style={styles.eyebrow}>DIAGNOSIS</Text>
+        <Text style={styles.title}>{diagnosis.diagnosis}</Text>
+        {isQuickRescue ? (
+          <Text style={styles.fallbackLine}>Using quick rescue checklist</Text>
+        ) : null}
       </View>
 
-      {diagnosis.visualEvidence.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>WHAT I SEE</Text>
-          {diagnosis.visualEvidence.map((ev, i) => (
-            <View key={i} style={styles.evidenceRow}>
-              <View style={styles.evidenceDot} />
-              <Text style={styles.evidenceText}>{ev}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+      {/* Fact strip */}
+      <FormulaSheet
+        topRule
+        background="porcelain"
+        padding="md"
+        style={styles.factSheet}
+      >
+        <FactStrip facts={facts} wrap />
+      </FormulaSheet>
 
-      {diagnosis.doNow.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>DO NOW</Text>
-          {diagnosis.doNow.map((action, i) => (
-            <BenchCard key={i} variant="default" style={styles.actionCard}>
-              <View style={styles.actionHeader}>
-                <View style={styles.actionNumber}>
-                  <Text style={styles.actionNumberText}>{i + 1}</Text>
-                </View>
-                <Text style={styles.actionTitle}>{action.title}</Text>
-                {action.minutesFromNow !== undefined && action.minutesFromNow > 0 && (
-                  <View style={styles.actionTimeBadge}>
-                    <Text style={styles.actionTimeText}>{action.minutesFromNow} min</Text>
-                  </View>
-                )}
-              </View>
-              <Text style={styles.actionDetails}>{action.details}</Text>
-            </BenchCard>
-          ))}
-        </View>
-      )}
+      {imageUri ? (
+        <FormulaSheet background="porcelain" padding="none" style={styles.imageSheet}>
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+        </FormulaSheet>
+      ) : null}
 
-      {diagnosis.nextBake.length > 0 && (
+      {/* Summary */}
+      {diagnosis.summary ? (
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>NEXT BAKE — PREVENTION</Text>
-          <BenchCard variant="filled">
-            {diagnosis.nextBake.map((tip, i) => (
-              <View key={i} style={[styles.nextBakeRow, i > 0 && styles.nextBakeRowBorder]}>
-                <Icon name="arrow-right-circle-outline" size={16} color={theme.colors.bench.copper} style={styles.nextBakeIcon} />
-                <Text style={styles.nextBakeText}>{tip}</Text>
-              </View>
-            ))}
-          </BenchCard>
-        </View>
-      )}
-
-      {diagnosis.risk ? (
-        <View style={styles.section}>
-          <BenchCard variant="outlined" style={styles.riskCard}>
-            <View style={styles.riskRow}>
-              <Icon name="alert-circle-outline" size={20} color={theme.colors.bench.heatRed} />
-              <Text style={styles.riskText}>{diagnosis.risk}</Text>
-            </View>
-          </BenchCard>
+          <Text style={styles.summaryText}>{diagnosis.summary}</Text>
         </View>
       ) : null}
 
-      {diagnosis.missingContextQuestions?.length > 0 && (
+      {/* WHAT I SEE */}
+      {diagnosis.visualEvidence.length > 0 ? (
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>THINGS TO CHECK</Text>
-          <BenchCard variant="filled">
-            {diagnosis.missingContextQuestions.map((q, i) => (
-              <View key={i} style={[styles.nextBakeRow, i > 0 && styles.nextBakeRowBorder]}>
-                <Icon name="help-circle-outline" size={16} color={theme.colors.bench.crumb} style={styles.nextBakeIcon} />
-                <Text style={styles.nextBakeText}>{q}</Text>
+          <RuleHeader title="WHAT I SEE" />
+          <FormulaSheet background="porcelain" padding="lg">
+            {diagnosis.visualEvidence.map((ev, i) => (
+              <View
+                key={i}
+                style={[styles.evidenceRow, i > 0 && styles.evidenceRowBorder]}
+              >
+                <View style={styles.evidenceDot} />
+                <Text style={styles.evidenceText}>{ev}</Text>
               </View>
             ))}
-          </BenchCard>
+          </FormulaSheet>
         </View>
-      )}
+      ) : null}
 
-      <Button
-        title="Create Bake Plan"
-        onPress={handleCreateBakePlan}
-        fullWidth
-        leftIcon="calendar-clock"
-        style={styles.createPlanBtn}
-      />
+      {/* DO NOW */}
+      {directions.length > 0 ? (
+        <View style={styles.section}>
+          <RuleHeader title="DO NOW" />
+          <FormulaSheet background="porcelain" padding="lg">
+            <StageDirections directions={directions} />
+          </FormulaSheet>
+        </View>
+      ) : null}
 
-      <TouchableOpacity
-        style={styles.backLink}
-        onPress={() => navigation.goBack()}
-      >
-        <Icon name="chevron-left" size={16} color={theme.colors.bench.crumb} />
-        <Text style={styles.backLinkText}>Analyze another photo</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      {/* NEXT BAKE */}
+      {diagnosis.nextBake.length > 0 ? (
+        <View style={styles.section}>
+          <RuleHeader title="NEXT BAKE" />
+          <FormulaSheet background="porcelain" padding="lg">
+            {diagnosis.nextBake.map((tip, i) => (
+              <View
+                key={i}
+                style={[styles.evidenceRow, i > 0 && styles.evidenceRowBorder]}
+              >
+                <Icon
+                  name="arrow-right"
+                  size={14}
+                  color={theme.colors.modernist.ruleTeal}
+                  style={styles.nextBakeIcon}
+                />
+                <Text style={styles.evidenceText}>{tip}</Text>
+              </View>
+            ))}
+          </FormulaSheet>
+        </View>
+      ) : null}
+
+      {/* CAUTION */}
+      {diagnosis.risk ? (
+        <View style={styles.section}>
+          <RuleHeader title="CAUTION" />
+          <FormulaSheet background="porcelain" padding="md" style={styles.cautionSheet}>
+            <View style={styles.cautionRow}>
+              <Icon
+                name="alert-circle-outline"
+                size={18}
+                color={theme.colors.modernist.heatRed}
+              />
+              <Text style={styles.cautionText}>{diagnosis.risk}</Text>
+            </View>
+          </FormulaSheet>
+        </View>
+      ) : null}
+
+      {/* Things to check (only when present — doesn't break the fixed order) */}
+      {diagnosis.missingContextQuestions?.length > 0 ? (
+        <View style={styles.section}>
+          <RuleHeader title="THINGS TO CHECK" />
+          <FormulaSheet background="porcelain" padding="lg">
+            {diagnosis.missingContextQuestions.map((q, i) => (
+              <View
+                key={i}
+                style={[styles.evidenceRow, i > 0 && styles.evidenceRowBorder]}
+              >
+                <Icon
+                  name="help-circle-outline"
+                  size={14}
+                  color={theme.colors.modernist.graphiteMuted}
+                  style={styles.nextBakeIcon}
+                />
+                <Text style={styles.evidenceText}>{q}</Text>
+              </View>
+            ))}
+          </FormulaSheet>
+        </View>
+      ) : null}
+
+      {/* Actions */}
+      <View style={styles.actions}>
+        <Button
+          title="CREATE BAKE PLAN"
+          onPress={handleCreateBakePlan}
+          fullWidth
+          leftIcon="calendar-clock"
+        />
+        <TouchableOpacity
+          style={styles.backLink}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.7}
+        >
+          <Icon
+            name="chevron-left"
+            size={16}
+            color={theme.colors.modernist.graphiteMuted}
+          />
+          <Text style={styles.backLinkText}>Analyze another photo</Text>
+        </TouchableOpacity>
+      </View>
+    </ModernistScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.default,
+  titleBlock: {
+    marginBottom: theme.spacing.md,
   },
-  content: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing['2xl'],
+  eyebrow: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 4,
   },
-  quickRescueBanner: {
-    marginBottom: theme.spacing.lg,
-    borderColor: theme.colors.bench.border,
+  title: {
+    fontFamily: theme.typography.roles.display,
+    fontSize: theme.typography.sizes['2xl'],
+    color: theme.colors.modernist.ink,
+    lineHeight: 34,
   },
-  bannerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.xs,
+  fallbackLine: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 13,
+    color: theme.colors.modernist.copper,
+    marginTop: 6,
+    letterSpacing: 0.3,
   },
-  bannerText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.copper,
+
+  factSheet: {
+    marginTop: theme.spacing.sm,
   },
-  bannerSub: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
+
+  imageSheet: {
+    marginTop: theme.spacing.lg,
+    overflow: 'hidden',
   },
+  image: {
+    width: '100%',
+    height: 200,
+  },
+
   section: {
     marginTop: theme.spacing.lg,
   },
-  sectionLabel: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.copperDark,
-    letterSpacing: 0.7,
-    textTransform: 'uppercase',
-    marginBottom: theme.spacing.md,
-  },
   summaryText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
-    lineHeight: 24,
-  },
-  evidenceRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing.sm,
-  },
-  evidenceDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.bench.copper,
-    marginTop: 6,
-    marginRight: theme.spacing.sm,
-    flexShrink: 0,
-  },
-  evidenceText: {
-    flex: 1,
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 15,
+    color: theme.colors.modernist.graphite,
     lineHeight: 22,
   },
-  actionCard: {
-    marginBottom: theme.spacing.md,
-  },
-  actionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.sm,
-    flexWrap: 'wrap',
-    gap: theme.spacing.sm,
-  },
-  actionNumber: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: theme.colors.bench.copper,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionNumberText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.white,
-  },
-  actionTitle: {
-    flex: 1,
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
-  },
-  actionTimeBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 2,
-    borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.bench.linen,
-  },
-  actionTimeText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.crumb,
-  },
-  actionDetails: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
-    lineHeight: 20,
-    marginLeft: 36,
-  },
-  nextBakeRow: {
+
+  evidenceRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingVertical: theme.spacing.sm,
   },
-  nextBakeRowBorder: {
+  evidenceRowBorder: {
     borderTopWidth: 1,
-    borderTopColor: theme.colors.bench.borderSoft,
+    borderTopColor: theme.colors.modernist.hairline,
+  },
+  evidenceDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: theme.colors.modernist.ruleTeal,
+    marginTop: 8,
+    marginRight: theme.spacing.sm,
+    flexShrink: 0,
   },
   nextBakeIcon: {
     marginRight: theme.spacing.sm,
-    marginTop: 2,
+    marginTop: 4,
     flexShrink: 0,
   },
-  nextBakeText: {
+  evidenceText: {
     flex: 1,
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crust,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 14,
+    color: theme.colors.modernist.graphite,
     lineHeight: 20,
   },
-  riskCard: {
-    borderColor: theme.colors.bench.heatRed + '44',
-    backgroundColor: theme.colors.bench.heatRed + '0A',
+
+  cautionSheet: {
+    borderColor: theme.colors.modernist.heatRed,
   },
-  riskRow: {
+  cautionRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: theme.spacing.sm,
   },
-  riskText: {
+  cautionText: {
     flex: 1,
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.heatRed,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 14,
+    color: theme.colors.modernist.heatRed,
     lineHeight: 20,
   },
-  createPlanBtn: {
-    marginTop: theme.spacing['2xl'],
-    marginBottom: theme.spacing.md,
+
+  actions: {
+    marginTop: theme.spacing.xl,
+    marginBottom: theme.spacing.lg,
   },
   backLink: {
     flexDirection: 'row',
@@ -332,10 +356,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 2,
     paddingVertical: theme.spacing.md,
+    marginTop: theme.spacing.sm,
   },
   backLinkText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crumb,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
   },
 });

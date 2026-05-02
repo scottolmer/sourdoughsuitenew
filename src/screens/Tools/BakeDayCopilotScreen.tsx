@@ -3,20 +3,22 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Switch,
   Platform,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 
 import { theme } from '../../theme';
 import Button from '../../components/Button';
-import BenchCard from '../../components/BenchCard';
+import ModernistScreen from '../../components/ModernistScreen';
+import FormulaSheet from '../../components/FormulaSheet';
+import RuleHeader from '../../components/RuleHeader';
+import FactStrip from '../../components/FactStrip';
+import type { FactCell } from '../../components/FactStrip';
 import SegmentedControl from '../../components/SegmentedControl';
-import SectionHeader from '../../components/SectionHeader';
+import BasicInput from '../../components/BasicInput';
 import TimelineRail from '../../components/TimelineRail';
 import type { TimelineStep } from '../../components/TimelineRail';
 import type { ToolsStackParamList } from '../../navigation/types';
@@ -26,7 +28,12 @@ import type {
   ScheduleStyle,
   BakeStepType,
 } from '../../types/photoRescue';
-import { generateBakePlan, STEP_ICON_MAP, formatStepTime, formatStepDay } from '../../utils/bakeDayTimeline';
+import {
+  generateBakePlan,
+  STEP_ICON_MAP,
+  formatStepTime,
+  formatStepDay,
+} from '../../utils/bakeDayTimeline';
 import { bakePlanStorage } from '../../services/bakePlanStorage';
 
 type RouteType = RouteProp<ToolsStackParamList, 'BakeDayCopilot'>;
@@ -42,10 +49,21 @@ const SCHEDULE_OPTIONS: { label: string; value: ScheduleStyle }[] = [
   { label: 'Overnight', value: 'overnight-cold-proof' },
 ];
 
-const RISK_COLORS = {
-  low: theme.colors.bench.starterGreen,
-  medium: theme.colors.bench.crumb,
-  high: theme.colors.bench.heatRed,
+const SCHEDULE_LABEL: Record<ScheduleStyle, string> = {
+  'same-day': 'Same day',
+  'overnight-cold-proof': 'Overnight cold proof',
+};
+
+const STARTER_LABEL: Record<StarterReadiness, string> = {
+  weak: 'Weak',
+  okay: 'Okay',
+  strong: 'Strong',
+};
+
+const RISK_TONE: Record<'low' | 'medium' | 'high', FactCell['tone']> = {
+  low: 'green',
+  medium: 'amber',
+  high: 'red',
 };
 
 const BAKE_TIME_OPTIONS = [
@@ -71,6 +89,18 @@ function buildBakeAt(dayOffset: number, bakeHour: number): string {
   return d.toISOString();
 }
 
+function formatTotalElapsed(steps: { startsAt: string }[]): string {
+  if (steps.length < 2) return '—';
+  const first = new Date(steps[0].startsAt).getTime();
+  const last = new Date(steps[steps.length - 1].startsAt).getTime();
+  const totalMin = Math.max(0, Math.round((last - first) / 60000));
+  const hours = Math.floor(totalMin / 60);
+  const mins = totalMin % 60;
+  if (hours === 0) return `${mins}m`;
+  if (mins === 0) return `${hours}h`;
+  return `${hours}h ${mins}m`;
+}
+
 export default function BakeDayCopilotScreen() {
   const route = useRoute<RouteType>();
   const { diagnosis } = route.params ?? {};
@@ -85,40 +115,54 @@ export default function BakeDayCopilotScreen() {
   const [loafCount, setLoafCount] = useState('1');
   const [remindersEnabled, setRemindersEnabled] = useState(false);
   const [remindersUnavailable] = useState(Platform.OS === 'web');
-  const [planGenerated, setPlanGenerated] = useState(false);
   const [bakeHour, setBakeHour] = useState(10);
   const [bakeDayOffset, setBakeDayOffset] = useState(1);
 
-  const input: BakePlanInput = useMemo(() => ({
-    targetBakeAt: buildBakeAt(bakeDayOffset, bakeHour),
-    roomTempF: parseFloat(roomTemp) || 72,
-    starterReadiness,
-    scheduleStyle,
-    hydrationPercent: parseFloat(hydration) || 78,
-    loafCount: parseInt(loafCount, 10) || 1,
-    diagnosis,
-    remindersEnabled: remindersEnabled && !remindersUnavailable,
-  }), [roomTemp, starterReadiness, scheduleStyle, hydration, loafCount, diagnosis, remindersEnabled, remindersUnavailable, bakeDayOffset, bakeHour]);
+  const input: BakePlanInput = useMemo(
+    () => ({
+      targetBakeAt: buildBakeAt(bakeDayOffset, bakeHour),
+      roomTempF: parseFloat(roomTemp) || 72,
+      starterReadiness,
+      scheduleStyle,
+      hydrationPercent: parseFloat(hydration) || 78,
+      loafCount: parseInt(loafCount, 10) || 1,
+      diagnosis,
+      remindersEnabled: remindersEnabled && !remindersUnavailable,
+    }),
+    [
+      roomTemp,
+      starterReadiness,
+      scheduleStyle,
+      hydration,
+      loafCount,
+      diagnosis,
+      remindersEnabled,
+      remindersUnavailable,
+      bakeDayOffset,
+      bakeHour,
+    ]
+  );
 
-  const plan = useMemo(() => {
-    if (planGenerated) return generateBakePlan(input);
-    return null;
-  }, [planGenerated, input]);
+  // Plan auto-generates on every input change so the golden demo path
+  // surfaces a timeline immediately.
+  const plan = useMemo(() => generateBakePlan(input), [input]);
 
   useEffect(() => {
-    if (plan) {
-      bakePlanStorage.save(plan).catch((err) => {
-        console.error('Failed to persist bake plan', err);
-      });
-    }
+    bakePlanStorage.save(plan).catch((err) => {
+      console.error('Failed to persist bake plan', err);
+    });
   }, [plan]);
 
   const timelineSteps: TimelineStep[] = useMemo(() => {
-    if (!plan) return [];
     const now = new Date();
-    return plan.steps.map(step => {
+    return plan.steps.map((step) => {
       const stepTime = new Date(step.startsAt);
-      const state = stepTime < now ? 'past' : stepTime.getTime() - now.getTime() < 30 * 60000 ? 'active' : 'upcoming';
+      const state =
+        stepTime < now
+          ? 'past'
+          : stepTime.getTime() - now.getTime() < 30 * 60000
+          ? 'active'
+          : 'upcoming';
       return {
         id: step.id,
         icon: STEP_ICON_MAP[step.type as BakeStepType] ?? 'clock-outline',
@@ -130,362 +174,488 @@ export default function BakeDayCopilotScreen() {
     });
   }, [plan]);
 
-  const handleGenerate = () => {
-    setPlanGenerated(true);
-  };
-
   const handleReminderToggle = (val: boolean) => {
     if (remindersUnavailable) return;
     setRemindersEnabled(val);
   };
 
-  return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <SectionHeader
-        eyebrow="Bake Day Copilot"
-        title="Your personalized bake timeline"
-        subtitle="Fill in your details and generate a step-by-step overnight bake plan."
-      />
+  // Top fact strip
+  const targetBakeAt = new Date(input.targetBakeAt);
+  const topFacts: FactCell[] = [
+    {
+      label: 'TARGET BAKE TIME',
+      value: `${formatStepDay(input.targetBakeAt)} · ${formatStepTime(input.targetBakeAt)}`,
+      icon: 'pot-steam',
+    },
+    {
+      label: 'TOTAL ELAPSED',
+      value: formatTotalElapsed(plan.steps),
+      icon: 'timer-sand',
+      numeric: true,
+    },
+    {
+      label: 'SCHEDULE STYLE',
+      value: SCHEDULE_LABEL[scheduleStyle],
+      icon: 'calendar-blank-outline',
+    },
+  ];
 
-      {diagnosis && (
-        <BenchCard variant="filled" style={styles.diagnosisCard}>
+  // Notes table data — label flex, value right-aligned.
+  const notes: { label: string; value: string }[] = [
+    { label: 'Starter', value: STARTER_LABEL[starterReadiness] },
+    { label: 'Room temp', value: `${input.roomTempF}°F` },
+    { label: 'Hydration', value: `${input.hydrationPercent}%` },
+    { label: 'Schedule style', value: SCHEDULE_LABEL[scheduleStyle] },
+    { label: 'Loaves', value: String(input.loafCount) },
+    {
+      label: 'Bake at',
+      value: targetBakeAt.toLocaleString([], {
+        weekday: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    },
+  ];
+
+  const riskNonLow = plan.fermentationRisk !== 'low';
+
+  return (
+    <ModernistScreen background="paper">
+      <View style={styles.titleBlock}>
+        <Text style={styles.eyebrow}>BAKE DAY COPILOT</Text>
+        <Text style={styles.title}>Your bake plan</Text>
+      </View>
+
+      {/* Diagnosis handoff (when arriving from Photo Rescue) */}
+      {diagnosis ? (
+        <FormulaSheet
+          background="porcelain"
+          padding="md"
+          style={styles.diagnosisSheet}
+        >
           <View style={styles.diagnosisRow}>
-            <Icon name="camera-outline" size={16} color={theme.colors.bench.copper} />
-            <Text style={styles.diagnosisLabel}>From Photo Rescue: </Text>
-            <Text style={styles.diagnosisDiag} numberOfLines={1}>{diagnosis.diagnosis}</Text>
+            <Icon
+              name="camera-outline"
+              size={14}
+              color={theme.colors.modernist.copper}
+            />
+            <Text style={styles.diagnosisLabel}>FROM PHOTO RESCUE</Text>
           </View>
-          {seedAdjustments.length > 0 && (
+          <Text style={styles.diagnosisDiag}>{diagnosis.diagnosis}</Text>
+          {seedAdjustments.length > 0 ? (
             <View style={styles.adjustments}>
               {seedAdjustments.map((adj, i) => (
-                <Text key={i} style={styles.adjustmentText}>· {adj}</Text>
+                <Text key={i} style={styles.adjustmentText}>
+                  · {adj}
+                </Text>
               ))}
             </View>
-          )}
-        </BenchCard>
-      )}
+          ) : null}
+        </FormulaSheet>
+      ) : null}
 
-      <BenchCard variant="default" style={styles.controlStrip}>
-        <Text style={styles.controlLabel}>Bake-By Day</Text>
-        <View style={styles.chipsRow}>
-          {BAKE_DAY_OPTIONS.map(opt => (
-            <TouchableOpacity
-              key={opt.offset}
-              onPress={() => setBakeDayOffset(opt.offset)}
-              style={[styles.chip, bakeDayOffset === opt.offset && styles.chipActive]}
-            >
-              <Text style={[styles.chipText, bakeDayOffset === opt.offset && styles.chipTextActive]}>
-                {opt.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      {/* Top fact strip */}
+      <FormulaSheet
+        topRule
+        background="porcelain"
+        padding="md"
+        style={styles.factSheet}
+      >
+        <FactStrip facts={topFacts} wrap />
+      </FormulaSheet>
 
-        <Text style={[styles.controlLabel, styles.mt]}>Bake-By Time</Text>
-        <View style={styles.chipsRow}>
-          {BAKE_TIME_OPTIONS.map(opt => (
-            <TouchableOpacity
-              key={opt.hours}
-              onPress={() => setBakeHour(opt.hours)}
-              style={[styles.chip, bakeHour === opt.hours && styles.chipActive]}
-            >
-              <Text style={[styles.chipText, bakeHour === opt.hours && styles.chipTextActive]}>
-                {opt.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      {/* Inputs */}
+      <View style={styles.section}>
+        <RuleHeader title="PLAN INPUTS" />
+        <FormulaSheet background="porcelain" padding="lg">
+          <Text style={styles.fieldLabel}>BAKE DAY</Text>
+          <View style={styles.chipsRow}>
+            {BAKE_DAY_OPTIONS.map((opt) => {
+              const active = bakeDayOffset === opt.offset;
+              return (
+                <TouchableOpacity
+                  key={opt.offset}
+                  onPress={() => setBakeDayOffset(opt.offset)}
+                  style={[styles.chip, active && styles.chipActive]}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <Text style={[styles.controlLabel, styles.mt]}>Schedule Style</Text>
-        <SegmentedControl
-          options={SCHEDULE_OPTIONS}
-          value={scheduleStyle}
-          onChange={setScheduleStyle}
-        />
+          <Text style={[styles.fieldLabel, styles.gapTop]}>BAKE TIME</Text>
+          <View style={styles.chipsRow}>
+            {BAKE_TIME_OPTIONS.map((opt) => {
+              const active = bakeHour === opt.hours;
+              return (
+                <TouchableOpacity
+                  key={opt.hours}
+                  onPress={() => setBakeHour(opt.hours)}
+                  style={[styles.chip, active && styles.chipActive]}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        <View style={styles.controlRow}>
-          <View style={styles.controlHalf}>
-            <Text style={styles.controlLabel}>Room Temp (°F)</Text>
-            <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-              <TextInput
-                value={roomTemp}
-                onChangeText={setRoomTemp}
-                keyboardType="numeric"
-                style={styles.inputText}
-                placeholder="72"
-                placeholderTextColor={theme.colors.bench.border}
+          <Text style={[styles.fieldLabel, styles.gapTop]}>SCHEDULE STYLE</Text>
+          <SegmentedControl
+            options={SCHEDULE_OPTIONS}
+            value={scheduleStyle}
+            onChange={setScheduleStyle}
+          />
+
+          <Text style={[styles.fieldLabel, styles.gapTop]}>STARTER READINESS</Text>
+          <SegmentedControl
+            options={STARTER_OPTIONS}
+            value={starterReadiness}
+            onChange={setStarterReadiness}
+          />
+
+          <View style={[styles.splitRow, styles.gapTop]}>
+            <BasicInput
+              label="Room temp (°F)"
+              value={roomTemp}
+              onChangeText={setRoomTemp}
+              keyboardType="numeric"
+              placeholder="72"
+              containerStyle={styles.splitField}
+            />
+            <BasicInput
+              label="Hydration %"
+              value={hydration}
+              onChangeText={setHydration}
+              keyboardType="numeric"
+              placeholder="78"
+              containerStyle={styles.splitField}
+            />
+          </View>
+
+          <BasicInput
+            label="Loaves"
+            value={loafCount}
+            onChangeText={setLoafCount}
+            keyboardType="numeric"
+            placeholder="1"
+          />
+        </FormulaSheet>
+      </View>
+
+      {/* Fermentation risk */}
+      <View style={styles.section}>
+        <RuleHeader title="FERMENTATION RISK" />
+        <FormulaSheet
+          background="porcelain"
+          padding="lg"
+          style={riskNonLow ? styles.riskSheetWarn : undefined}
+        >
+          <View style={styles.riskHeader}>
+            {riskNonLow ? (
+              <Icon
+                name="alert-outline"
+                size={16}
+                color={theme.colors.modernist.warningAmber}
               />
-            </BenchCard>
-          </View>
-          <View style={styles.controlHalf}>
-            <Text style={styles.controlLabel}>Hydration %</Text>
-            <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-              <TextInput
-                value={hydration}
-                onChangeText={setHydration}
-                keyboardType="numeric"
-                style={styles.inputText}
-                placeholder="78"
-                placeholderTextColor={theme.colors.bench.border}
+            ) : (
+              <Icon
+                name="check-circle-outline"
+                size={16}
+                color={theme.colors.modernist.starterGreen}
               />
-            </BenchCard>
-          </View>
-        </View>
-
-        <Text style={styles.controlLabel}>Starter Readiness</Text>
-        <SegmentedControl
-          options={STARTER_OPTIONS}
-          value={starterReadiness}
-          onChange={setStarterReadiness}
-        />
-
-        <View style={styles.controlRow}>
-          <View style={styles.controlHalf}>
-            <Text style={styles.controlLabel}>Loaves</Text>
-            <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-              <TextInput
-                value={loafCount}
-                onChangeText={setLoafCount}
-                keyboardType="numeric"
-                style={styles.inputText}
-                placeholder="1"
-                placeholderTextColor={theme.colors.bench.border}
-              />
-            </BenchCard>
-          </View>
-          <View style={styles.controlHalf}>
-            <Text style={styles.controlLabel}>Reminders</Text>
-            <BenchCard variant="outlined" padding="md" style={styles.reminderCard}>
-              {remindersUnavailable ? (
-                <Text style={styles.remindersUnavailableText}>Reminders unavailable here</Text>
-              ) : (
-                <View style={styles.switchRow}>
-                  <Text style={styles.switchLabel}>{remindersEnabled ? 'On' : 'Off'}</Text>
-                  <Switch
-                    value={remindersEnabled}
-                    onValueChange={handleReminderToggle}
-                    trackColor={{ true: theme.colors.bench.copper, false: theme.colors.bench.border }}
-                    thumbColor={theme.colors.white}
-                  />
-                </View>
-              )}
-            </BenchCard>
-          </View>
-        </View>
-      </BenchCard>
-
-      <Button
-        title="Generate Bake Plan"
-        onPress={handleGenerate}
-        fullWidth
-        leftIcon="calendar-clock"
-        style={styles.generateBtn}
-      />
-
-      {plan && (
-        <>
-          <BenchCard variant="filled" style={styles.insightCard}>
-            <View style={styles.insightHeader}>
-              <View style={[styles.riskBadge, { backgroundColor: RISK_COLORS[plan.fermentationRisk] + '20' }]}>
-                <Text style={[styles.riskLabel, { color: RISK_COLORS[plan.fermentationRisk] }]}>
-                  {plan.fermentationRisk.toUpperCase()} RISK
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.insightNote}>{plan.temperatureNote}</Text>
-            <Text style={[styles.insightNote, styles.mt8]}>{plan.starterNote}</Text>
-            {parseFloat(hydration) >= 80 && (
-              <BenchCard variant="outlined" style={styles.hydrationWarn} padding="sm">
-                <View style={styles.warnRow}>
-                  <Icon name="alert-outline" size={16} color={theme.colors.warning.dark} />
-                  <Text style={styles.warnText}>High hydration — expect sticky, extensible dough. Use wet hands throughout.</Text>
-                </View>
-              </BenchCard>
             )}
-          </BenchCard>
-
-          <View style={styles.timelineSection}>
-            <Text style={styles.sectionLabel}>YOUR BAKE TIMELINE</Text>
-            <BenchCard variant="default">
-              <TimelineRail steps={timelineSteps} />
-            </BenchCard>
+            <Text
+              style={[
+                styles.riskBadge,
+                {
+                  color:
+                    plan.fermentationRisk === 'high'
+                      ? theme.colors.modernist.heatRed
+                      : plan.fermentationRisk === 'medium'
+                      ? theme.colors.modernist.warningAmber
+                      : theme.colors.modernist.starterGreen,
+                },
+              ]}
+            >
+              {plan.fermentationRisk.toUpperCase()} RISK
+            </Text>
           </View>
-        </>
-      )}
-    </ScrollView>
+          <Text style={styles.riskNote}>{plan.temperatureNote}</Text>
+          <Text style={[styles.riskNote, styles.gapTopSm]}>{plan.starterNote}</Text>
+          {input.hydrationPercent >= 80 ? (
+            <Text style={[styles.riskNote, styles.gapTopSm, styles.warnLine]}>
+              High hydration — expect a slack, sticky dough. Use wet hands throughout.
+            </Text>
+          ) : null}
+        </FormulaSheet>
+      </View>
+
+      {/* Bake plan timeline */}
+      <View style={styles.section}>
+        <RuleHeader
+          title="BAKE PLAN"
+          trailing={`${plan.steps.length} STEPS`}
+        />
+        <FormulaSheet background="porcelain" padding="lg">
+          <TimelineRail steps={timelineSteps} />
+        </FormulaSheet>
+      </View>
+
+      {/* Notes table */}
+      <View style={styles.section}>
+        <RuleHeader title="NOTES" />
+        <FormulaSheet background="porcelain" padding="lg">
+          {notes.map((row, i) => (
+            <View
+              key={row.label}
+              style={[styles.noteRow, i > 0 && styles.noteRowBorder]}
+            >
+              <Text style={styles.noteLabel}>{row.label}</Text>
+              <Text style={styles.noteValue} numberOfLines={1}>
+                {row.value}
+              </Text>
+            </View>
+          ))}
+        </FormulaSheet>
+      </View>
+
+      {/* Reminder toggle */}
+      <View style={styles.section}>
+        <RuleHeader title="REMINDERS" />
+        <FormulaSheet background="porcelain" padding="md">
+          {remindersUnavailable ? (
+            <View style={styles.reminderRow}>
+              <Icon
+                name="bell-off-outline"
+                size={16}
+                color={theme.colors.modernist.graphiteMuted}
+              />
+              <Text style={styles.reminderText}>
+                Reminders aren't available on web. Open the app on your phone to enable
+                step alerts.
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.reminderRow}>
+              <Icon
+                name={remindersEnabled ? 'bell-outline' : 'bell-off-outline'}
+                size={16}
+                color={
+                  remindersEnabled
+                    ? theme.colors.modernist.copper
+                    : theme.colors.modernist.graphiteMuted
+                }
+              />
+              <Text style={styles.reminderText}>
+                {remindersEnabled
+                  ? 'Step reminders are on. We\'ll alert you before each step.'
+                  : 'Step reminders are off.'}
+              </Text>
+              <Switch
+                value={remindersEnabled}
+                onValueChange={handleReminderToggle}
+                trackColor={{
+                  true: theme.colors.modernist.copper,
+                  false: theme.colors.modernist.hairlineDark,
+                }}
+                thumbColor={theme.colors.modernist.paper}
+              />
+            </View>
+          )}
+        </FormulaSheet>
+      </View>
+
+      <View style={styles.actions}>
+        <Button
+          title="REFRESH PLAN"
+          onPress={() => bakePlanStorage.save(plan).catch(() => undefined)}
+          fullWidth
+          variant="outline"
+          leftIcon="refresh"
+        />
+      </View>
+    </ModernistScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.default,
+  titleBlock: {
+    marginBottom: theme.spacing.md,
   },
-  content: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing['2xl'],
+  eyebrow: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 4,
   },
-  diagnosisCard: {
-    marginBottom: theme.spacing.lg,
-    borderColor: theme.colors.bench.border,
+  title: {
+    fontFamily: theme.typography.roles.display,
+    fontSize: theme.typography.sizes['2xl'],
+    color: theme.colors.modernist.ink,
+  },
+
+  diagnosisSheet: {
+    marginBottom: theme.spacing.md,
+    borderColor: theme.colors.modernist.copperSoft,
   },
   diagnosisRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.xs,
-    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 4,
   },
   diagnosisLabel: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.copper,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.copper,
+    letterSpacing: 0.6,
   },
   diagnosisDiag: {
-    flex: 1,
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crust,
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 14,
+    color: theme.colors.modernist.ink,
+    lineHeight: 20,
   },
   adjustments: {
     marginTop: theme.spacing.sm,
     paddingTop: theme.spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.bench.borderSoft,
+    borderTopColor: theme.colors.modernist.hairline,
   },
   adjustmentText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
-    lineHeight: 20,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
+    lineHeight: 18,
+  },
+
+  factSheet: {
+    marginTop: theme.spacing.sm,
+  },
+
+  section: {
+    marginTop: theme.spacing.lg,
+  },
+
+  fieldLabel: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    marginBottom: theme.spacing.sm,
+  },
+  gapTop: {
+    marginTop: theme.spacing.lg,
+  },
+  gapTopSm: {
+    marginTop: theme.spacing.sm,
   },
   chipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm,
+    gap: theme.spacing.xs,
   },
   chip: {
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.full,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: theme.colors.bench.border,
-    backgroundColor: theme.colors.background.paper,
+    borderColor: theme.colors.modernist.hairlineDark,
+    backgroundColor: theme.colors.modernist.paper,
   },
   chipActive: {
-    backgroundColor: theme.colors.bench.copper,
-    borderColor: theme.colors.bench.copper,
+    backgroundColor: theme.colors.modernist.ink,
+    borderColor: theme.colors.modernist.ink,
   },
   chipText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crustSoft,
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 12,
+    color: theme.colors.modernist.ink,
   },
   chipTextActive: {
-    color: theme.colors.white,
+    color: theme.colors.modernist.paper,
   },
-  mt: {
-    marginTop: theme.spacing.md,
-  },
-  controlStrip: {
-    marginBottom: theme.spacing.lg,
-    gap: theme.spacing.lg,
-  },
-  controlRow: {
+  splitRow: {
     flexDirection: 'row',
     gap: theme.spacing.md,
   },
-  controlHalf: {
+  splitField: {
     flex: 1,
-  },
-  controlLabel: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crustSoft,
     marginBottom: theme.spacing.sm,
   },
-  inputCard: {
-    borderRadius: theme.borderRadius.lg,
+
+  riskSheetWarn: {
+    borderColor: theme.colors.modernist.warningAmber,
   },
-  inputText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
-  },
-  reminderCard: {
-    borderRadius: theme.borderRadius.lg,
-    justifyContent: 'center',
-  },
-  remindersUnavailableText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.disabled,
-    textAlign: 'center',
-  },
-  switchRow: {
+  riskHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  switchLabel: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crustSoft,
-  },
-  generateBtn: {
-    marginBottom: theme.spacing.lg,
-  },
-  insightCard: {
-    marginBottom: theme.spacing.lg,
-    borderColor: theme.colors.bench.border,
-  },
-  insightHeader: {
-    flexDirection: 'row',
+    gap: 6,
     marginBottom: theme.spacing.sm,
   },
   riskBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 4,
-    borderRadius: theme.borderRadius.full,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    letterSpacing: 0.6,
   },
-  riskLabel: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    letterSpacing: 0.5,
-  },
-  insightNote: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crust,
+  riskNote: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 14,
+    color: theme.colors.modernist.graphite,
     lineHeight: 20,
   },
-  mt8: {
-    marginTop: theme.spacing.sm,
+  warnLine: {
+    color: theme.colors.modernist.warningAmber,
   },
-  hydrationWarn: {
-    marginTop: theme.spacing.md,
-    borderColor: theme.colors.warning.main + '44',
-    backgroundColor: theme.colors.warning.light,
-  },
-  warnRow: {
+
+  noteRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
+  noteRowBorder: {
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.hairline,
+  },
+  noteLabel: {
+    flex: 1,
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 13,
+    color: theme.colors.modernist.ink,
+  },
+  noteValue: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 13,
+    color: theme.colors.modernist.graphite,
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+
+  reminderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: theme.spacing.sm,
   },
-  warnText: {
+  reminderText: {
     flex: 1,
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.warning.dark,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphite,
     lineHeight: 18,
   },
-  timelineSection: {
+
+  actions: {
+    marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
-  },
-  sectionLabel: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.copperDark,
-    letterSpacing: 0.7,
-    textTransform: 'uppercase',
-    marginBottom: theme.spacing.md,
   },
 });

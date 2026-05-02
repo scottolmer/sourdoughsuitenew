@@ -3,13 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Image,
   ActivityIndicator,
   Platform,
-  Alert,
-  TextInput,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -18,13 +15,15 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 
 import { theme } from '../../theme';
 import Button from '../../components/Button';
-import BenchCard from '../../components/BenchCard';
+import ModernistScreen from '../../components/ModernistScreen';
+import FormulaSheet from '../../components/FormulaSheet';
+import RuleHeader from '../../components/RuleHeader';
+import BasicInput from '../../components/BasicInput';
 import SegmentedControl from '../../components/SegmentedControl';
-import SectionHeader from '../../components/SectionHeader';
 import type { ToolsStackParamList } from '../../navigation/types';
-import type { PhotoSubject, StarterReadiness, PhotoRescueDiagnosis } from '../../types/photoRescue';
+import type { PhotoSubject } from '../../types/photoRescue';
 import { analyzePhoto, PhotoRescueFallbackError } from '../../services/photoRescueApi';
-import { QUICK_RESCUE_QUESTIONS, runQuickRescue, type QuickRescueQuestion } from '../../utils/quickRescue';
+import { QUICK_RESCUE_QUESTIONS, runQuickRescue } from '../../utils/quickRescue';
 import type { QuickRescueAnswers } from '../../types/photoRescue';
 
 const SAMPLE_DOUGH = require('../../../assets/images/sample-dough.png');
@@ -39,13 +38,13 @@ const SUBJECT_OPTIONS: { label: string; value: PhotoSubject }[] = [
 ];
 
 const STAGE_CHIPS: Record<PhotoSubject, string[]> = {
-  dough: ['Early bulk', 'Late bulk', 'Shaping', 'Pre-shape'],
+  dough: ['Early bulk', 'Late bulk', 'Pre-shape', 'Shaping'],
   starter: ['Just fed', 'Rising', 'Peak', 'Past peak'],
   crumb: ['Just cut', 'After cooling'],
   loaf: ['Just baked', 'After cooling'],
 };
 
-type QuickRescueMode = 'input' | 'questions' | 'done';
+type QuickRescueMode = 'input' | 'questions';
 
 function imageUriToBase64(uri: string): Promise<{ base64: string; mimeType: 'image/jpeg' | 'image/png' | 'image/webp' }> {
   if (uri.startsWith('data:')) {
@@ -75,8 +74,9 @@ export default function PhotoRescueScreen() {
   const [subject, setSubject] = useState<PhotoSubject>('dough');
   const [stage, setStage] = useState<string>('');
   const [roomTemp, setRoomTemp] = useState<string>('');
-  const [elapsed, setElapsed] = useState<string>('');
+  const [hoursElapsed, setHoursElapsed] = useState<string>('');
   const [hydration, setHydration] = useState<string>('');
+  const [starterHealth, setStarterHealth] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,7 +97,7 @@ export default function PhotoRescueScreen() {
         setError(null);
       }
     } catch {
-      setError('Could not open image picker. Try using the sample photo.');
+      setError('Could not open the photo picker. Try the sample dough photo instead.');
     }
   }, []);
 
@@ -108,7 +108,7 @@ export default function PhotoRescueScreen() {
 
   const handleAnalyze = useCallback(async () => {
     if (!imageUri) {
-      setError('Please choose a photo or use the sample dough photo.');
+      setError('Choose a photo or tap "Use sample dough photo" to continue.');
       return;
     }
     setLoading(true);
@@ -128,6 +128,8 @@ export default function PhotoRescueScreen() {
         mimeType = result.mimeType;
       }
 
+      const elapsedMinutes = hoursElapsed ? parseFloat(hoursElapsed) * 60 : undefined;
+
       const diagnosis = await analyzePhoto({
         imageBase64: base64,
         mimeType,
@@ -135,8 +137,9 @@ export default function PhotoRescueScreen() {
           subject,
           stage: stage || undefined,
           roomTempF: roomTemp ? parseFloat(roomTemp) : undefined,
-          elapsedMinutes: elapsed ? parseFloat(elapsed) : undefined,
+          elapsedMinutes,
           hydrationPercent: hydration ? parseFloat(hydration) : undefined,
+          notes: starterHealth ? `Starter: ${starterHealth}` : undefined,
         },
       });
 
@@ -146,17 +149,25 @@ export default function PhotoRescueScreen() {
       });
     } catch (err) {
       if (err instanceof PhotoRescueFallbackError) {
-        setQuickRescueMode('questions');
-        setQrStep(0);
-        setQrAnswers({ subject });
-        setQrSelectedSigns([]);
+        // Fall back to quick rescue using whatever context the user provided.
+        const elapsedMinutes = hoursElapsed ? parseFloat(hoursElapsed) * 60 : undefined;
+        const qrInput: QuickRescueAnswers = {
+          subject,
+          stage: stage || undefined,
+          roomTempF: roomTemp ? parseFloat(roomTemp) : undefined,
+          elapsedMinutes,
+          observedSigns: [],
+          hydrationPercent: hydration ? parseFloat(hydration) : undefined,
+        };
+        const diagnosis = runQuickRescue(qrInput);
+        navigation.navigate('DiagnosisResult', { diagnosis, imageUri: undefined, isQuickRescue: true });
       } else {
-        setError('Something went wrong. Try again or use Quick Rescue below.');
+        setError('Something went wrong. Try again or use the quick rescue checklist below.');
       }
     } finally {
       setLoading(false);
     }
-  }, [imageUri, subject, stage, roomTemp, elapsed, hydration, navigation]);
+  }, [imageUri, subject, stage, roomTemp, hoursElapsed, hydration, starterHealth, navigation]);
 
   const handleQuickRescueSingleSelect = (key: string, value: string) => {
     setQrAnswers(prev => ({ ...prev, [key]: value }));
@@ -223,22 +234,25 @@ export default function PhotoRescueScreen() {
     setQrSelectedSigns([]);
   };
 
+  // ─────────────────────────────────────────────────────────
+  // Quick-rescue checklist mode
+  // ─────────────────────────────────────────────────────────
   if (quickRescueMode === 'questions') {
     const q = QUICK_RESCUE_QUESTIONS[qrStep];
     const isSignsStep = q.key === 'signs';
 
     return (
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-        <BenchCard variant="filled" style={styles.quickRescueBanner}>
+      <ModernistScreen background="paper">
+        <FormulaSheet topRule background="porcelain" padding="md" style={styles.modeBanner}>
           <View style={styles.bannerRow}>
-            <Icon name="clipboard-check-outline" size={20} color={theme.colors.bench.copper} />
+            <Icon name="clipboard-check-outline" size={16} color={theme.colors.modernist.copper} />
             <Text style={styles.bannerText}>Using quick rescue checklist</Text>
           </View>
-          <Text style={styles.bannerSub}>No image analysis — rule-based guidance only</Text>
-        </BenchCard>
+          <Text style={styles.bannerSub}>Rule-based guidance — your photo was not analyzed.</Text>
+        </FormulaSheet>
 
         <Text style={styles.qrProgress}>
-          Question {qrStep + 1} of {QUICK_RESCUE_QUESTIONS.length}
+          QUESTION {qrStep + 1} OF {QUICK_RESCUE_QUESTIONS.length}
         </Text>
         <Text style={styles.qrQuestion}>{q.question}</Text>
 
@@ -247,13 +261,15 @@ export default function PhotoRescueScreen() {
             <View style={styles.chipsWrap}>
               {q.options.map((opt, idx) => {
                 const display = q.displayLabels?.[idx] ?? opt;
+                const active = qrSelectedSigns.includes(opt);
                 return (
                   <TouchableOpacity
                     key={opt}
                     onPress={() => handleSignsToggle(opt)}
-                    style={[styles.chip, qrSelectedSigns.includes(opt) && styles.chipActive]}
+                    style={[styles.chip, active && styles.chipActive]}
+                    activeOpacity={0.8}
                   >
-                    <Text style={[styles.chipText, qrSelectedSigns.includes(opt) && styles.chipTextActive]}>
+                    <Text style={[styles.chipText, active && styles.chipTextActive]}>
                       {display}
                     </Text>
                   </TouchableOpacity>
@@ -264,7 +280,7 @@ export default function PhotoRescueScreen() {
               title={`Continue with ${qrSelectedSigns.length} selected`}
               onPress={handleSignsDone}
               fullWidth
-              style={styles.mt}
+              style={styles.actionTopGap}
               disabled={qrSelectedSigns.length === 0}
             />
           </>
@@ -277,9 +293,10 @@ export default function PhotoRescueScreen() {
                   key={opt}
                   onPress={() => handleQuickRescueSingleSelect(q.key, opt)}
                   style={styles.qrOption}
+                  activeOpacity={0.85}
                 >
                   <Text style={styles.qrOptionText}>{display}</Text>
-                  <Icon name="chevron-right" size={20} color={theme.colors.bench.border} />
+                  <Icon name="chevron-right" size={18} color={theme.colors.modernist.graphiteMuted} />
                 </TouchableOpacity>
               );
             })}
@@ -288,304 +305,398 @@ export default function PhotoRescueScreen() {
 
         {qrStep > 0 && (
           <TouchableOpacity onPress={() => setQrStep(s => s - 1)} style={styles.backLink}>
-            <Icon name="chevron-left" size={16} color={theme.colors.bench.crumb} />
+            <Icon name="chevron-left" size={16} color={theme.colors.modernist.graphiteMuted} />
             <Text style={styles.backLinkText}>Back</Text>
           </TouchableOpacity>
         )}
-      </ScrollView>
+      </ModernistScreen>
     );
   }
 
+  // ─────────────────────────────────────────────────────────
+  // Main input mode
+  // ─────────────────────────────────────────────────────────
   const stageChips = STAGE_CHIPS[subject];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <SectionHeader
-        eyebrow="Photo Rescue"
-        title="What's going on with your dough?"
-        subtitle="Choose a photo, tell us what you're looking at, and we'll help diagnose it."
+    <ModernistScreen background="paper">
+      <View style={styles.titleBlock}>
+        <Text style={styles.title}>Photo Rescue</Text>
+        <Text style={styles.subtitle}>
+          Pick a subject, share a photo, and add any context you have. We'll diagnose the most likely issue.
+        </Text>
+      </View>
+
+      {/* Subject control — always at the top so the analysis frame is set first. */}
+      <RuleHeader title="SUBJECT" />
+      <SegmentedControl
+        options={SUBJECT_OPTIONS}
+        value={subject}
+        onChange={(v) => {
+          setSubject(v);
+          setStage('');
+        }}
       />
 
-      <BenchCard variant="default" style={styles.imageCard}>
-        {imageUri && imageUri !== 'sample' ? (
-          <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
-        ) : imageUri === 'sample' ? (
-          <Image source={SAMPLE_DOUGH} style={styles.preview} resizeMode="cover" />
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Icon name="camera-outline" size={40} color={theme.colors.bench.border} />
-            <Text style={styles.placeholderText}>No photo selected</Text>
-          </View>
-        )}
-
-        <View style={styles.imageActions}>
-          <TouchableOpacity style={styles.imageBtn} onPress={pickImage}>
-            <Icon name="image-outline" size={18} color={theme.colors.bench.copper} />
-            <Text style={styles.imageBtnText}>Choose Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.imageBtn} onPress={useSamplePhoto}>
-            <Icon name="grain" size={18} color={theme.colors.bench.copper} />
-            <Text style={styles.imageBtnText}>Use sample dough photo</Text>
-          </TouchableOpacity>
-        </View>
-      </BenchCard>
-
+      {/* Image input */}
       <View style={styles.section}>
-        <Text style={styles.label}>What are you analyzing?</Text>
-        <SegmentedControl
-          options={SUBJECT_OPTIONS}
-          value={subject}
-          onChange={(v) => {
-            setSubject(v);
-            setStage('');
-          }}
-        />
-      </View>
+        <RuleHeader title="PHOTO" />
+        <FormulaSheet background="porcelain" padding="none" style={styles.imageSheet}>
+          {imageUri && imageUri !== 'sample' ? (
+            <Image source={{ uri: imageUri }} style={styles.preview} resizeMode="cover" />
+          ) : imageUri === 'sample' ? (
+            <Image source={SAMPLE_DOUGH} style={styles.preview} resizeMode="cover" />
+          ) : (
+            <View style={styles.imagePlaceholder}>
+              <Icon name="image-outline" size={32} color={theme.colors.modernist.hairlineDark} />
+              <Text style={styles.placeholderText}>No photo selected</Text>
+            </View>
+          )}
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Stage (optional)</Text>
-        <View style={styles.chipsWrap}>
-          {stageChips.map(s => (
-            <TouchableOpacity
-              key={s}
-              onPress={() => setStage(stage === s ? '' : s)}
-              style={[styles.chip, stage === s && styles.chipActive]}
-            >
-              <Text style={[styles.chipText, stage === s && styles.chipTextActive]}>{s}</Text>
+          <View style={styles.imageActions}>
+            <TouchableOpacity style={styles.imageBtn} onPress={useSamplePhoto} activeOpacity={0.8}>
+              <Icon name="grain" size={16} color={theme.colors.modernist.ink} />
+              <Text style={styles.imageBtnText}>Use sample dough photo</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+            <TouchableOpacity style={styles.imageBtnSecondary} onPress={pickImage} activeOpacity={0.8}>
+              <Icon name="image-plus" size={16} color={theme.colors.modernist.ink} />
+              <Text style={styles.imageBtnText}>Upload</Text>
+            </TouchableOpacity>
+          </View>
+        </FormulaSheet>
       </View>
 
-      <View style={styles.row}>
-        <View style={styles.halfField}>
-          <Text style={styles.label}>Room Temp (°F)</Text>
-          <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-            <TextInput
+      {/* Context — compact rows on a single sheet */}
+      <View style={styles.section}>
+        <RuleHeader title="CONTEXT" trailing="OPTIONAL" />
+        <FormulaSheet background="porcelain" padding="lg">
+          <View style={styles.contextRow}>
+            <Text style={styles.contextLabel}>Stage</Text>
+            <View style={styles.contextValue}>
+              <View style={styles.chipsWrap}>
+                {stageChips.map(s => {
+                  const active = stage === s;
+                  return (
+                    <TouchableOpacity
+                      key={s}
+                      onPress={() => setStage(active ? '' : s)}
+                      style={[styles.chipSm, active && styles.chipSmActive]}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={[styles.chipSmText, active && styles.chipSmTextActive]}>{s}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.contextSplit}>
+            <BasicInput
+              label="Hydration %"
+              placeholder="e.g. 78"
+              value={hydration}
+              onChangeText={setHydration}
+              keyboardType="numeric"
+              containerStyle={styles.contextHalf}
+            />
+            <BasicInput
+              label="Hours bulked"
+              placeholder="e.g. 4"
+              value={hoursElapsed}
+              onChangeText={setHoursElapsed}
+              keyboardType="numeric"
+              containerStyle={styles.contextHalf}
+            />
+          </View>
+
+          <View style={styles.contextSplit}>
+            <BasicInput
+              label="Ambient temp (°F)"
+              placeholder="e.g. 72"
               value={roomTemp}
               onChangeText={setRoomTemp}
-              placeholder="e.g. 72"
               keyboardType="numeric"
-              style={styles.inputText}
-              placeholderTextColor={theme.colors.bench.border}
+              containerStyle={styles.contextHalf}
             />
-          </BenchCard>
-        </View>
-        <View style={styles.halfField}>
-          <Text style={styles.label}>Time Elapsed (min)</Text>
-          <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-            <TextInput
-              value={elapsed}
-              onChangeText={setElapsed}
-              placeholder="e.g. 210"
-              keyboardType="numeric"
-              style={styles.inputText}
-              placeholderTextColor={theme.colors.bench.border}
+            <BasicInput
+              label="Starter health"
+              placeholder="weak / okay / strong"
+              value={starterHealth}
+              onChangeText={setStarterHealth}
+              autoCapitalize="none"
+              containerStyle={styles.contextHalf}
             />
-          </BenchCard>
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.label}>Hydration % (optional)</Text>
-        <BenchCard variant="outlined" padding="md" style={styles.inputCard}>
-          <TextInput
-            value={hydration}
-            onChangeText={setHydration}
-            placeholder="e.g. 78"
-            keyboardType="numeric"
-            style={styles.inputText}
-            placeholderTextColor={theme.colors.bench.border}
-          />
-        </BenchCard>
+          </View>
+        </FormulaSheet>
       </View>
 
       {error ? (
-        <BenchCard variant="outlined" style={styles.errorCard}>
-          <Text style={styles.errorText}>{error}</Text>
-        </BenchCard>
+        <FormulaSheet background="porcelain" padding="md" style={styles.errorSheet}>
+          <View style={styles.bannerRow}>
+            <Icon name="alert-circle-outline" size={16} color={theme.colors.modernist.heatRed} />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        </FormulaSheet>
       ) : null}
 
-      <Button
-        title={loading ? 'Analyzing...' : 'Analyze Photo'}
-        onPress={handleAnalyze}
-        fullWidth
-        loading={loading}
-        leftIcon="magnify"
-        style={styles.analyzeBtn}
-      />
-
-      <TouchableOpacity onPress={triggerQuickRescue} style={styles.fallbackLink}>
-        <Icon name="clipboard-check-outline" size={16} color={theme.colors.bench.crumb} />
-        <Text style={styles.fallbackText}>Skip photo — use Quick Rescue checklist instead</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      <View style={styles.actionBlock}>
+        {loading ? (
+          <View style={styles.loadingRow}>
+            <ActivityIndicator color={theme.colors.modernist.copper} />
+            <Text style={styles.loadingText}>Analyzing photo…</Text>
+          </View>
+        ) : null}
+        <Button
+          title="ANALYZE"
+          onPress={handleAnalyze}
+          fullWidth
+          loading={loading}
+          leftIcon="magnify"
+        />
+        <TouchableOpacity onPress={triggerQuickRescue} style={styles.fallbackLink}>
+          <Icon name="clipboard-check-outline" size={14} color={theme.colors.modernist.graphiteMuted} />
+          <Text style={styles.fallbackText}>Skip photo — use quick rescue checklist</Text>
+        </TouchableOpacity>
+      </View>
+    </ModernistScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.default,
-  },
-  content: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing['2xl'],
-  },
-  imageCard: {
+  titleBlock: {
     marginBottom: theme.spacing.lg,
+  },
+  title: {
+    fontFamily: theme.typography.roles.display,
+    fontSize: theme.typography.sizes['2xl'],
+    color: theme.colors.modernist.ink,
+    marginBottom: theme.spacing.xs,
+  },
+  subtitle: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 14,
+    color: theme.colors.modernist.graphiteMuted,
+    lineHeight: 20,
+  },
+  section: {
+    marginTop: theme.spacing.lg,
+  },
+
+  // image sheet
+  imageSheet: {
     overflow: 'hidden',
-    padding: 0,
   },
   preview: {
     width: '100%',
-    height: 220,
+    height: 200,
   },
   imagePlaceholder: {
-    height: 180,
+    height: 160,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.colors.bench.linen,
+    backgroundColor: theme.colors.modernist.paperWarm,
   },
   placeholderText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.border,
-    marginTop: theme.spacing.sm,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 12,
+    color: theme.colors.modernist.graphiteMuted,
+    marginTop: 6,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   imageActions: {
     flexDirection: 'row',
     padding: theme.spacing.md,
-    gap: theme.spacing.md,
+    gap: theme.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.hairline,
   },
   imageBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing.xs,
+    gap: 6,
     paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.full,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.bench.border,
-    backgroundColor: theme.colors.background.paper,
+    borderColor: theme.colors.modernist.ink,
+    backgroundColor: theme.colors.modernist.paper,
+  },
+  imageBtnSecondary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: theme.colors.modernist.hairlineDark,
+    backgroundColor: theme.colors.modernist.paper,
   },
   imageBtnText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.copper,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 12,
+    color: theme.colors.modernist.ink,
+    letterSpacing: 0.4,
   },
-  section: {
-    marginBottom: theme.spacing.lg,
+
+  // context rows
+  contextRow: {
+    paddingBottom: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.modernist.hairline,
+    marginBottom: theme.spacing.md,
   },
-  label: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crustSoft,
+  contextLabel: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
     marginBottom: theme.spacing.sm,
   },
+  contextValue: {
+    width: '100%',
+  },
+  contextSplit: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+  },
+  contextHalf: {
+    flex: 1,
+    marginBottom: theme.spacing.sm,
+  },
+
+  // chips
   chipsWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm,
+    gap: theme.spacing.xs,
   },
   chip: {
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.full,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: 6,
     borderWidth: 1,
-    borderColor: theme.colors.bench.border,
-    backgroundColor: theme.colors.background.paper,
+    borderColor: theme.colors.modernist.hairlineDark,
+    backgroundColor: theme.colors.modernist.paper,
   },
   chipActive: {
-    backgroundColor: theme.colors.bench.copper,
-    borderColor: theme.colors.bench.copper,
+    backgroundColor: theme.colors.modernist.ink,
+    borderColor: theme.colors.modernist.ink,
   },
   chipText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crustSoft,
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 13,
+    color: theme.colors.modernist.ink,
   },
   chipTextActive: {
-    color: theme.colors.white,
+    color: theme.colors.modernist.paper,
   },
-  row: {
-    flexDirection: 'row',
-    gap: theme.spacing.md,
+  chipSm: {
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: 6,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: theme.colors.modernist.hairlineDark,
+    backgroundColor: theme.colors.modernist.paper,
+  },
+  chipSmActive: {
+    backgroundColor: theme.colors.modernist.ink,
+    borderColor: theme.colors.modernist.ink,
+  },
+  chipSmText: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 12,
+    color: theme.colors.modernist.ink,
+  },
+  chipSmTextActive: {
+    color: theme.colors.modernist.paper,
+  },
+
+  // analyze block
+  actionBlock: {
+    marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
   },
-  halfField: {
-    flex: 1,
-  },
-  inputCard: {
-    borderRadius: theme.borderRadius.lg,
-  },
-  inputText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
-  },
-  errorCard: {
+  loadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: theme.spacing.sm,
     marginBottom: theme.spacing.md,
-    borderColor: theme.colors.error.main,
-    backgroundColor: theme.colors.error.light,
   },
-  errorText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.error.dark,
-  },
-  analyzeBtn: {
-    marginBottom: theme.spacing.md,
+  loadingText: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
   },
   fallbackLink: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing.xs,
+    gap: 6,
     paddingVertical: theme.spacing.md,
   },
   fallbackText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crumb,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
   },
-  mt: {
-    marginTop: theme.spacing.lg,
+
+  // error sheet
+  errorSheet: {
+    marginTop: theme.spacing.md,
+    borderColor: theme.colors.modernist.heatRed,
   },
-  quickRescueBanner: {
+  errorText: {
+    flex: 1,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.heatRed,
+    lineHeight: 18,
+  },
+
+  // quick rescue mode
+  modeBanner: {
     marginBottom: theme.spacing.lg,
-    borderColor: theme.colors.bench.border,
   },
   bannerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.sm,
-    marginBottom: theme.spacing.xs,
+    gap: 6,
+    marginBottom: 4,
   },
   bannerText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.copper,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 13,
+    color: theme.colors.modernist.copper,
+    letterSpacing: 0.3,
   },
   bannerSub: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 12,
+    color: theme.colors.modernist.graphiteMuted,
+    lineHeight: 16,
   },
   qrProgress: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.bench.crumb,
-    letterSpacing: 0.5,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
     marginBottom: theme.spacing.sm,
   },
   qrQuestion: {
-    fontFamily: theme.typography.fonts.heading,
-    fontSize: theme.typography.sizes['2xl'],
-    color: theme.colors.bench.crust,
+    fontFamily: theme.typography.roles.display,
+    fontSize: 22,
+    color: theme.colors.modernist.ink,
     marginBottom: theme.spacing.lg,
+    lineHeight: 28,
   },
   qrOptions: {
     gap: theme.spacing.sm,
@@ -594,27 +705,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: theme.spacing.lg,
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: theme.colors.background.paper,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: 8,
+    backgroundColor: theme.colors.modernist.porcelain,
     borderWidth: 1,
-    borderColor: theme.colors.bench.borderSoft,
+    borderColor: theme.colors.modernist.hairline,
   },
   qrOptionText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.bench.crust,
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 15,
+    color: theme.colors.modernist.ink,
+  },
+  actionTopGap: {
+    marginTop: theme.spacing.lg,
   },
   backLink: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: theme.spacing.lg,
     gap: 2,
+    marginTop: theme.spacing.lg,
   },
   backLinkText: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.bench.crumb,
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
   },
 });
