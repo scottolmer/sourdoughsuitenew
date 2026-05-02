@@ -72,7 +72,7 @@ const modernistHeaderOptions = {
 };
 
 const safeTopStyle = { flex: 1, backgroundColor: theme.colors.modernist.paper } as const;
-const safeTopInner = { flex: 1, paddingTop: theme.spacing.xl } as const;
+const safeTopInner = { flex: 1, paddingTop: theme.spacing.xs } as const;
 const withSafeTop = (Comp: React.ComponentType<any>) => {
   const Wrapped = (props: any) => (
     <SafeAreaView edges={['top']} style={safeTopStyle}>
