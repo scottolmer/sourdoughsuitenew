@@ -7,6 +7,7 @@ import {
   Switch,
   Platform,
   TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
@@ -96,7 +97,7 @@ export default function BakeDayCopilotScreen() {
     loafCount: parseInt(loafCount, 10) || 1,
     diagnosis,
     remindersEnabled: remindersEnabled && !remindersUnavailable,
-  }), [roomTemp, starterReadiness, scheduleStyle, hydration, loafCount, diagnosis, remindersEnabled, remindersUnavailable]);
+  }), [roomTemp, starterReadiness, scheduleStyle, hydration, loafCount, diagnosis, remindersEnabled, remindersUnavailable, bakeDayOffset, bakeHour]);
 
   const plan = useMemo(() => {
     if (planGenerated) return generateBakePlan(input);
@@ -304,8 +305,6 @@ export default function BakeDayCopilotScreen() {
     </ScrollView>
   );
 }
-
-import { TextInput } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
