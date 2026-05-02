@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Animated,
   Linking,
+  useWindowDimensions,
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -31,10 +32,27 @@ type HomeNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList>
 >;
 
+// Shared card sizing tokens for Home + Tools screens
+const SCREEN_HORIZONTAL_PADDING = theme.spacing.lg;
+const GRID_GAP = theme.spacing.md;
+const QUICK_GRID_COLUMNS = 2;
+const FEATURE_CARD_MIN_HEIGHT = 148;
+const FEATURE_ICON_WRAP = 48;
+const FEATURE_ICON_SIZE = 28;
+const QUICK_TILE_MIN_HEIGHT = 124;
+const QUICK_ICON_WRAP = 40;
+const QUICK_ICON_SIZE = 22;
+
 export default function HomeScreen() {
   const navigation = useNavigation<HomeNavProp>();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [soonestStarter, setSoonestStarter] = useState<Starter | null>(null);
+  const { width: windowWidth } = useWindowDimensions();
+  // Flex calculation: subtract screen side padding and the (columns - 1) gaps,
+  // then divide by the column count so tiles fit flush with the row gap.
+  const quickTileWidth =
+    (windowWidth - SCREEN_HORIZONTAL_PADDING * 2 - GRID_GAP * (QUICK_GRID_COLUMNS - 1)) /
+    QUICK_GRID_COLUMNS;
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -207,7 +225,7 @@ export default function HomeScreen() {
               >
                 <BenchCard variant="hero" padding="lg" style={styles.primaryCard}>
                   <View style={[styles.primaryIconWrap, { backgroundColor: theme.colors.bench.heatRed + '18' }]}>
-                    <Icon name="camera-iris" size={28} color={theme.colors.bench.heatRed} />
+                    <Icon name="camera-iris" size={FEATURE_ICON_SIZE} color={theme.colors.bench.heatRed} />
                   </View>
                   <Text style={styles.primaryTitle}>Photo Rescue</Text>
                   <Text style={styles.primarySub}>Diagnose your dough from a photo</Text>
@@ -223,7 +241,7 @@ export default function HomeScreen() {
               >
                 <BenchCard variant="hero" padding="lg" style={styles.primaryCard}>
                   <View style={[styles.primaryIconWrap, { backgroundColor: theme.colors.bench.copper + '18' }]}>
-                    <Icon name="calendar-clock" size={28} color={theme.colors.bench.copper} />
+                    <Icon name="calendar-clock" size={FEATURE_ICON_SIZE} color={theme.colors.bench.copper} />
                   </View>
                   <Text style={styles.primaryTitle}>Bake Day Copilot</Text>
                   <Text style={styles.primarySub}>Personalized bake timeline</Text>
@@ -239,13 +257,13 @@ export default function HomeScreen() {
               {quickTools.map((tool, i) => (
                 <TouchableOpacity
                   key={i}
-                  style={styles.quickTile}
+                  style={[styles.quickTile, { width: quickTileWidth }]}
                   onPress={tool.onPress}
                   activeOpacity={0.78}
                 >
                   <BenchCard variant="default" padding="md" style={styles.quickCard}>
                     <View style={[styles.quickIcon, { backgroundColor: tool.color + '18' }]}>
-                      <Icon name={tool.icon} size={22} color={tool.color} />
+                      <Icon name={tool.icon} size={QUICK_ICON_SIZE} color={tool.color} />
                     </View>
                     <Text style={styles.quickTitle}>{tool.title}</Text>
                     <Text style={styles.quickSub}>{tool.sub}</Text>
@@ -377,18 +395,21 @@ const styles = StyleSheet.create({
   },
   primaryActions: {
     flexDirection: 'row',
+    alignItems: 'stretch',
     gap: theme.spacing.md,
   },
   primaryActionBtn: {
     flex: 1,
   },
   primaryCard: {
+    flex: 1,
+    minHeight: FEATURE_CARD_MIN_HEIGHT,
     alignItems: 'flex-start',
     gap: theme.spacing.sm,
   },
   primaryIconWrap: {
-    width: 48,
-    height: 48,
+    width: FEATURE_ICON_WRAP,
+    height: FEATURE_ICON_WRAP,
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
@@ -407,17 +428,20 @@ const styles = StyleSheet.create({
   quickGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.md,
+    gap: GRID_GAP,
   },
   quickTile: {
-    width: '47%',
+    // width is computed at render time from useWindowDimensions so it
+    // stays correct on rotation/resize and accounts for the row gap.
   },
   quickCard: {
+    flex: 1,
+    minHeight: QUICK_TILE_MIN_HEIGHT,
     gap: theme.spacing.xs,
   },
   quickIcon: {
-    width: 40,
-    height: 40,
+    width: QUICK_ICON_WRAP,
+    height: QUICK_ICON_WRAP,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',

@@ -17,6 +17,14 @@ import { useHaptics } from '../../hooks/useHaptics';
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
 
+// Card sizing tokens — kept aligned with HomeScreen so the patterns match
+const FEATURE_CARD_MIN_HEIGHT = 148;
+const FEATURE_ICON_WRAP = 48;
+const FEATURE_ICON_SIZE = 28;
+const LIST_ROW_MIN_HEIGHT = 76;
+const LIST_ICON_WRAP = 44;
+const LIST_ICON_SIZE = 22;
+
 type ToolRoute = Extract<
   keyof ToolsStackParamList,
   | 'BakersCalculator'
@@ -53,7 +61,7 @@ function FeaturedToolCard({ tool, onPress }: { tool: ToolDef; onPress: () => voi
     <TouchableOpacity style={styles.featuredBtn} onPress={onPress} activeOpacity={0.8}>
       <BenchCard variant="hero" padding="lg" style={styles.featuredCard}>
         <View style={[styles.featuredIcon, { backgroundColor: tool.color + '20' }]}>
-          <Icon name={tool.icon} size={28} color={tool.color} />
+          <Icon name={tool.icon} size={FEATURE_ICON_SIZE} color={tool.color} />
         </View>
         <Text style={styles.featuredTitle}>{tool.title}</Text>
         <Text style={styles.featuredDesc}>{tool.description}</Text>
@@ -67,7 +75,7 @@ function ToolRow({ tool, onPress }: { tool: ToolDef; onPress: () => void }) {
     <TouchableOpacity onPress={onPress} activeOpacity={0.75}>
       <BenchCard variant="flat" padding="md" style={styles.toolRow}>
         <View style={[styles.toolIcon, { backgroundColor: tool.color + '18' }]}>
-          <Icon name={tool.icon} size={22} color={tool.color} />
+          <Icon name={tool.icon} size={LIST_ICON_SIZE} color={tool.color} />
         </View>
         <View style={styles.toolInfo}>
           <Text style={styles.toolTitle}>{tool.title}</Text>
@@ -107,13 +115,6 @@ export default function ToolsScreen() {
       description: 'Personalized bake timeline',
       color: theme.colors.bench.copper,
       onPress: goCopilot,
-    },
-    {
-      icon: 'percent',
-      title: "Baker's %",
-      description: 'Formula ratios & weights',
-      color: theme.colors.primary[600],
-      onPress: () => go('BakersCalculator'),
     },
   ];
 
@@ -280,6 +281,7 @@ const styles = StyleSheet.create({
   },
   featuredRow: {
     flexDirection: 'row',
+    alignItems: 'stretch',
     gap: theme.spacing.md,
     marginBottom: theme.spacing.xl,
   },
@@ -287,12 +289,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featuredCard: {
+    flex: 1,
+    minHeight: FEATURE_CARD_MIN_HEIGHT,
     alignItems: 'flex-start',
     gap: theme.spacing.sm,
   },
   featuredIcon: {
-    width: 48,
-    height: 48,
+    width: FEATURE_ICON_WRAP,
+    height: FEATURE_ICON_WRAP,
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
@@ -317,11 +321,12 @@ const styles = StyleSheet.create({
   toolRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: LIST_ROW_MIN_HEIGHT,
     gap: theme.spacing.md,
   },
   toolIcon: {
-    width: 44,
-    height: 44,
+    width: LIST_ICON_WRAP,
+    height: LIST_ICON_WRAP,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
