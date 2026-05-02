@@ -7,6 +7,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { CommonActions } from '@react-navigation/native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -362,26 +363,66 @@ export default function MainTabNavigator() {
         name="HomeTab"
         component={HomeStack}
         options={{ title: 'Home' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="ToolsTab"
         component={ToolsStack}
         options={{ title: 'Tools' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="StartersTab"
         component={StartersStack}
         options={{ title: 'Starters' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="RecipesTab"
         component={RecipesStack}
         options={{ title: 'Recipes' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="ProfileTab"
         component={ProfileStack}
         options={{ title: 'Profile' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
     </Tab.Navigator>
   );
