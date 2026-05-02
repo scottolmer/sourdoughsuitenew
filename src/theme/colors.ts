@@ -57,11 +57,11 @@ export const colors = {
     dark: '#1e40af',
   },
 
-  // Backgrounds - Warm & Organic
+  // Backgrounds - aligned to Modernist paper tokens
   background: {
-    default: '#FFF9ED',   // Flour — bench semantic default
-    paper: '#FFFDF8',     // Off-white parchment
-    subtle: '#F8EEDC',    // Parchment — bench semantic subtle
+    default: '#FFFDF8',   // Modernist paper
+    paper: '#FFFDF8',     // Modernist paper
+    subtle: '#F7F4EE',    // Modernist paperWarm
     dark: '#2A1A10',      // Dark Crust
   },
 
