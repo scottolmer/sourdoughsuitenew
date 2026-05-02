@@ -693,11 +693,12 @@ const styles = StyleSheet.create({
   presetButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm,
+    gap: theme.spacing.md,
+    rowGap: theme.spacing.sm,
   },
   presetButton: {
     flex: 0,
-    minWidth: 0,
+    minWidth: 100,
     paddingHorizontal: theme.spacing.md,
   },
   modeCard: {
