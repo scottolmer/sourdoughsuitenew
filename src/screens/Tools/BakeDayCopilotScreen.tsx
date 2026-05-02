@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ import type {
   BakeStepType,
 } from '../../types/photoRescue';
 import { generateBakePlan, STEP_ICON_MAP, formatStepTime, formatStepDay } from '../../utils/bakeDayTimeline';
+import { bakePlanStorage } from '../../services/bakePlanStorage';
 
 type RouteType = RouteProp<ToolsStackParamList, 'BakeDayCopilot'>;
 
@@ -103,6 +104,14 @@ export default function BakeDayCopilotScreen() {
     if (planGenerated) return generateBakePlan(input);
     return null;
   }, [planGenerated, input]);
+
+  useEffect(() => {
+    if (plan) {
+      bakePlanStorage.save(plan).catch((err) => {
+        console.error('Failed to persist bake plan', err);
+      });
+    }
+  }, [plan]);
 
   const timelineSteps: TimelineStep[] = useMemo(() => {
     if (!plan) return [];

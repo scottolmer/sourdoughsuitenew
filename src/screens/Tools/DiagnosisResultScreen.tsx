@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import ResultHero from '../../components/ResultHero';
 import SectionHeader from '../../components/SectionHeader';
 import type { ToolsStackParamList } from '../../navigation/types';
 import type { Confidence } from '../../types/photoRescue';
+import { diagnosisStorage } from '../../services/diagnosisStorage';
 
 type RouteType = RouteProp<ToolsStackParamList, 'DiagnosisResult'>;
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
@@ -38,6 +39,12 @@ export default function DiagnosisResultScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteType>();
   const { diagnosis, imageUri, isQuickRescue } = route.params;
+
+  useEffect(() => {
+    diagnosisStorage.save(diagnosis, imageUri).catch((err) => {
+      console.error('Failed to persist diagnosis', err);
+    });
+  }, [diagnosis, imageUri]);
 
   const handleCreateBakePlan = () => {
     navigation.navigate('BakeDayCopilot', { diagnosis });
