@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.modernist.hairline,
     borderRadius: 8,
     backgroundColor: theme.colors.modernist.porcelain,
-    paddingHorizontal: theme.spacing.md,
     minHeight: 48,
     overflow: 'hidden',
   },
@@ -88,11 +87,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.modernist.porcelain,
   },
   leftIcon: {
+    marginLeft: theme.spacing.md,
     marginRight: theme.spacing.sm,
   },
   input: {
     flex: 1,
     paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
     fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.primary,
