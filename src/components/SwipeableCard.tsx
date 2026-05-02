@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 export interface SwipeAction {
   icon: string;
@@ -100,7 +101,7 @@ export default function SwipeableCard({
         style={[styles.action, { backgroundColor: action.color }]}
         onPress={() => handleActionPress(action)}
       >
-        <Icon name={action.icon} size={24} color={theme.colors.white} />
+        <Icon name={(action.icon as unknown) as MaterialCommunityIconName} size={24} color={theme.colors.white} />
         {action.label && <Text style={styles.actionLabel}>{action.label}</Text>}
       </TouchableOpacity>
     ));

@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 import type {
   RootStackParamList,
   MainTabParamList,
@@ -153,7 +154,7 @@ function MainTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+          let iconName: MaterialCommunityIconName;
 
           switch (route.name) {
             case 'HomeTab':

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 import { useHaptics } from '../hooks/useHaptics';
 
@@ -83,7 +84,7 @@ export default function Button({
         <View style={styles.content}>
           {leftIcon && (
             <Icon
-              name={leftIcon}
+              name={(leftIcon as unknown) as MaterialCommunityIconName}
               size={iconSize}
               color={iconColor}
               style={styles.leftIcon}
@@ -92,7 +93,7 @@ export default function Button({
           <Text style={textStyles}>{title}</Text>
           {rightIcon && (
             <Icon
-              name={rightIcon}
+              name={(rightIcon as unknown) as MaterialCommunityIconName}
               size={iconSize}
               color={iconColor}
               style={styles.rightIcon}
@@ -114,19 +115,27 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: theme.colors.primary[500],
-    ...theme.shadows.lg,
-    shadowColor: theme.colors.primary[600],
+    backgroundColor: '#C88A1D',
+    borderRadius: 22,
+    shadowColor: '#5A3A25',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 5,
   },
   secondary: {
-    backgroundColor: theme.colors.secondary[600],
+    backgroundColor: '#3B2112',
+    borderRadius: 22,
     ...theme.shadows.md,
+    shadowColor: '#3B2112',
   },
   outline: {
     backgroundColor: theme.colors.white,
-    borderWidth: 2,
-    borderColor: theme.colors.primary[500],
+    borderWidth: 1.5,
+    borderColor: '#E3CDAA',
+    borderRadius: 22,
     ...theme.shadows.sm,
+    shadowColor: '#5A3A25',
   },
   ghost: {
     backgroundColor: 'transparent',

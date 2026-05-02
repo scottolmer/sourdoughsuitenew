@@ -2,8 +2,10 @@
  * API Configuration
  */
 
+declare const window: { location: { protocol: string; hostname: string } } | undefined;
+
 function resolveApiBaseUrl(): string {
-  if (typeof window !== 'undefined' && window.location) {
+  if (typeof window !== 'undefined' && window && window.location) {
     const { protocol, hostname } = window.location;
     const replitDevMatch = hostname.match(/^(\d+)-(.+\.replit\.dev)$/);
     if (replitDevMatch) {

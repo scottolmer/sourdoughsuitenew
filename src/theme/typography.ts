@@ -65,6 +65,16 @@ export const typography = {
     wide: 0.25,
     wider: 0.5,
   },
+
+  // Semantic font role aliases
+  roles: {
+    display: 'PlayfairDisplay-Bold',
+    displayRegular: 'PlayfairDisplay-Regular',
+    body: 'Inter-Regular',
+    bodyMedium: 'Inter-Medium',
+    bodySemibold: 'Inter-SemiBold',
+    bodyBold: 'Inter-Bold',
+  },
 };
 
 export type Typography = typeof typography;

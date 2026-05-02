@@ -59,10 +59,10 @@ export const colors = {
 
   // Backgrounds - Warm & Organic
   background: {
-    default: '#FDFBF7',   // Floral White / Warm Flour
-    paper: '#FFFFFF',     // Pure White
-    subtle: '#FAF6F0',    // Very light beige
-    dark: '#2A2826',      // Dark Loaf
+    default: '#FFF9ED',   // Flour — bench semantic default
+    paper: '#FFFDF8',     // Off-white parchment
+    subtle: '#F8EEDC',    // Parchment — bench semantic subtle
+    dark: '#2A1A10',      // Dark Crust
   },
 
   // Card Backgrounds
@@ -100,6 +100,23 @@ export const colors = {
     secondary: ['#78716c', '#57534e'],
     warmResult: ['#fffbf0', '#fef2d6'],
     golden: ['#fcd34d', '#f59e0b'],
+  },
+
+  // Bench semantic palette — warm, artisan, sourdough-specific
+  bench: {
+    flour: '#FFF9ED',
+    parchment: '#F8EEDC',
+    linen: '#F2E2C9',
+    crust: '#3B2112',
+    crustSoft: '#5A3A25',
+    crumb: '#B9822B',
+    copper: '#C88A1D',
+    copperDark: '#8B5A11',
+    starterGreen: '#557A3B',
+    waterBlue: '#4F7E8A',
+    heatRed: '#A84E2E',
+    border: '#E3CDAA',
+    borderSoft: '#EADBC2',
   },
 
   transparent: 'transparent',

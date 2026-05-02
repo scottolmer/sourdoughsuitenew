@@ -7,13 +7,14 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import type { MaterialCommunityIconName } from '../../types/icons';
 
 type FaqItem = {
   question: string;
   answer: string;
 };
 
-const faqSections: { title: string; icon: string; items: FaqItem[] }[] = [
+const faqSections: { title: string; icon: MaterialCommunityIconName; items: FaqItem[] }[] = [
   {
     title: 'Getting Started',
     icon: 'rocket-launch',

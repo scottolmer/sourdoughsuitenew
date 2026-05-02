@@ -379,7 +379,7 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
             style={styles.deleteButton}
             activeOpacity={0.7}
           >
-            <Icon name="delete-outline" size={20} color={theme.colors.error[500]} />
+            <Icon name="delete-outline" size={20} color={theme.colors.error.main} />
             <Text style={styles.deleteText}>Delete Recipe</Text>
           </TouchableOpacity>
         </View>
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     fontSize: theme.typography.sizes.base,
-    color: theme.colors.error[500],
+    color: theme.colors.error.main,
     fontWeight: theme.typography.weights.semibold,
   },
   starterHeader: {

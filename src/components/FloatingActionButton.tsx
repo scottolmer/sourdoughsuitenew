@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 interface FloatingActionButtonProps {
   icon: string;
@@ -85,7 +86,7 @@ export default function FloatingActionButton({
           },
         ]}
       >
-        <Icon name={icon} size={iconSize} color={theme.colors.white} />
+        <Icon name={(icon as unknown) as MaterialCommunityIconName} size={iconSize} color={theme.colors.white} />
       </TouchableOpacity>
     </Animated.View>
   );

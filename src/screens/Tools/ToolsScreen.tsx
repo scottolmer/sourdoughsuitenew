@@ -10,6 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
+import type { MaterialCommunityIconName } from '../../types/icons';
 
 type ToolsStackParamList = {
   ToolsList: undefined;
@@ -29,7 +30,7 @@ type ToolsStackParamList = {
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
 
 interface ToolCardProps {
-  icon: string;
+  icon: MaterialCommunityIconName;
   title: string;
   description: string;
   color: string;
@@ -68,7 +69,7 @@ export default function ToolsScreen() {
     navigation.navigate(route);
   };
 
-  const tools = [
+  const tools: { icon: MaterialCommunityIconName; title: string; description: string; color: string; onPress: () => void }[] = [
     {
       icon: 'clock-outline',
       title: 'Timeline Calculator',

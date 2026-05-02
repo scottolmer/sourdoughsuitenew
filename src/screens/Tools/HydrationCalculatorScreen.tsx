@@ -155,7 +155,7 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
               value={flourWeight}
               onChangeText={setFlourWeight}
               keyboardType="numeric"
-              leftIcon="wheat"
+              leftIcon="barley"
               helperText="Total flour in grams"
             />
             <BasicInput
@@ -232,7 +232,7 @@ export default function HydrationCalculatorScreen({ navigation }: Props) {
             {targetHydration && waterWeight && (
               <View style={styles.targetResults}>
                 <View style={styles.targetRow}>
-                  <Icon name="wheat" size={20} color={theme.colors.warning.main} />
+                  <Icon name="barley" size={20} color={theme.colors.warning.main} />
                   <Text style={styles.targetLabel}>
                     Flour needed for {targetHydration}%:
                   </Text>

@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   textArea: {
     backgroundColor: theme.colors.white,
     borderWidth: 1,
-    borderColor: theme.colors.border.medium,
+    borderColor: theme.colors.border.main,
     borderRadius: theme.spacing.sm,
     padding: theme.spacing.md,
     fontSize: theme.typography.sizes.base,

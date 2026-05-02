@@ -88,7 +88,7 @@ export default function StarterCard({ starter, onPress, onDelete }: Props) {
           </View>
 
           <View style={styles.detailRow}>
-            <Icon name="wheat" size={16} color={theme.colors.text.secondary} />
+            <Icon name="barley" size={16} color={theme.colors.text.secondary} />
             <Text style={styles.detailLabel}>Flour:</Text>
             <Text style={styles.detailValue}>{starter.flourType}</Text>
           </View>

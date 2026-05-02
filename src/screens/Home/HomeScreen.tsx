@@ -7,6 +7,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Linking } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import type { MaterialCommunityIconName } from '../../types/icons';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 
@@ -26,14 +27,14 @@ export default function HomeScreen() {
     Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
   };
 
-  const socialLinks = [
+  const socialLinks: { icon: MaterialCommunityIconName; url: string; color: string }[] = [
     { icon: 'youtube', url: 'https://youtube.com/@SourdoughSuite', color: '#FF0000' },
     { icon: 'instagram', url: 'https://instagram.com/sourdoughsuite', color: '#E1306C' },
     { icon: 'facebook', url: 'https://facebook.com/sourdoughsuite', color: '#1877F2' },
-    { icon: 'music-note-eighth', url: 'https://tiktok.com/@sourdoughsuite', color: '#000000' }, // TikTok replacement
+    { icon: 'music-note-eighth', url: 'https://tiktok.com/@sourdoughsuite', color: '#000000' },
   ];
 
-  const quickActions = [
+  const quickActions: { icon: MaterialCommunityIconName; title: string; description: string; color: string; onPress: () => void }[] = [
     {
       icon: 'calculator',
       title: 'Calculators',

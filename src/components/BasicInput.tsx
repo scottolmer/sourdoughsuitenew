@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 interface BasicInputProps extends TextInputProps {
   label?: string;
@@ -40,7 +41,7 @@ export default function BasicInput({
       ]}>
         {leftIcon && (
           <Icon
-            name={leftIcon}
+            name={(leftIcon as unknown) as MaterialCommunityIconName}
             size={20}
             color={isFocused ? theme.colors.primary[500] : theme.colors.text.tertiary}
             style={styles.leftIcon}
@@ -75,20 +76,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.lg, // More rounded
-    backgroundColor: theme.colors.background.paper,
+    borderColor: '#E3CDAA',
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: '#FFF9ED',
     paddingHorizontal: theme.spacing.md,
-    minHeight: 52, // Taller touch target
-    ...theme.shadows.sm,
-    shadowOpacity: 0.02, // Very subtle depth
+    minHeight: 52,
+    shadowColor: '#5A3A25',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
+    elevation: 1,
   },
   inputContainerFocused: {
-    borderColor: theme.colors.primary[400],
-    backgroundColor: theme.colors.white,
-    ...theme.shadows.md,
-    shadowColor: theme.colors.primary[200],
-    shadowOpacity: 0.2,
+    borderColor: '#C88A1D',
+    backgroundColor: '#FFF9ED',
+    shadowColor: '#C88A1D',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 3,
   },
   leftIcon: {
     marginRight: theme.spacing.sm,
