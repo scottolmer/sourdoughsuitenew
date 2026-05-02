@@ -672,6 +672,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   titleBlock: {
+    marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
   },
   kicker: {
