@@ -59,17 +59,17 @@ export const colors = {
 
   // Backgrounds - aligned to Modernist paper tokens
   background: {
-    default: '#FFFDF8',   // Modernist paper
-    paper: '#FFFDF8',     // Modernist paper
-    subtle: '#F7F4EE',    // Modernist paperWarm
+    default: '#FDFEFE',   // Modernist paper — cool-neutral white
+    paper: '#FDFEFE',     // Modernist paper — cool-neutral white
+    subtle: '#F2F7F7',    // Modernist paperCool — teal-tinted light gray
     dark: '#2A1A10',      // Dark Crust
   },
 
   // Card Backgrounds
   cardBg: {
-    warm: '#FDFBF7',
-    cream: '#FFF9F0',
-    wheat: '#FEF3E6',
+    warm: '#F9FCFC',      // Near-white with cool teal tint
+    cream: '#EEF8F7',     // Cool teal-cream (replaces warm cream)
+    wheat: '#E5F3F2',     // Cool teal-tinted (replaces warm wheat)
     neutral: '#F5F5F4',
   },
 
@@ -84,8 +84,8 @@ export const colors = {
 
   // Borders
   border: {
-    light: '#F0EBE6',
-    main: '#E5E0DC',
+    light: '#E6EEEE',   // Cool teal-tinted (replaces warm '#F0EBE6')
+    main: '#D8E8E7',    // Cool teal-tinted (replaces warm '#E5E0DC')
     dark: '#D6D3D1',
   },
 
@@ -104,9 +104,9 @@ export const colors = {
 
   // Bench semantic palette — modernist, sourdough-specific
   bench: {
-    flour: '#FFF9ED',
-    parchment: '#F8EEDC',
-    linen: '#F2E2C9',
+    flour: '#F0FAFA',     // Cool teal-white (replaces warm '#FFF9ED')
+    parchment: '#E4F2F1', // Cool teal-tinted (replaces warm parchment '#F8EEDC')
+    linen: '#D6ECEA',     // Cool teal-gray (replaces warm linen '#F2E2C9')
     crust: '#3B2112',
     crustSoft: '#5A3A25',
     crumb: '#14B8A6',
@@ -122,8 +122,8 @@ export const colors = {
   // Modernist palette — precise editorial style for Modernist Formula Cards redesign.
   // Color ratio target: ~70% paper/white, 20% ink/graphite, 7% teal rules, 3% teal accent or semantic state.
   modernist: {
-    paper: '#FFFDF8',
-    paperWarm: '#F7F4EE',
+    paper: '#FDFEFE',     // Cool near-white (replaces warm '#FFFDF8')
+    paperWarm: '#F2F7F7', // Cool teal-tinted (replaces warm '#F7F4EE')
     porcelain: '#FFFFFF',
     ink: '#111111',
     graphite: '#2B2B2B',
