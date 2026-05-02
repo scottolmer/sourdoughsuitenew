@@ -16,6 +16,7 @@ config.resolver.blockList = [
   new RegExp(`${path.resolve(__dirname, 'replit').replace(/\\/g, '/')}.*`),
   new RegExp(`${path.resolve(__dirname, 'android').replace(/\\/g, '/')}.*`),
   new RegExp(`${path.resolve(__dirname, 'ios').replace(/\\/g, '/')}.*`),
+  new RegExp(`${path.resolve(__dirname, 'server').replace(/\\/g, '/')}.*`),
 ];
 
 module.exports = config;

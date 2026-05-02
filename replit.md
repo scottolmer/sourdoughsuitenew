@@ -25,7 +25,8 @@ Sourdough Suite is a feature-rich mobile-first app for sourdough bakers, includi
 ## Running the App
 
 - **Workflow**: "Start application" — runs `BROWSER=none npx expo start --web --port 5000`
-- **Port**: 5000 (web preview)
+- **Workflow**: "Start Backend" — runs `node server/index.js` on port 3001
+- **Port**: 5000 (web preview), 3001 (Express API)
 
 ## Key Files
 
@@ -49,7 +50,22 @@ Sourdough Suite is a feature-rich mobile-first app for sourdough bakers, includi
 
 ## API Backend
 
-The app is configured to talk to a backend API (see `src/constants/api.ts`), but all calculators work offline/locally. The Starters and Recipes features use AsyncStorage for local persistence via the storage services.
+Express backend runs on port 3001. Key files:
+- `server/index.js` — Express entry point, CORS, health route
+- `server/gemini.js` — Gemini API helper with validation
+- `server/routes/photoRescue.js` — POST /api/photo-rescue/analyze
+
+### Routes
+- `GET /api/health` — returns `{ ok, service, geminiConfigured }`
+- `POST /api/photo-rescue/analyze` — analyzes sourdough photo via Gemini; returns fallback if `GEMINI_API_KEY` is not set
+
+### Environment Variables
+- `GEMINI_API_KEY` — required for real Photo Rescue (set via Replit Secrets)
+- `GEMINI_MODEL` — optional, defaults to `gemini-2.0-flash`
+- `PORT` — Express port, defaults to 3001
+
+### API URL Resolution
+`src/constants/api.ts` auto-detects the Replit dev domain and routes to port 3001. On `*.replit.dev` hosts, it rewrites the port prefix. Falls back to `http://localhost:3001/api`.
 
 ## Package Manager
 
