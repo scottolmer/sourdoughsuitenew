@@ -65,9 +65,11 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   label: {
-    fontSize: theme.typography.sizes.sm,
-    fontFamily: theme.typography.fonts.medium,
-    color: theme.colors.text.secondary,
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.modernist.graphite,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
     marginBottom: theme.spacing.xs,
     marginLeft: theme.spacing.xs, // Slight alignment with input
   },
@@ -75,20 +77,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.lg, // More rounded
-    backgroundColor: theme.colors.background.paper,
+    borderColor: theme.colors.modernist.hairlineDark,
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.modernist.porcelain,
     paddingHorizontal: theme.spacing.md,
     minHeight: 52, // Taller touch target
-    ...theme.shadows.sm,
-    shadowOpacity: 0.02, // Very subtle depth
   },
   inputContainerFocused: {
-    borderColor: theme.colors.primary[400],
-    backgroundColor: theme.colors.white,
-    ...theme.shadows.md,
-    shadowColor: theme.colors.primary[200],
-    shadowOpacity: 0.2,
+    borderColor: theme.colors.modernist.ruleTeal,
+    backgroundColor: theme.colors.modernist.porcelain,
   },
   leftIcon: {
     marginRight: theme.spacing.sm,

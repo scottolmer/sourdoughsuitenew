@@ -14,6 +14,10 @@ export type HomeStackParamList = {
 
 export type ToolsStackParamList = {
   ToolsList: undefined;
+  PhotoRescue: undefined;
+  PhotoRescueResult: { diagnosisId: string };
+  BakePlanner: { diagnosisId?: string } | undefined;
+  BakePlanDetail: { planId: string };
   BakersCalculator: undefined;
   HydrationCalculator: undefined;
   TimelineCalculator: undefined;

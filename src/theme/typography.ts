@@ -24,6 +24,15 @@ export const typography = {
     system: 'System',
   },
 
+  roles: {
+    display: 'PlayfairDisplay-Bold',
+    displayRegular: 'PlayfairDisplay-Regular',
+    body: 'Inter-Regular',
+    bodyMedium: 'Inter-Medium',
+    bodySemibold: 'Inter-SemiBold',
+    bodyBold: 'Inter-Bold',
+  },
+
   // Font sizes - More dramatic scale for better hierarchy
   sizes: {
     xs: 12,    // Slightly larger for readability

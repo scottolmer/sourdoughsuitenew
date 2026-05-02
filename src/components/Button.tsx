@@ -109,24 +109,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: theme.borderRadius.xl,
+    borderRadius: theme.borderRadius.md,
   },
 
   // Variants
   primary: {
     backgroundColor: theme.colors.primary[500],
-    ...theme.shadows.lg,
-    shadowColor: theme.colors.primary[600],
+    borderWidth: 1,
+    borderColor: theme.colors.primary[600],
   },
   secondary: {
     backgroundColor: theme.colors.secondary[600],
     ...theme.shadows.md,
   },
   outline: {
-    backgroundColor: theme.colors.white,
-    borderWidth: 2,
+    backgroundColor: theme.colors.modernist.porcelain,
+    borderWidth: 1,
     borderColor: theme.colors.primary[500],
-    ...theme.shadows.sm,
   },
   ghost: {
     backgroundColor: 'transparent',
@@ -162,7 +161,8 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     textAlign: 'center',
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
   },
   primaryText: {
     color: theme.colors.white,

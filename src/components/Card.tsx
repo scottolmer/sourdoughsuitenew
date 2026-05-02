@@ -36,28 +36,26 @@ export default function Card({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: theme.borderRadius.xl, // Smoother corners
+    borderRadius: theme.borderRadius.lg,
   },
   elevated: {
-    backgroundColor: theme.colors.white,
-    ...theme.shadows.sm, // Softer shadow
+    backgroundColor: theme.colors.modernist.porcelain,
     borderWidth: 1,
-    borderColor: theme.colors.border.light,
+    borderColor: theme.colors.modernist.hairline,
   },
   outlined: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: theme.colors.border.main,
+    borderColor: theme.colors.modernist.hairlineDark,
   },
   filled: {
-    backgroundColor: theme.colors.cardBg.neutral,
+    backgroundColor: theme.colors.modernist.paperWarm,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: theme.colors.modernist.hairline,
   },
   glass: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: theme.colors.modernist.porcelain,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-    ...theme.shadows.sm,
+    borderColor: theme.colors.modernist.hairline,
   },
 });

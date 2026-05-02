@@ -4,18 +4,38 @@
  */
 
 export const colors = {
+  // Modernist Formula Cards - paper, ink, technical rules
+  modernist: {
+    paper: '#FFFDF8',
+    paperWarm: '#F7F4EE',
+    porcelain: '#FFFFFF',
+    ink: '#111111',
+    graphite: '#2B2B2B',
+    graphiteMuted: '#66615B',
+    hairline: '#D8D3CB',
+    hairlineDark: '#A9A49B',
+    ruleTeal: '#2E7474',
+    tealSoft: '#E6F0EF',
+    copper: '#B46F2B',
+    copperSoft: '#F2E1D0',
+    starterGreen: '#4D6F3A',
+    waterBlue: '#356F8C',
+    heatRed: '#9B3F2F',
+    warningAmber: '#B87A1D',
+  },
+
   // Primary - Rich Amber / Bronzed Crust
   primary: {
-    50: '#fffbf0',
-    100: '#fef2d6',
-    200: '#fce3ad',
-    300: '#fad280',
-    400: '#f7b955',
-    500: '#f59e0b', // Base Primary
-    600: '#d97706',
-    700: '#b45309',
-    800: '#92400e',
-    900: '#78350f',
+    50: '#E6F0EF',
+    100: '#CFE2E0',
+    200: '#9FC6C4',
+    300: '#6FAAA7',
+    400: '#4D8E8B',
+    500: '#2E7474', // Modernist rule teal
+    600: '#245E5F',
+    700: '#1D4B4C',
+    800: '#16393A',
+    900: '#102B2C',
   },
 
   // Secondary - Warm Neutrals / Stone
@@ -36,18 +56,24 @@ export const colors = {
   success: {
     light: '#dcfce7',
     main: '#4ade80', // Fresh Starter Green
+    default: '#4ade80',
+    medium: '#4ade80',
     dark: '#15803d',
   },
 
   warning: {
     light: '#fef3c7',
     main: '#f59e0b', // Golden Wheat
+    default: '#f59e0b',
+    medium: '#f59e0b',
     dark: '#b45309',
   },
 
   error: {
     light: '#fee2e2',
     main: '#ef4444', // Scorched Red
+    default: '#ef4444',
+    medium: '#ef4444',
     dark: '#991b1b',
   },
 
@@ -59,10 +85,10 @@ export const colors = {
 
   // Backgrounds - Warm & Organic
   background: {
-    default: '#FDFBF7',   // Floral White / Warm Flour
-    paper: '#FFFFFF',     // Pure White
-    subtle: '#FAF6F0',    // Very light beige
-    dark: '#2A2826',      // Dark Loaf
+    default: '#FFFDF8',
+    paper: '#FFFDF8',
+    subtle: '#F7F4EE',
+    dark: '#111111',
   },
 
   // Card Backgrounds
@@ -75,18 +101,20 @@ export const colors = {
 
   // Text - High Contrast but Softer
   text: {
-    primary: '#2A2826',   // Soft Black / Dark Crust
-    secondary: '#57534e', // Warm Gray
-    tertiary: '#888481',  // Light Gray
+    primary: '#111111',
+    secondary: '#2B2B2B',
+    tertiary: '#66615B',
     disabled: '#d6d3d1',
     inverse: '#FFFFFF',
   },
 
   // Borders
   border: {
-    light: '#F0EBE6',
-    main: '#E5E0DC',
-    dark: '#D6D3D1',
+    light: '#E7E2DA',
+    main: '#D8D3CB',
+    default: '#D8D3CB',
+    medium: '#D8D3CB',
+    dark: '#A9A49B',
   },
 
   // Special Effects
@@ -96,7 +124,7 @@ export const colors = {
 
   // Gradients
   gradients: {
-    primary: ['#f59e0b', '#d97706'],
+    primary: ['#2E7474', '#245E5F'],
     secondary: ['#78716c', '#57534e'],
     warmResult: ['#fffbf0', '#fef2d6'],
     golden: ['#fcd34d', '#f59e0b'],

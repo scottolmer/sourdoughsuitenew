@@ -1,240 +1,303 @@
-/**
- * Home Screen
- * Main dashboard for the app
- */
-
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Linking } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { useEffect, useState } from 'react';
+import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Card from '../../components/Card';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FactStrip from '../../components/FactStrip';
+import FormulaSheet from '../../components/FormulaSheet';
+import ModernistScreen from '../../components/ModernistScreen';
+import RuleHeader from '../../components/RuleHeader';
+import { bakePlanStorage } from '../../services/bakePlanStorage';
+import { photoRescueStorage } from '../../services/photoRescueStorage';
+import { starterStorage } from '../../services/starterStorage';
+import { getAllRecipes } from '../../services/recipeStorage';
+import { SavedBakePlanRecord, SavedDiagnosisRecord, Starter } from '../../types';
 import { theme } from '../../theme';
 
+interface ActionCell {
+  title: string;
+  label: string;
+  icon: string;
+  route?: string;
+  tab?: string;
+  url?: string;
+  tone?: 'teal' | 'copper' | 'green';
+}
+
 export default function HomeScreen() {
-  const navigation = useNavigation();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation<any>();
+  const [latestDiagnosis, setLatestDiagnosis] =
+    useState<SavedDiagnosisRecord | null>(null);
+  const [latestPlan, setLatestPlan] = useState<SavedBakePlanRecord | null>(null);
+  const [starters, setStarters] = useState<Starter[]>([]);
+  const [recipeCount, setRecipeCount] = useState(0);
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 400,
-      useNativeDriver: true,
-    }).start();
+    const load = async () => {
+      const [diagnosis, plan, starterList, recipes] = await Promise.all([
+        photoRescueStorage.getLatest(),
+        bakePlanStorage.getLatest(),
+        starterStorage.getAll(),
+        getAllRecipes(),
+      ]);
+      setLatestDiagnosis(diagnosis);
+      setLatestPlan(plan);
+      setStarters(starterList);
+      setRecipeCount(recipes.length);
+    };
+
+    load();
   }, []);
 
-  const handleSocialPress = (url: string) => {
-    Linking.openURL(url).catch((err) => console.error("Couldn't load page", err));
+  const activeStarter = starters.find(starter => starter.isActive) || starters[0];
+
+  const actions: ActionCell[] = [
+    {
+      title: 'Photo Rescue',
+      label: 'Diagnose dough',
+      icon: 'image-search-outline',
+      route: 'PhotoRescue',
+      tone: 'teal',
+    },
+    {
+      title: 'Bake Planner',
+      label: 'Build schedule',
+      icon: 'calendar-clock',
+      route: 'BakePlanner',
+      tone: 'copper',
+    },
+    {
+      title: 'Formulas',
+      label: 'Baker %',
+      icon: 'percent-outline',
+      route: 'BakersCalculator',
+      tone: 'green',
+    },
+    {
+      title: 'Recipes',
+      label: 'Formula index',
+      icon: 'book-open-variant',
+      tab: 'RecipesTab',
+    },
+    {
+      title: 'Starters',
+      label: 'Culture log',
+      icon: 'bacteria-outline',
+      tab: 'StartersTab',
+    },
+    {
+      title: 'Academy',
+      label: 'Methods',
+      icon: 'school-outline',
+      route: 'Learn',
+    },
+  ];
+
+  const handleAction = (action: ActionCell) => {
+    if (action.url) {
+      Linking.openURL(action.url);
+      return;
+    }
+
+    if (action.tab) {
+      navigation.navigate(action.tab);
+      return;
+    }
+
+    navigation.navigate('ToolsTab', {
+      screen: action.route,
+    });
   };
 
-  const socialLinks = [
-    { icon: 'youtube', url: 'https://youtube.com/@SourdoughSuite', color: '#FF0000' },
-    { icon: 'instagram', url: 'https://instagram.com/sourdoughsuite', color: '#E1306C' },
-    { icon: 'facebook', url: 'https://facebook.com/sourdoughsuite', color: '#1877F2' },
-    { icon: 'music-note-eighth', url: 'https://tiktok.com/@sourdoughsuite', color: '#000000' }, // TikTok replacement
-  ];
+  const nextUpTitle = latestDiagnosis
+    ? latestDiagnosis.diagnosis.diagnosis
+    : activeStarter
+      ? `${activeStarter.name} check`
+      : 'Run Photo Rescue';
 
-  const quickActions = [
-    {
-      icon: 'calculator',
-      title: 'Calculators',
-      description: '11 professional tools',
-      color: theme.colors.primary[500],
-      onPress: () => navigation.navigate('ToolsTab' as never),
-    },
-    {
-      icon: 'flask',
-      title: 'My Starters',
-      description: 'Track your starters',
-      color: theme.colors.success.main,
-      onPress: () => navigation.navigate('StartersTab' as never),
-    },
-    {
-      icon: 'book-open-variant',
-      title: 'My Recipes',
-      description: 'Saved formulas & recipes',
-      color: theme.colors.warning.main,
-      onPress: () => navigation.navigate('RecipesTab' as never),
-    },
-    {
-      icon: 'school',
-      title: 'Academy',
-      description: 'Master the craft',
-      color: theme.colors.info.main,
-      onPress: () => navigation.navigate('Learn' as never),
-    },
-  ];
+  const nextUpText = latestDiagnosis
+    ? latestDiagnosis.diagnosis.doNow[0]?.title || 'Review diagnosis'
+    : activeStarter
+      ? activeStarter.nextFeedingDue
+        ? `Next feed: ${new Date(activeStarter.nextFeedingDue).toLocaleString()}`
+        : 'Log the next feeding and check activity.'
+      : 'Use the sample dough photo to create a diagnosis and plan.';
 
   return (
-    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>SourdoughSuite</Text>
-        </View>
+    <ModernistScreen>
+      <View style={styles.header}>
+        <Text style={styles.kicker}>SOURDOUGH SUITE</Text>
+        <Text style={styles.title}>Bench command sheet</Text>
+        <Text style={styles.subtitle}>
+          Formula-first tools for rescue, planning, starters, and recipes.
+        </Text>
+      </View>
 
-        <View style={styles.content}>
-          {quickActions.map((action, index) => (
+      <FormulaSheet accented style={styles.nextUp}>
+        <RuleHeader title="Next Up" />
+        <Text style={styles.nextTitle}>{nextUpTitle}</Text>
+        <Text style={styles.nextText}>{nextUpText}</Text>
+        <TouchableOpacity
+          style={styles.nextButton}
+          onPress={() =>
+            latestDiagnosis
+              ? navigation.navigate('ToolsTab', {
+                  screen: 'PhotoRescueResult',
+                  params: { diagnosisId: latestDiagnosis.diagnosis.id },
+                })
+              : navigation.navigate('ToolsTab', { screen: 'PhotoRescue' })
+          }
+        >
+          <Text style={styles.nextButtonText}>
+            {latestDiagnosis ? 'Open Result' : 'Start Rescue'}
+          </Text>
+          <Icon
+            name="arrow-right"
+            size={18}
+            color={theme.colors.modernist.ruleTeal}
+          />
+        </TouchableOpacity>
+      </FormulaSheet>
+
+      <FactStrip
+        items={[
+          {
+            label: 'Starter',
+            value: activeStarter?.name || 'none',
+            icon: 'bacteria-outline',
+            tone: activeStarter ? 'green' : undefined,
+          },
+          {
+            label: 'Recipes',
+            value: `${recipeCount}`,
+            icon: 'book-open-variant',
+          },
+          {
+            label: 'Last Plan',
+            value: latestPlan ? latestPlan.plan.fermentationRisk : 'none',
+            icon: 'calendar-clock',
+            tone: latestPlan ? 'copper' : undefined,
+          },
+          {
+            label: 'Rescue',
+            value: latestDiagnosis ? latestDiagnosis.diagnosis.confidence : 'ready',
+            icon: 'image-search-outline',
+            tone: 'teal',
+          },
+        ]}
+      />
+
+      <View style={styles.actions}>
+        <RuleHeader title="Quick Actions" />
+        <View style={styles.actionGrid}>
+          {actions.map(action => (
             <TouchableOpacity
-              key={index}
-              onPress={action.onPress}
-              activeOpacity={0.7}
+              key={action.title}
+              style={styles.action}
+              onPress={() => handleAction(action)}
+              activeOpacity={0.75}
             >
-              <Card
-                variant="elevated"
-                padding="lg"
-                style={styles.actionCard}
-              >
-                <View style={styles.actionContent}>
-                  <View
-                    style={[
-                      styles.actionIcon,
-                      { backgroundColor: action.color + '20' },
-                    ]}
-                  >
-                    <Icon name={action.icon} size={32} color={action.color} />
-                  </View>
-                  <View style={styles.actionInfo}>
-                    <Text style={styles.actionTitle}>{action.title}</Text>
-                    <Text style={styles.actionDescription}>
-                      {action.description}
-                    </Text>
-                  </View>
-                  <Icon
-                    name="chevron-right"
-                    size={24}
-                    color={theme.colors.text.disabled}
-                  />
-                </View>
-              </Card>
+              <Icon
+                name={action.icon}
+                size={22}
+                color={
+                  action.tone === 'copper'
+                    ? theme.colors.modernist.copper
+                    : action.tone === 'green'
+                      ? theme.colors.modernist.starterGreen
+                      : theme.colors.modernist.ruleTeal
+                }
+              />
+              <Text style={styles.actionTitle}>{action.title}</Text>
+              <Text style={styles.actionLabel}>{action.label}</Text>
             </TouchableOpacity>
           ))}
-
-
-          <View style={styles.socialFooter}>
-            <View style={styles.socialIcons}>
-              {socialLinks.map((link, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.socialButton}
-                  onPress={() => handleSocialPress(link.url)}
-                >
-                  <Icon name={link.icon} size={28} color={link.color} />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
         </View>
-      </ScrollView>
-    </Animated.View>
+      </View>
+    </ModernistScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background.paper,
-  },
   header: {
-    paddingTop: 60,
-    paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerText: {
-    marginLeft: theme.spacing.md,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontFamily: theme.typography.fonts.heading,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary,
-  },
-  headerSubtitle: {
-    fontSize: theme.typography.sizes.lg,
-    fontFamily: theme.typography.fonts.regular,
-    color: theme.colors.text.secondary,
-    marginTop: theme.spacing.sm,
-  },
-  content: {
-    padding: theme.spacing.md,
-  },
-  sectionTitle: {
-    fontSize: theme.typography.sizes['2xl'],
-    fontFamily: theme.typography.fonts.heading,
-    fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md,
-  },
-  actionCard: {
-    marginBottom: theme.spacing.md,
-  },
-  actionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: theme.borderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  actionInfo: {
-    flex: 1,
-    marginLeft: theme.spacing.md,
-  },
-  actionTitle: {
-    fontSize: theme.typography.sizes.lg,
+  kicker: {
     fontFamily: theme.typography.fonts.semibold,
-    fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary,
+    fontSize: theme.typography.sizes.xs,
+    letterSpacing: 0.9,
+    color: theme.colors.modernist.ruleTeal,
     marginBottom: theme.spacing.xs,
   },
-  actionDescription: {
-    fontSize: theme.typography.sizes.sm,
+  title: {
+    fontFamily: theme.typography.fonts.heading,
+    fontSize: 36,
+    lineHeight: 42,
+    color: theme.colors.modernist.ink,
+  },
+  subtitle: {
     fontFamily: theme.typography.fonts.regular,
-    color: theme.colors.text.secondary,
-  },
-  infoCard: {
-    marginTop: theme.spacing.lg,
-  },
-  infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  infoTitle: {
-    fontSize: theme.typography.sizes.lg,
-    fontFamily: theme.typography.fonts.semibold,
-    fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary,
-    marginLeft: theme.spacing.sm,
-  },
-  infoText: {
     fontSize: theme.typography.sizes.base,
+    lineHeight: 23,
+    color: theme.colors.modernist.graphiteMuted,
+    marginTop: theme.spacing.sm,
+  },
+  nextUp: {
+    marginBottom: theme.spacing.lg,
+  },
+  nextTitle: {
+    fontFamily: theme.typography.fonts.heading,
+    fontSize: theme.typography.sizes['2xl'],
+    color: theme.colors.modernist.ink,
+    marginBottom: theme.spacing.xs,
+  },
+  nextText: {
     fontFamily: theme.typography.fonts.regular,
-    color: theme.colors.text.secondary,
-    lineHeight: 24,
+    fontSize: theme.typography.sizes.sm,
+    lineHeight: 20,
+    color: theme.colors.modernist.graphiteMuted,
   },
-  socialFooter: {
-    marginTop: theme.spacing.sm, // Reduced from lg to sm
-    alignItems: 'center',
-    paddingBottom: 0,
-    marginBottom: -theme.spacing.md, // Pull closer to bottom
-  },
-  socialIcons: {
+  nextButton: {
+    marginTop: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.hairline,
     flexDirection: 'row',
-    gap: theme.spacing.lg,
-  },
-  socialButton: {
-    width: 48,
-    height: 48,
-    borderRadius: theme.borderRadius.full,
-    backgroundColor: theme.colors.white,
-    justifyContent: 'center',
     alignItems: 'center',
-    ...theme.shadows.sm,
+    gap: theme.spacing.xs,
+  },
+  nextButtonText: {
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.modernist.ruleTeal,
+  },
+  actions: {
+    marginTop: theme.spacing.xl,
+  },
+  actionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: theme.colors.modernist.hairline,
+  },
+  action: {
+    width: '50%',
+    minHeight: 116,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.modernist.porcelain,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: theme.colors.modernist.hairline,
+  },
+  actionTitle: {
+    fontFamily: theme.typography.fonts.semibold,
+    fontSize: theme.typography.sizes.base,
+    color: theme.colors.modernist.ink,
+    marginTop: theme.spacing.sm,
+  },
+  actionLabel: {
+    fontFamily: theme.typography.fonts.regular,
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.modernist.graphiteMuted,
+    marginTop: 3,
   },
 });

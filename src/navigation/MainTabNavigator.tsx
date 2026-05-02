@@ -31,6 +31,10 @@ import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScr
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
 import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScreen';
+import PhotoRescueScreen from '../screens/PhotoRescue/PhotoRescueScreen';
+import PhotoRescueResultScreen from '../screens/PhotoRescue/PhotoRescueResultScreen';
+import BakePlannerScreen from '../screens/BakePlanner/BakePlannerScreen';
+import BakePlanDetailScreen from '../screens/BakePlanner/BakePlanDetailScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -82,6 +86,26 @@ function ToolsStack() {
         name="ToolsList"
         component={ToolsScreen}
         options={{ title: 'Calculators & Tools' }}
+      />
+      <ToolsStackNav.Screen
+        name="PhotoRescue"
+        component={PhotoRescueScreen}
+        options={{ title: 'Photo Rescue' }}
+      />
+      <ToolsStackNav.Screen
+        name="PhotoRescueResult"
+        component={PhotoRescueResultScreen}
+        options={{ title: 'Diagnosis Result' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakePlanner"
+        component={BakePlannerScreen}
+        options={{ title: 'Bake Day Copilot' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakePlanDetail"
+        component={BakePlanDetailScreen}
+        options={{ title: 'Bake Plan' }}
       />
       <ToolsStackNav.Screen
         name="BakersCalculator"

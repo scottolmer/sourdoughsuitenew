@@ -17,6 +17,7 @@ interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
   helperText?: string;
+  required?: boolean;
   leftIcon?: string;
   rightIcon?: string;
   onRightIconPress?: () => void;

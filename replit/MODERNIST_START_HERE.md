@@ -27,6 +27,10 @@ It should not feel like:
 
 Read these files before editing:
 
+- `replit/LOCAL_MODERNIST_REPLIT_HANDOFF.md`
+- `replit/specs/local-modernist-file-map.md`
+- `replit/specs/local-modernist-screen-spec.md`
+- `replit/specs/local-modernist-replit-prompt.md`
 - `replit/specs/modernist-formula-cards-style-guide.md`
 - `replit/specs/modernist-redesign-plan.md`
 - `replit/specs/modernist-replit-prompts.md`
