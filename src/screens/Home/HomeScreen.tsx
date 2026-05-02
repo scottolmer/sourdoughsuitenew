@@ -449,7 +449,7 @@ export default function HomeScreen() {
     },
     {
       icon: 'calculator-variant',
-      label: 'Formulas',
+      label: "Baker's %",
       cmd: { type: 'tools', target: 'BakersCalculator' },
     },
     {
