@@ -17,7 +17,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.sm,
     borderRadius: theme.borderRadius.md,
     borderWidth: 2,
-    borderColor: theme.colors.border.default,
+    borderColor: theme.colors.border.dark,
     backgroundColor: theme.colors.white,
     gap: theme.spacing.xs,
   },

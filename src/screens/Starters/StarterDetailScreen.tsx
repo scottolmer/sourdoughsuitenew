@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import { theme } from '../../theme';

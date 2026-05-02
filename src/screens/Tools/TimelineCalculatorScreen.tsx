@@ -13,8 +13,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
@@ -29,8 +28,6 @@ interface TimelineStep {
 
 export default function TimelineCalculatorScreen() {
   const [targetTime, setTargetTime] = useState('');
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date());
   const [steps, setSteps] = useState<TimelineStep[]>([
     { name: 'Mix dough', duration: '0.5' },
     { name: 'Bulk fermentation', duration: '4' },
@@ -97,18 +94,6 @@ export default function TimelineCalculatorScreen() {
     ]);
   };
 
-  const handleTimeChange = useCallback((event: any, time?: Date) => {
-    if (Platform.OS === 'android') {
-      setShowTimePicker(false);
-    }
-    if (event.type === 'set' && time) {
-      setSelectedTime(time);
-      const hours = time.getHours().toString().padStart(2, '0');
-      const minutes = time.getMinutes().toString().padStart(2, '0');
-      setTargetTime(`${hours}:${minutes}`);
-    }
-  }, []);
-
   const formatTime = (date: Date | undefined) => {
     if (!date) return '';
     return date.toLocaleTimeString('en-US', {
@@ -151,27 +136,13 @@ export default function TimelineCalculatorScreen() {
           <Card variant="elevated">
             <Text style={styles.sectionTitle}>When do you want to finish?</Text>
             <Text style={styles.label}>Target Finish Time</Text>
-            <TouchableOpacity
-              style={styles.timePickerButton}
-              onPress={() => setShowTimePicker(true)}
-            >
-              <Icon name="clock-outline" size={20} color={theme.colors.primary[600]} />
-              <Text style={styles.timePickerText}>
-                {targetTime || 'Select time'}
-              </Text>
-              <Icon name="chevron-down" size={20} color={theme.colors.text.tertiary} />
-            </TouchableOpacity>
-            <Text style={styles.helperText}>Tap to select your target finish time</Text>
-            {showTimePicker && (
-              <DateTimePicker
-                value={selectedTime}
-                mode="time"
-                is24Hour={false}
-                display="spinner"
-                themeVariant="light"
-                onChange={handleTimeChange}
-              />
-            )}
+            <BasicInput
+              placeholder="HH:MM (e.g. 18:00)"
+              value={targetTime}
+              onChangeText={setTargetTime}
+              containerStyle={styles.timeInput}
+            />
+            <Text style={styles.helperText}>Enter your target finish time (24h format)</Text>
           </Card>
 
           {/* Steps */}
@@ -326,21 +297,8 @@ const styles = StyleSheet.create({
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.xs,
   },
-  timePickerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.border.main,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: theme.spacing.md,
-    minHeight: 48,
-    gap: theme.spacing.sm,
-  },
-  timePickerText: {
-    flex: 1,
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.primary,
+  timeInput: {
+    marginBottom: 0,
   },
   helperText: {
     fontSize: theme.typography.sizes.xs,

@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import type { ProfileStackParamList } from '../../navigation/types';

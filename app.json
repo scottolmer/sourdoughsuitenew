@@ -13,6 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "web": {
+      "bundler": "metro"
+    },
     "ios": {
       "bundleIdentifier": "com.sourdoughsuite.app",
       "buildNumber": "1",

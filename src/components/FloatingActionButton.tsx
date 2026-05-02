@@ -9,7 +9,7 @@ import {
   ViewStyle,
   Animated,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
 
 interface FloatingActionButtonProps {

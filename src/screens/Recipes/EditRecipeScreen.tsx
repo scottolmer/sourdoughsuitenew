@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Picker, { PickerOption } from '../../components/Picker';
