@@ -47,13 +47,17 @@ waitForPort = 3001
 outputType = "console"
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
 localPort = 3001
 externalPort = 3001
+
+[[ports]]
+localPort = 5000
+externalPort = 80
 
 [deployment]
 deploymentTarget = "autoscale"
 run = ["npx", "expo", "start", "--web", "--port", "5000"]
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 120000
