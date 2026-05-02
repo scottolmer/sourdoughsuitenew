@@ -49,6 +49,7 @@ import HelpFaqScreen from '../screens/Profile/HelpFaqScreen';
 import AboutScreen from '../screens/Profile/AboutScreen';
 import PrivacyPolicyScreen from '../screens/Profile/PrivacyPolicyScreen';
 import TermsOfServiceScreen from '../screens/Profile/TermsOfServiceScreen';
+import LearnScreen from '../screens/Learn/LearnScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
@@ -56,11 +57,6 @@ const ToolsStackNav = createNativeStackNavigator<ToolsStackParamList>();
 const StartersStackNav = createNativeStackNavigator<StartersStackParamList>();
 const RecipesStackNav = createNativeStackNavigator<RecipesStackParamList>();
 const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
-
-// Stack navigators for each tab
-import LearnScreen from '../screens/Learn/LearnScreen';
-
-// ...
 
 function HomeStack() {
   return (
