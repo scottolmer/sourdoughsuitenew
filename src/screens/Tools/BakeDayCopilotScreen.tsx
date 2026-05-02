@@ -6,6 +6,7 @@ import {
   Switch,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
@@ -35,6 +36,7 @@ import {
   formatStepDay,
 } from '../../utils/bakeDayTimeline';
 import { bakePlanStorage } from '../../services/bakePlanStorage';
+import { saveRecipe } from '../../services/recipeStorage';
 
 type RouteType = RouteProp<ToolsStackParamList, 'BakeDayCopilot'>;
 
@@ -117,6 +119,9 @@ export default function BakeDayCopilotScreen() {
   const [remindersUnavailable] = useState(Platform.OS === 'web');
   const [bakeHour, setBakeHour] = useState(10);
   const [bakeDayOffset, setBakeDayOffset] = useState(1);
+  const [recipeName, setRecipeName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
 
   const input: BakePlanInput = useMemo(
     () => ({
@@ -218,6 +223,41 @@ export default function BakeDayCopilotScreen() {
   ];
 
   const riskNonLow = plan.fermentationRisk !== 'low';
+
+  const defaultRecipeName = useMemo(() => {
+    const style = scheduleStyle === 'overnight-cold-proof' ? 'Overnight' : 'Same Day';
+    return `${style} Sourdough ${input.hydrationPercent}%`;
+  }, [scheduleStyle, input.hydrationPercent]);
+
+  const handleSaveRecipe = async () => {
+    const name = recipeName.trim() || defaultRecipeName;
+    setIsSaving(true);
+    try {
+      const flourBase = 500 * (parseInt(loafCount, 10) || 1);
+      const hydPct = input.hydrationPercent;
+      const saved = await saveRecipe({
+        name,
+        description: `${SCHEDULE_LABEL[scheduleStyle]} · ${hydPct}% hydration · ${input.loafCount} loaf${input.loafCount !== 1 ? 'es' : ''} · Room ${input.roomTempF}°F`,
+        formula: {
+          flour: flourBase,
+          water: hydPct,
+          salt: 2,
+          starter: 20,
+        },
+        hydration: hydPct,
+        totalWeight: Math.round(flourBase * (1 + hydPct / 100 + 0.02 + 0.2)),
+        instructions: plan.steps
+          .map((s, i) => `${i + 1}. ${s.title}${s.notes ? ': ' + s.notes : ''}`)
+          .join('\n'),
+      });
+      setSavedId(saved.id);
+      Alert.alert('Saved!', `"${name}" has been added to My Recipes.`);
+    } catch {
+      Alert.alert('Error', 'Could not save the recipe. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <ModernistScreen background="paper">
@@ -472,6 +512,32 @@ export default function BakeDayCopilotScreen() {
         </FormulaSheet>
       </View>
 
+      {/* Save to My Recipes */}
+      <View style={styles.section}>
+        <RuleHeader title="SAVE TO MY RECIPES" />
+        <FormulaSheet background="porcelain" padding="lg">
+          <BasicInput
+            label="Recipe name"
+            placeholder={defaultRecipeName}
+            value={recipeName}
+            onChangeText={setRecipeName}
+          />
+          {savedId ? (
+            <View style={styles.savedRow}>
+              <Icon name="check-circle-outline" size={16} color={theme.colors.modernist.starterGreen} />
+              <Text style={styles.savedText}>Saved to My Recipes</Text>
+            </View>
+          ) : null}
+          <Button
+            title={savedId ? 'SAVE AGAIN' : 'SAVE TO MY RECIPES'}
+            onPress={handleSaveRecipe}
+            loading={isSaving}
+            fullWidth
+            leftIcon="bookmark-outline"
+          />
+        </FormulaSheet>
+      </View>
+
       <View style={styles.actions}>
         <Button
           title="REFRESH PLAN"
@@ -654,6 +720,17 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 
+  savedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: theme.spacing.sm,
+  },
+  savedText: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 13,
+    color: theme.colors.modernist.starterGreen,
+  },
   actions: {
     marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
