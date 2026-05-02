@@ -65,7 +65,7 @@ export default function Button({
 
   const iconColor =
     variant === 'outline' || variant === 'ghost'
-      ? theme.colors.primary[600]
+      ? theme.colors.modernist.ink
       : theme.colors.white;
 
   const iconSize = size === 'small' ? 16 : size === 'large' ? 24 : 20;
@@ -113,32 +113,24 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.xl,
   },
 
-  // Variants
+  // Variants — Modernist: sharp radii, hairline borders, no heavy shadows.
   primary: {
-    backgroundColor: '#C88A1D',
-    borderRadius: 22,
-    shadowColor: '#5A3A25',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    elevation: 5,
+    backgroundColor: theme.colors.modernist.copper,
+    borderRadius: 8,
   },
   secondary: {
-    backgroundColor: '#3B2112',
-    borderRadius: 22,
-    ...theme.shadows.md,
-    shadowColor: '#3B2112',
+    backgroundColor: theme.colors.modernist.ink,
+    borderRadius: 8,
   },
   outline: {
-    backgroundColor: theme.colors.white,
-    borderWidth: 1.5,
-    borderColor: '#E3CDAA',
-    borderRadius: 22,
-    ...theme.shadows.sm,
-    shadowColor: '#5A3A25',
+    backgroundColor: theme.colors.modernist.paper,
+    borderWidth: 1,
+    borderColor: theme.colors.modernist.ink,
+    borderRadius: 8,
   },
   ghost: {
     backgroundColor: 'transparent',
+    borderRadius: 8,
   },
 
   // Sizes
@@ -182,11 +174,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base,
   },
   outlineText: {
-    color: theme.colors.primary[500],
+    color: theme.colors.modernist.ink,
     fontSize: theme.typography.sizes.base,
   },
   ghostText: {
-    color: theme.colors.primary[500],
+    color: theme.colors.modernist.ink,
     fontSize: theme.typography.sizes.base,
   },
 

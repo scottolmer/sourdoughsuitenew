@@ -119,6 +119,27 @@ export const colors = {
     borderSoft: '#EADBC2',
   },
 
+  // Modernist palette — precise editorial style for Modernist Formula Cards redesign.
+  // Color ratio target: ~70% paper/white, 20% ink/graphite, 7% teal rules, 3% copper or semantic state.
+  modernist: {
+    paper: '#FFFDF8',
+    paperWarm: '#F7F4EE',
+    porcelain: '#FFFFFF',
+    ink: '#111111',
+    graphite: '#2B2B2B',
+    graphiteMuted: '#66615B',
+    hairline: '#D8D3CB',
+    hairlineDark: '#A9A49B',
+    ruleTeal: '#2E7474',
+    tealSoft: '#E6F0EF',
+    copper: '#B46F2B',
+    copperSoft: '#F2E1D0',
+    starterGreen: '#4D6F3A',
+    waterBlue: '#356F8C',
+    heatRed: '#9B3F2F',
+    warningAmber: '#B87A1D',
+  },
+
   transparent: 'transparent',
   white: '#ffffff',
   black: '#000000',

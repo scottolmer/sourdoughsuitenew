@@ -42,17 +42,17 @@ export default function BasicInput({
         {leftIcon && (
           <Icon
             name={(leftIcon as unknown) as MaterialCommunityIconName}
-            size={20}
-            color={isFocused ? theme.colors.primary[500] : theme.colors.text.tertiary}
+            size={18}
+            color={isFocused ? theme.colors.modernist.ink : theme.colors.modernist.graphiteMuted}
             style={styles.leftIcon}
           />
         )}
         <TextInput
           style={[styles.input, leftIcon && styles.inputWithIcon, style]}
-          placeholderTextColor={theme.colors.text.disabled}
+          placeholderTextColor={theme.colors.modernist.graphiteMuted}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          selectionColor={theme.colors.primary[500]}
+          selectionColor={theme.colors.modernist.copper}
           {...props}
         />
       </View>
@@ -76,25 +76,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#E3CDAA',
-    borderRadius: theme.borderRadius.lg,
-    backgroundColor: '#FFF9ED',
+    borderColor: theme.colors.modernist.hairline,
+    borderRadius: 8,
+    backgroundColor: theme.colors.modernist.porcelain,
     paddingHorizontal: theme.spacing.md,
-    minHeight: 52,
-    shadowColor: '#5A3A25',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    elevation: 1,
+    minHeight: 48,
   },
   inputContainerFocused: {
-    borderColor: '#C88A1D',
-    backgroundColor: '#FFF9ED',
-    shadowColor: '#C88A1D',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
-    elevation: 3,
+    borderColor: theme.colors.modernist.ink,
+    backgroundColor: theme.colors.modernist.porcelain,
   },
   leftIcon: {
     marginRight: theme.spacing.sm,
