@@ -32,6 +32,9 @@ import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScr
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
 import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScreen';
+import PhotoRescueScreen from '../screens/Tools/PhotoRescueScreen';
+import DiagnosisResultScreen from '../screens/Tools/DiagnosisResultScreen';
+import BakeDayCopilotScreen from '../screens/Tools/BakeDayCopilotScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -138,6 +141,21 @@ function ToolsStack() {
         name="FlourBlendCalculator"
         component={FlourBlendCalculatorScreen}
         options={{ title: 'Flour Blend Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="PhotoRescue"
+        component={PhotoRescueScreen}
+        options={{ title: 'Photo Rescue' }}
+      />
+      <ToolsStackNav.Screen
+        name="DiagnosisResult"
+        component={DiagnosisResultScreen}
+        options={{ title: 'Diagnosis Result' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakeDayCopilot"
+        component={BakeDayCopilotScreen}
+        options={{ title: 'Bake Day Copilot' }}
       />
     </ToolsStackNav.Navigator>
   );

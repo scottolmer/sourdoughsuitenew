@@ -25,6 +25,15 @@ export type ToolsStackParamList = {
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
   FlourBlendCalculator: undefined;
+  PhotoRescue: undefined;
+  DiagnosisResult: {
+    diagnosis: import('../types/photoRescue').PhotoRescueDiagnosis;
+    imageUri?: string;
+    isQuickRescue?: boolean;
+  };
+  BakeDayCopilot: {
+    diagnosis?: import('../types/photoRescue').PhotoRescueDiagnosis;
+  };
 };
 
 export type StartersStackParamList = {

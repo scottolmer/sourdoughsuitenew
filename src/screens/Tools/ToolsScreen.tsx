@@ -11,21 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
 import type { MaterialCommunityIconName } from '../../types/icons';
-
-type ToolsStackParamList = {
-  ToolsList: undefined;
-  BakersCalculator: undefined;
-  TimelineCalculator: undefined;
-  HydrationCalculator: undefined;
-  TemperatureCalculator: undefined;
-  ScalingCalculator: undefined;
-  LevainBuilder: undefined;
-  StarterPercentageCalculator: undefined;
-  PrefermentCalculator: undefined;
-  DoughWeightCalculator: undefined;
-  RecipeRescueCalculator: undefined;
-  FlourBlendCalculator: undefined;
-};
+import type { ToolsStackParamList } from '../../navigation/types';
+import { useHaptics } from '../../hooks/useHaptics';
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
 
@@ -56,20 +43,30 @@ function ToolCard({ icon, title, description, color, onPress }: ToolCardProps) {
   );
 }
 
-import { useHaptics } from '../../hooks/useHaptics';
-
-// ... (existing helper types)
-
 export default function ToolsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const haptics = useHaptics();
 
-  const handleToolPress = (route: keyof ToolsStackParamList) => {
+  const handleToolPress = (route: Extract<keyof ToolsStackParamList, 'BakersCalculator' | 'HydrationCalculator' | 'TimelineCalculator' | 'ScalingCalculator' | 'TemperatureCalculator' | 'LevainBuilder' | 'StarterPercentageCalculator' | 'PrefermentCalculator' | 'DoughWeightCalculator' | 'RecipeRescueCalculator' | 'FlourBlendCalculator' | 'PhotoRescue'>) => {
     haptics.selection();
     navigation.navigate(route);
   };
 
   const tools: { icon: MaterialCommunityIconName; title: string; description: string; color: string; onPress: () => void }[] = [
+    {
+      icon: 'camera-iris',
+      title: 'Photo Rescue',
+      description: 'Diagnose your dough from a photo',
+      color: theme.colors.bench.heatRed,
+      onPress: () => handleToolPress('PhotoRescue'),
+    },
+    {
+      icon: 'calendar-clock',
+      title: 'Bake Day Copilot',
+      description: 'Generate your personalized bake timeline',
+      color: theme.colors.bench.copper,
+      onPress: () => { haptics.selection(); navigation.navigate('BakeDayCopilot', {}); },
+    },
     {
       icon: 'clock-outline',
       title: 'Timeline Calculator',
