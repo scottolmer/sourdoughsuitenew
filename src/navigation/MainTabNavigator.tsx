@@ -72,11 +72,46 @@ const modernistHeaderOptions = {
 const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
 const safeTopStyle = { flex: 1, backgroundColor: theme.colors.modernist.paper } as const;
-const withSafeTop = (Comp: React.ComponentType<any>) => (props: any) => (
-  <SafeAreaView edges={['top']} style={safeTopStyle}>
-    <Comp {...props} />
-  </SafeAreaView>
-);
+const withSafeTop = (Comp: React.ComponentType<any>) => {
+  const Wrapped = (props: any) => (
+    <SafeAreaView edges={['top']} style={safeTopStyle}>
+      <Comp {...props} />
+    </SafeAreaView>
+  );
+  Wrapped.displayName = `SafeTop(${Comp.displayName || Comp.name || 'Component'})`;
+  return Wrapped;
+};
+
+// Pre-create all wrapped components at module scope so their identity
+// stays stable across renders — inline calls create new types each render
+// which causes React Navigation to unmount/remount screens on mobile.
+const SafeLearnScreen = withSafeTop(LearnScreen);
+const SafeToolsScreen = withSafeTop(ToolsScreen);
+const SafeBakersCalculatorScreen = withSafeTop(BakersCalculatorScreen);
+const SafeHydrationCalculatorScreen = withSafeTop(HydrationCalculatorScreen);
+const SafeTimelineCalculatorScreen = withSafeTop(TimelineCalculatorScreen);
+const SafeScalingCalculatorScreen = withSafeTop(ScalingCalculatorScreen);
+const SafeTemperatureCalculatorScreen = withSafeTop(TemperatureCalculatorScreen);
+const SafeLevainBuilderScreen = withSafeTop(LevainBuilderScreen);
+const SafeStarterPercentageCalculatorScreen = withSafeTop(StarterPercentageCalculatorScreen);
+const SafePrefermentCalculatorScreen = withSafeTop(PrefermentCalculatorScreen);
+const SafeDoughWeightCalculatorScreen = withSafeTop(DoughWeightCalculatorScreen);
+const SafeRecipeRescueCalculatorScreen = withSafeTop(RecipeRescueCalculatorScreen);
+const SafeFlourBlendCalculatorScreen = withSafeTop(FlourBlendCalculatorScreen);
+const SafeStartersScreen = withSafeTop(StartersScreen);
+const SafeStarterDetailScreen = withSafeTop(StarterDetailScreen);
+const SafeAddStarterScreen = withSafeTop(AddStarterScreen);
+const SafeEditStarterScreen = withSafeTop(EditStarterScreen);
+const SafeAddFeedingScreen = withSafeTop(AddFeedingScreen);
+const SafeRecipesScreen = withSafeTop(RecipesScreen);
+const SafeRecipeDetailScreen = withSafeTop(RecipeDetailScreen);
+const SafeAddRecipeScreen = withSafeTop(AddRecipeScreen);
+const SafeEditRecipeScreen = withSafeTop(EditRecipeScreen);
+const SafeProfileScreen = withSafeTop(ProfileScreen);
+const SafeHelpFaqScreen = withSafeTop(HelpFaqScreen);
+const SafeAboutScreen = withSafeTop(AboutScreen);
+const SafePrivacyPolicyScreen = withSafeTop(PrivacyPolicyScreen);
+const SafeTermsOfServiceScreen = withSafeTop(TermsOfServiceScreen);
 
 function HomeStack() {
   return (
@@ -88,7 +123,7 @@ function HomeStack() {
       />
       <HomeStackNav.Screen
         name="Learn"
-        component={withSafeTop(LearnScreen)}
+        component={SafeLearnScreen}
         options={{ title: 'Sourdough Academy' }}
       />
     </HomeStackNav.Navigator>
@@ -100,62 +135,62 @@ function ToolsStack() {
     <ToolsStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <ToolsStackNav.Screen
         name="ToolsList"
-        component={withSafeTop(ToolsScreen)}
+        component={SafeToolsScreen}
         options={{ title: 'Calculators & Tools' }}
       />
       <ToolsStackNav.Screen
         name="BakersCalculator"
-        component={withSafeTop(BakersCalculatorScreen)}
+        component={SafeBakersCalculatorScreen}
         options={{ title: "Baker's Percentage" }}
       />
       <ToolsStackNav.Screen
         name="HydrationCalculator"
-        component={withSafeTop(HydrationCalculatorScreen)}
+        component={SafeHydrationCalculatorScreen}
         options={{ title: 'Hydration Calculator' }}
       />
       <ToolsStackNav.Screen
         name="TimelineCalculator"
-        component={withSafeTop(TimelineCalculatorScreen)}
+        component={SafeTimelineCalculatorScreen}
         options={{ title: 'Timeline Calculator' }}
       />
       <ToolsStackNav.Screen
         name="ScalingCalculator"
-        component={withSafeTop(ScalingCalculatorScreen)}
+        component={SafeScalingCalculatorScreen}
         options={{ title: 'Recipe Scaler' }}
       />
       <ToolsStackNav.Screen
         name="TemperatureCalculator"
-        component={withSafeTop(TemperatureCalculatorScreen)}
+        component={SafeTemperatureCalculatorScreen}
         options={{ title: 'Temperature Calculator' }}
       />
       <ToolsStackNav.Screen
         name="LevainBuilder"
-        component={withSafeTop(LevainBuilderScreen)}
+        component={SafeLevainBuilderScreen}
         options={{ title: 'Levain Builder' }}
       />
       <ToolsStackNav.Screen
         name="StarterPercentageCalculator"
-        component={withSafeTop(StarterPercentageCalculatorScreen)}
+        component={SafeStarterPercentageCalculatorScreen}
         options={{ title: 'Starter Percentage Calculator' }}
       />
       <ToolsStackNav.Screen
         name="PrefermentCalculator"
-        component={withSafeTop(PrefermentCalculatorScreen)}
+        component={SafePrefermentCalculatorScreen}
         options={{ title: 'Preferment Calculator' }}
       />
       <ToolsStackNav.Screen
         name="DoughWeightCalculator"
-        component={withSafeTop(DoughWeightCalculatorScreen)}
+        component={SafeDoughWeightCalculatorScreen}
         options={{ title: 'Dough Weight Calculator' }}
       />
       <ToolsStackNav.Screen
         name="RecipeRescueCalculator"
-        component={withSafeTop(RecipeRescueCalculatorScreen)}
+        component={SafeRecipeRescueCalculatorScreen}
         options={{ title: 'Recipe Rescue Calculator' }}
       />
       <ToolsStackNav.Screen
         name="FlourBlendCalculator"
-        component={withSafeTop(FlourBlendCalculatorScreen)}
+        component={SafeFlourBlendCalculatorScreen}
         options={{ title: 'Flour Blend Calculator' }}
       />
       <ToolsStackNav.Screen
@@ -182,27 +217,27 @@ function StartersStack() {
     <StartersStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <StartersStackNav.Screen
         name="StartersList"
-        component={withSafeTop(StartersScreen)}
+        component={SafeStartersScreen}
         options={{ title: 'My Starters' }}
       />
       <StartersStackNav.Screen
         name="StarterDetail"
-        component={withSafeTop(StarterDetailScreen)}
+        component={SafeStarterDetailScreen}
         options={{ title: 'Starter Details' }}
       />
       <StartersStackNav.Screen
         name="AddStarter"
-        component={withSafeTop(AddStarterScreen)}
+        component={SafeAddStarterScreen}
         options={{ title: 'Add Starter' }}
       />
       <StartersStackNav.Screen
         name="EditStarter"
-        component={withSafeTop(EditStarterScreen)}
+        component={SafeEditStarterScreen}
         options={{ title: 'Edit Starter' }}
       />
       <StartersStackNav.Screen
         name="AddFeeding"
-        component={withSafeTop(AddFeedingScreen)}
+        component={SafeAddFeedingScreen}
         options={{ title: 'Log Feeding' }}
       />
     </StartersStackNav.Navigator>
@@ -214,22 +249,22 @@ function RecipesStack() {
     <RecipesStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <RecipesStackNav.Screen
         name="Recipes"
-        component={withSafeTop(RecipesScreen)}
+        component={SafeRecipesScreen}
         options={{ title: 'Recipes' }}
       />
       <RecipesStackNav.Screen
         name="RecipeDetail"
-        component={withSafeTop(RecipeDetailScreen)}
+        component={SafeRecipeDetailScreen}
         options={{ title: 'Recipe Details' }}
       />
       <RecipesStackNav.Screen
         name="AddRecipe"
-        component={withSafeTop(AddRecipeScreen)}
+        component={SafeAddRecipeScreen}
         options={{ title: 'Add Recipe' }}
       />
       <RecipesStackNav.Screen
         name="EditRecipe"
-        component={withSafeTop(EditRecipeScreen)}
+        component={SafeEditRecipeScreen}
         options={{ title: 'Edit Recipe' }}
       />
     </RecipesStackNav.Navigator>
@@ -241,27 +276,27 @@ function ProfileStack() {
     <ProfileStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <ProfileStackNav.Screen
         name="Profile"
-        component={withSafeTop(ProfileScreen)}
+        component={SafeProfileScreen}
         options={{ title: 'Profile' }}
       />
       <ProfileStackNav.Screen
         name="HelpFaq"
-        component={withSafeTop(HelpFaqScreen)}
+        component={SafeHelpFaqScreen}
         options={{ title: 'Help & FAQ' }}
       />
       <ProfileStackNav.Screen
         name="About"
-        component={withSafeTop(AboutScreen)}
+        component={SafeAboutScreen}
         options={{ title: 'About' }}
       />
       <ProfileStackNav.Screen
         name="PrivacyPolicy"
-        component={withSafeTop(PrivacyPolicyScreen)}
+        component={SafePrivacyPolicyScreen}
         options={{ title: 'Privacy Policy' }}
       />
       <ProfileStackNav.Screen
         name="TermsOfService"
-        component={withSafeTop(TermsOfServiceScreen)}
+        component={SafeTermsOfServiceScreen}
         options={{ title: 'Terms of Service' }}
       />
     </ProfileStackNav.Navigator>
