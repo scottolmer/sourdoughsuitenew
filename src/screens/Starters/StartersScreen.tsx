@@ -124,42 +124,7 @@ export default function StartersScreen() {
     );
   }
 
-  if (!starters || starters.length === 0) {
-    return (
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.emptyContent}
-        refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
-        }
-      >
-        <View style={styles.titleBlock}>
-          <Text style={styles.pageTitle}>Starters</Text>
-          <Text style={styles.pageSubtitle}>Track feedings, health, and activity.</Text>
-        </View>
-        <BenchCard variant="outlined" padding="xl">
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIconRing}>
-              <Icon
-                name="grain"
-                size={40}
-                color={theme.colors.primary[600]}
-              />
-            </View>
-            <Text style={styles.emptyStateTitle}>Your starters live here.</Text>
-            <Text style={styles.emptyStateText}>
-              Add your first to get started. Track feedings, monitor health, and watch your culture thrive.
-            </Text>
-            <Button
-              title="Add Starter"
-              onPress={handleAddStarter}
-              style={styles.addButton}
-            />
-          </View>
-        </BenchCard>
-      </ScrollView>
-    );
-  }
+  const isEmpty = !starters || starters.length === 0;
 
   return (
     <View style={styles.container}>
@@ -169,6 +134,7 @@ export default function StartersScreen() {
       </View>
       <ScrollView
         style={styles.scrollContent}
+        contentContainerStyle={isEmpty ? styles.emptyContent : undefined}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -178,23 +144,48 @@ export default function StartersScreen() {
           />
         }
       >
-        <View style={styles.startersList}>
-          {starters.map((starter) => (
-            <StarterCard
-              key={starter.id}
-              starter={starter}
-              onPress={() => handleStarterPress(starter.id)}
-              onDelete={() => handleDeleteStarter(starter)}
-            />
-          ))}
-        </View>
+        {isEmpty ? (
+          <BenchCard variant="outlined" padding="xl">
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconRing}>
+                <Icon
+                  name="grain"
+                  size={40}
+                  color={theme.colors.primary[600]}
+                />
+              </View>
+              <Text style={styles.emptyStateTitle}>Your starters live here.</Text>
+              <Text style={styles.emptyStateText}>
+                Add your first to get started. Track feedings, monitor health, and watch your culture thrive.
+              </Text>
+              <Button
+                title="Add Starter"
+                onPress={handleAddStarter}
+                style={styles.addButton}
+              />
+            </View>
+          </BenchCard>
+        ) : (
+          <View style={styles.startersList}>
+            {starters.map((starter) => (
+              <StarterCard
+                key={starter.id}
+                starter={starter}
+                onPress={() => handleStarterPress(starter.id)}
+                onDelete={() => handleDeleteStarter(starter)}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
 
-      <FloatingActionButton
-        icon="plus"
-        onPress={handleAddStarter}
-        color={theme.colors.primary[600]}
-      />
+      {!isEmpty && (
+        <FloatingActionButton
+          icon="plus"
+          onPress={handleAddStarter}
+          color={theme.colors.primary[600]}
+        />
+      )}
     </View>
   );
 }
