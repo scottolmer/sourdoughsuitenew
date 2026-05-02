@@ -17,7 +17,6 @@ import type {
   ToolsStackParamList,
   StartersStackParamList,
   RecipesStackParamList,
-  ProfileStackParamList,
   MainTabParamList,
 } from './types';
 
@@ -71,7 +70,6 @@ const modernistHeaderOptions = {
   },
   headerShadowVisible: false,
 };
-const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
 const safeTopStyle = { flex: 1, backgroundColor: theme.colors.modernist.paper } as const;
 const safeTopInner = { flex: 1, paddingTop: theme.spacing.xl } as const;
@@ -130,6 +128,31 @@ function HomeStack() {
         name="Learn"
         component={SafeLearnScreen}
         options={{ title: 'Sourdough Academy' }}
+      />
+      <HomeStackNav.Screen
+        name="Profile"
+        component={SafeProfileScreen}
+        options={{ title: 'Profile' }}
+      />
+      <HomeStackNav.Screen
+        name="HelpFaq"
+        component={SafeHelpFaqScreen}
+        options={{ title: 'Help & FAQ' }}
+      />
+      <HomeStackNav.Screen
+        name="About"
+        component={SafeAboutScreen}
+        options={{ title: 'About' }}
+      />
+      <HomeStackNav.Screen
+        name="PrivacyPolicy"
+        component={SafePrivacyPolicyScreen}
+        options={{ title: 'Privacy Policy' }}
+      />
+      <HomeStackNav.Screen
+        name="TermsOfService"
+        component={SafeTermsOfServiceScreen}
+        options={{ title: 'Terms of Service' }}
       />
     </HomeStackNav.Navigator>
   );
@@ -276,37 +299,6 @@ function RecipesStack() {
   );
 }
 
-function ProfileStack() {
-  return (
-    <ProfileStackNav.Navigator screenOptions={modernistHeaderOptions}>
-      <ProfileStackNav.Screen
-        name="Profile"
-        component={SafeProfileScreen}
-        options={{ title: 'Profile' }}
-      />
-      <ProfileStackNav.Screen
-        name="HelpFaq"
-        component={SafeHelpFaqScreen}
-        options={{ title: 'Help & FAQ' }}
-      />
-      <ProfileStackNav.Screen
-        name="About"
-        component={SafeAboutScreen}
-        options={{ title: 'About' }}
-      />
-      <ProfileStackNav.Screen
-        name="PrivacyPolicy"
-        component={SafePrivacyPolicyScreen}
-        options={{ title: 'Privacy Policy' }}
-      />
-      <ProfileStackNav.Screen
-        name="TermsOfService"
-        component={SafeTermsOfServiceScreen}
-        options={{ title: 'Terms of Service' }}
-      />
-    </ProfileStackNav.Navigator>
-  );
-}
 
 export default function MainTabNavigator() {
   return (
@@ -328,9 +320,6 @@ export default function MainTabNavigator() {
               break;
             case 'RecipesTab':
               iconName = focused ? 'book-open-variant' : 'book-open-outline';
-              break;
-            case 'ProfileTab':
-              iconName = focused ? 'account' : 'account-outline';
               break;
             default:
               iconName = 'circle';
@@ -402,19 +391,6 @@ export default function MainTabNavigator() {
         name="RecipesTab"
         component={RecipesStack}
         options={{ title: 'Recipes' }}
-        listeners={({ navigation, route }) => ({
-          tabPress: (e) => {
-            e.preventDefault();
-            navigation.dispatch(
-              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
-            );
-          },
-        })}
-      />
-      <Tab.Screen
-        name="ProfileTab"
-        component={ProfileStack}
-        options={{ title: 'Profile' }}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             e.preventDefault();

@@ -10,6 +10,11 @@ import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/n
 export type HomeStackParamList = {
   Home: undefined;
   Learn: undefined;
+  Profile: undefined;
+  HelpFaq: undefined;
+  About: undefined;
+  PrivacyPolicy: undefined;
+  TermsOfService: undefined;
 };
 
 export type ToolsStackParamList = {
@@ -86,7 +91,6 @@ export type MainTabParamList = {
   ToolsTab: NavigatorScreenParams<ToolsStackParamList> | undefined;
   StartersTab: undefined;
   RecipesTab: undefined;
-  ProfileTab: undefined;
 };
 
 // Root stack

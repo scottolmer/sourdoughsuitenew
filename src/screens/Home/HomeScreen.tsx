@@ -481,12 +481,6 @@ export default function HomeScreen() {
     },
   ];
 
-  const socialLinks: { icon: MaterialCommunityIconName; url: string }[] = [
-    { icon: 'youtube', url: 'https://youtube.com/@SourdoughSuite' },
-    { icon: 'instagram', url: 'https://instagram.com/sourdoughsuite' },
-    { icon: 'facebook', url: 'https://facebook.com/sourdoughsuite' },
-    { icon: 'music-note-eighth', url: 'https://tiktok.com/@sourdoughsuite' },
-  ];
 
   const showRecent = !!recentRecipe || !!recentDiagnosis;
 
@@ -494,10 +488,27 @@ export default function HomeScreen() {
     <ModernistScreen background="paper">
       {/* Title block */}
       <View style={styles.titleBlock}>
-        <Text style={styles.title}>Baker's Dashboard</Text>
-        <Text style={styles.subtitle}>
-          Formula-first tools for rescue, planning, starters, and recipes.
-        </Text>
+        <View style={styles.titleRow}>
+          <View style={styles.titleText}>
+            <Text style={styles.title}>Baker's Dashboard</Text>
+            <Text style={styles.subtitle}>
+              Formula-first tools for rescue, planning, starters, and recipes.
+            </Text>
+          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Profile and settings"
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('Profile')}
+            style={styles.profileIconBtn}
+          >
+            <Icon
+              name="account-circle-outline"
+              size={28}
+              color={theme.colors.modernist.graphite}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* NEXT UP */}
@@ -658,25 +669,23 @@ export default function HomeScreen() {
 
       {/* Social footer */}
       <View style={styles.socialFooter}>
-        {socialLinks.map((link, idx) => (
-          <TouchableOpacity
-            key={idx}
-            accessibilityRole="link"
-            accessibilityLabel={`Follow on ${link.icon}`}
-            onPress={() =>
-              Linking.openURL(link.url).catch((err) =>
-                console.error("Couldn't load page", err)
-              )
-            }
-            style={styles.socialButton}
-          >
-            <Icon
-              name={link.icon}
-              size={18}
-              color={theme.colors.modernist.graphiteMuted}
-            />
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity
+          accessibilityRole="link"
+          accessibilityLabel="Follow @scottolmer on X"
+          onPress={() =>
+            Linking.openURL('https://x.com/scottolmer').catch((err) =>
+              console.error("Couldn't load page", err)
+            )
+          }
+          style={styles.socialButton}
+        >
+          <Icon
+            name="twitter"
+            size={18}
+            color={theme.colors.modernist.graphiteMuted}
+          />
+          <Text style={styles.socialLabel}>@scottolmer</Text>
+        </TouchableOpacity>
       </View>
     </ModernistScreen>
   );
@@ -686,6 +695,19 @@ const styles = StyleSheet.create({
   titleBlock: {
     marginTop: theme.spacing.xl,
     marginBottom: theme.spacing.lg,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  titleText: {
+    flex: 1,
+    paddingRight: theme.spacing.sm,
+  },
+  profileIconBtn: {
+    paddingTop: 4,
+    paddingLeft: theme.spacing.sm,
   },
   kicker: {
     fontFamily: theme.typography.roles.bodySemibold,
@@ -832,16 +854,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing.lg,
     marginTop: theme.spacing.xl,
     paddingTop: theme.spacing.lg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: theme.colors.modernist.hairline,
   },
   socialButton: {
-    width: 44,
-    height: 44,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  socialLabel: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 13,
+    color: theme.colors.modernist.graphiteMuted,
   },
 });

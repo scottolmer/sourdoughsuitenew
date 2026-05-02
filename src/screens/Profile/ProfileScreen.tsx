@@ -9,9 +9,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
-import type { ProfileStackParamList } from '../../navigation/types';
+import type { HomeStackParamList } from '../../navigation/types';
 
-type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
+type Props = NativeStackScreenProps<HomeStackParamList, 'Profile'>;
 
 export default function ProfileScreen({ navigation }: Props) {
   const handleSocialPress = (url: string) => {
