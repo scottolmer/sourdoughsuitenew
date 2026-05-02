@@ -166,6 +166,7 @@ export default function HomeScreen() {
   const { width: windowWidth } = useWindowDimensions();
   const [soonestStarter, setSoonestStarter] = useState<Starter | null>(null);
   const [activeStarters, setActiveStarters] = useState<Starter[]>([]);
+  const [totalStarterCount, setTotalStarterCount] = useState(0);
   const [recentRecipe, setRecentRecipe] = useState<Recipe | null>(null);
   const [recipeCount, setRecipeCount] = useState(0);
   const [activePlan, setActivePlan] = useState<SavedBakePlanRecord | null>(
@@ -197,6 +198,7 @@ export default function HomeScreen() {
 
         const active = starters.filter((s) => s.isActive);
         setActiveStarters(active);
+        setTotalStarterCount(starters.length);
 
         const dueSorted = active
           .filter((s) => s.nextFeedingDue)
@@ -350,6 +352,16 @@ export default function HomeScreen() {
         cmd: { type: 'tab', target: 'StartersTab' } as NavCmd,
       };
     }
+    if (totalStarterCount > 0) {
+      return {
+        eyebrow: 'YOUR STARTERS',
+        title: 'View your starters',
+        meta: 'See your starters and log a feeding.',
+        tone: 'muted' as StatusTone,
+        actionLabel: 'Open Starters',
+        cmd: { type: 'tab', target: 'StartersTab' } as NavCmd,
+      };
+    }
     return {
       eyebrow: 'GET STARTED',
       title: 'Add your first starter',
@@ -407,7 +419,7 @@ export default function HomeScreen() {
         tone: starterTone,
         onPress: () =>
           goto(
-            activeStarters.length === 0
+            totalStarterCount === 0
               ? { type: 'starters', target: 'AddStarter' }
               : { type: 'tab', target: 'StartersTab' }
           ),
