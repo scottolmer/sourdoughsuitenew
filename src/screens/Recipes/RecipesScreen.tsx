@@ -149,6 +149,10 @@ export default function RecipesScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleBlock}>
+        <Text style={styles.pageTitle}>Recipes</Text>
+        <Text style={styles.pageSubtitle}>Your saved formulas and bakes.</Text>
+      </View>
       <ScrollView
         contentContainerStyle={recipes.length === 0 ? styles.emptyContent : styles.content}
         refreshControl={
@@ -195,6 +199,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.default,
+  },
+  titleBlock: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.default,
+  },
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
   },
   content: {
     padding: theme.spacing.lg,

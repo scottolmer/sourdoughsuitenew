@@ -133,6 +133,10 @@ export default function StartersScreen() {
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
       >
+        <View style={styles.titleBlock}>
+          <Text style={styles.pageTitle}>Starters</Text>
+          <Text style={styles.pageSubtitle}>Track feedings, health, and activity.</Text>
+        </View>
         <BenchCard variant="outlined" padding="xl">
           <View style={styles.emptyState}>
             <View style={styles.emptyIconRing}>
@@ -159,6 +163,10 @@ export default function StartersScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleBlock}>
+        <Text style={styles.pageTitle}>Starters</Text>
+        <Text style={styles.pageSubtitle}>Track feedings, health, and activity.</Text>
+      </View>
       <ScrollView
         style={styles.scrollContent}
         refreshControl={
@@ -195,6 +203,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background.default,
+  },
+  titleBlock: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.default,
+  },
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
   },
   centerContainer: {
     flex: 1,
