@@ -18,7 +18,7 @@ import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/Button';
-import Card from '../../components/Card';
+import BenchCard from '../../components/BenchCard';
 import StarterCard from '../../components/StarterCard';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import { SkeletonList } from '../../components/SkeletonLoader';
@@ -43,7 +43,6 @@ export default function StartersScreen() {
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
 
-  // Fetch starters using React Query
   const {
     data: starters = [],
     isLoading,
@@ -55,7 +54,6 @@ export default function StartersScreen() {
     queryFn: () => starterStorage.getAll(),
   });
 
-  // Delete starter mutation
   const deleteMutation = useMutation({
     mutationFn: async (starterId: number) => {
       await feedingLogStorage.deleteByStarterId(starterId);
@@ -66,7 +64,6 @@ export default function StartersScreen() {
     },
   });
 
-  // Initialize notifications lazily (after screen is interactive)
   useEffect(() => {
     if (notificationsInitialized.current) return;
 
@@ -106,7 +103,6 @@ export default function StartersScreen() {
     );
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -115,11 +111,10 @@ export default function StartersScreen() {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <View style={styles.centerContainer}>
-        <Icon name="alert-circle" size={64} color={theme.colors.error.main} />
+        <Icon name="alert-circle" size={64} color={theme.colors.bench.heatRed} />
         <Text style={styles.errorTitle}>Failed to load starters</Text>
         <Text style={styles.errorText}>
           Please check your connection and try again
@@ -129,52 +124,49 @@ export default function StartersScreen() {
     );
   }
 
-  // Empty state
   if (!starters || starters.length === 0) {
     return (
       <ScrollView
         style={styles.container}
+        contentContainerStyle={styles.emptyContent}
         refreshControl={
           <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
       >
-
-        <View style={styles.content}>
-          <Card variant="outlined">
-            <View style={styles.emptyState}>
+        <BenchCard variant="outlined" padding="xl">
+          <View style={styles.emptyState}>
+            <View style={styles.emptyIconRing}>
               <Icon
-                name="bacteria"
-                size={64}
-                color={theme.colors.text.disabled}
-              />
-              <Text style={styles.emptyStateTitle}>Your starter collection awaits!</Text>
-              <Text style={styles.emptyStateText}>
-                Create your first bubbly friend and start your sourdough journey. Track feedings, monitor health, and watch your starter thrive 🍞
-              </Text>
-              <Button
-                title="Add Starter"
-                onPress={handleAddStarter}
-                style={styles.addButton}
+                name="grain"
+                size={40}
+                color={theme.colors.bench.copper}
               />
             </View>
-          </Card>
-        </View>
+            <Text style={styles.emptyStateTitle}>Your starters live here.</Text>
+            <Text style={styles.emptyStateText}>
+              Add your first to get started. Track feedings, monitor health, and watch your culture thrive.
+            </Text>
+            <Button
+              title="Add Starter"
+              onPress={handleAddStarter}
+              style={styles.addButton}
+            />
+          </View>
+        </BenchCard>
       </ScrollView>
     );
   }
 
-  // List of starters
   return (
     <View style={styles.container}>
-
       <ScrollView
         style={styles.scrollContent}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
             onRefresh={refetch}
-            colors={[theme.colors.primary[500]]}
-            tintColor={theme.colors.primary[500]}
+            colors={[theme.colors.bench.copper]}
+            tintColor={theme.colors.bench.copper}
           />
         }
       >
@@ -193,7 +185,7 @@ export default function StartersScreen() {
       <FloatingActionButton
         icon="plus"
         onPress={handleAddStarter}
-        color={theme.colors.primary[500]}
+        color={theme.colors.bench.copper}
       />
     </View>
   );
@@ -211,64 +203,51 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
     padding: theme.spacing.xl,
   },
-  header: {
-    padding: theme.spacing.xl,
-    backgroundColor: theme.colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: theme.typography.sizes['2xl'],
-    fontWeight: theme.typography.weights.bold as any,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
-  },
-  headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.secondary,
-  },
   scrollContent: {
     flex: 1,
   },
-  content: {
+  emptyContent: {
     padding: theme.spacing.xl,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   startersList: {
     padding: theme.spacing.lg,
   },
   emptyState: {
     alignItems: 'center',
-    padding: theme.spacing['3xl'],
+    paddingVertical: theme.spacing['2xl'],
+  },
+  emptyIconRing: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: theme.colors.background.subtle,
+    borderWidth: 1,
+    borderColor: theme.colors.bench.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing.lg,
   },
   emptyStateTitle: {
-    fontSize: theme.typography.sizes['2xl'],
+    fontSize: theme.typography.sizes.xl,
     fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold as any,
-    color: theme.colors.text.primary,
-    marginTop: theme.spacing.lg,
+    color: theme.colors.bench.crust,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   emptyStateText: {
-    fontSize: theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: theme.spacing.xl,
-    lineHeight: 28,
+    lineHeight: 24,
+    maxWidth: 280,
   },
   addButton: {
-    minWidth: 200,
-  },
-  loadingText: {
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.secondary,
-    marginTop: theme.spacing.md,
+    minWidth: 180,
   },
   errorTitle: {
     fontSize: theme.typography.sizes.xl,
