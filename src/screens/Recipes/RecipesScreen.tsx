@@ -170,7 +170,7 @@ export default function RecipesScreen() {
                   color={theme.colors.primary[600]}
                 />
               </View>
-              <Text style={styles.emptyStateTitle}>Your formula book is ready.</Text>
+              <Text style={styles.emptyStateTitle}>Your recipe book is ready.</Text>
               <Text style={styles.emptyStateText}>
                 Save your first recipe here. Build from scratch or save directly from any calculator.
               </Text>
