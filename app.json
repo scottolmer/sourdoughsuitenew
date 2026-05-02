@@ -9,9 +9,9 @@
     "entryPoint": "./index.js",
     "icon": "./assets/app-icon.png",
     "splash": {
-      "image": "./assets/app-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#14B8A6"
     },
     "web": {
       "bundler": "metro"
@@ -29,7 +29,7 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/app-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#14B8A6"
       },
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
