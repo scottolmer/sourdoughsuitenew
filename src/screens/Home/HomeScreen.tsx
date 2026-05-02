@@ -482,8 +482,7 @@ export default function HomeScreen() {
     <ModernistScreen background="paper">
       {/* Title block */}
       <View style={styles.titleBlock}>
-        <Text style={styles.kicker}>SOURDOUGH SUITE</Text>
-        <Text style={styles.title}>Bench command sheet</Text>
+        <Text style={styles.title}>Baker's Dashboard</Text>
         <Text style={styles.subtitle}>
           Formula-first tools for rescue, planning, starters, and recipes.
         </Text>
