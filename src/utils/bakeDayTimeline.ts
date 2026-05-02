@@ -230,6 +230,24 @@ export function generateBakePlan(input: BakePlanInput): BakePlan {
   };
 }
 
+/**
+ * Re-anchors every step in a plan so the first step starts RIGHT NOW,
+ * preserving all relative durations between steps.
+ */
+export function shiftPlanToNow(plan: BakePlan): BakePlan {
+  if (plan.steps.length === 0) return plan;
+  const sorted = [...plan.steps].sort(
+    (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime()
+  );
+  const firstStepMs = new Date(sorted[0].startsAt).getTime();
+  const deltaMs = Date.now() - firstStepMs;
+  const shiftedSteps = plan.steps.map((step) => ({
+    ...step,
+    startsAt: new Date(new Date(step.startsAt).getTime() + deltaMs).toISOString(),
+  }));
+  return { ...plan, steps: shiftedSteps };
+}
+
 export const STEP_ICON_MAP: Record<BakeStepType, MaterialCommunityIconName> = {
   'feed-starter': 'bacteria',
   'mix': 'blender',

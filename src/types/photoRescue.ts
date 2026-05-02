@@ -113,5 +113,7 @@ export interface SavedDiagnosisRecord {
 export interface SavedBakePlanRecord {
   id: string;
   createdAt: string;
+  /** ISO timestamp set when the user explicitly starts this bake. */
+  startedAt?: string;
   plan: BakePlan;
 }

@@ -125,6 +125,8 @@ export default function BakeDayCopilotScreen() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [pastPlans, setPastPlans] = useState<SavedBakePlanRecord[]>([]);
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
+  const [savedRecord, setSavedRecord] = useState<SavedBakePlanRecord | null>(null);
+  const [isStarting, setIsStarting] = useState(false);
 
   const input: BakePlanInput = useMemo(
     () => ({
@@ -156,21 +158,42 @@ export default function BakeDayCopilotScreen() {
   const plan = useMemo(() => generateBakePlan(input), [input]);
 
   useEffect(() => {
-    bakePlanStorage.save(plan).catch((err) => {
+    bakePlanStorage.save(plan).then(setSavedRecord).catch((err) => {
       console.error('Failed to persist bake plan', err);
     });
   }, [plan]);
 
-  // Reload past plans whenever the screen comes into focus
+  // Reload past plans and the active record whenever the screen comes into focus
   useFocusEffect(
     useCallback(() => {
       bakePlanStorage.getAll().then(setPastPlans).catch(() => {});
+      bakePlanStorage.getActive().then(setSavedRecord).catch(() => {});
     }, [])
   );
 
+  const isStarted = !!savedRecord?.startedAt;
+
+  const handleStartBake = useCallback(async () => {
+    if (!savedRecord) return;
+    setIsStarting(true);
+    try {
+      const updated = await bakePlanStorage.startPlan(savedRecord.id);
+      setSavedRecord(updated);
+      const all = await bakePlanStorage.getAll();
+      setPastPlans(all);
+    } catch (err) {
+      Alert.alert('Could not start bake plan', 'Please try again.');
+    } finally {
+      setIsStarting(false);
+    }
+  }, [savedRecord]);
+
+  // When a bake has been started, show live timestamps from the started record.
+  const displaySteps = isStarted && savedRecord ? savedRecord.plan.steps : plan.steps;
+
   const timelineSteps: TimelineStep[] = useMemo(() => {
     const now = new Date();
-    return plan.steps.map((step) => {
+    return displaySteps.map((step) => {
       const stepTime = new Date(step.startsAt);
       const state =
         stepTime < now
@@ -187,7 +210,7 @@ export default function BakeDayCopilotScreen() {
         state,
       };
     });
-  }, [plan]);
+  }, [displaySteps]);
 
   const handleReminderToggle = (val: boolean) => {
     if (remindersUnavailable) return;
@@ -451,8 +474,37 @@ export default function BakeDayCopilotScreen() {
       <View style={styles.section}>
         <RuleHeader
           title="BAKE PLAN"
-          trailing={`${plan.steps.length} STEPS`}
+          trailing={`${displaySteps.length} STEPS`}
         />
+
+        {/* Start / status row */}
+        {isStarted ? (
+          <View style={styles.startedBanner}>
+            <View style={styles.startedBadge}>
+              <Icon name="timer-play-outline" size={14} color={theme.colors.modernist.paper} />
+              <Text style={styles.startedBadgeText}>BAKE IN PROGRESS</Text>
+            </View>
+            <TouchableOpacity
+              onPress={handleStartBake}
+              disabled={isStarting}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.restartLink}>
+                {isStarting ? 'Restarting…' : 'Restart from now'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Button
+            title={isStarting ? 'STARTING…' : 'START THIS BAKE'}
+            onPress={handleStartBake}
+            loading={isStarting}
+            fullWidth
+            leftIcon="play-circle-outline"
+            style={styles.startButton}
+          />
+        )}
+
         <FormulaSheet background="porcelain" padding="lg">
           <TimelineRail steps={timelineSteps} />
         </FormulaSheet>
@@ -802,6 +854,37 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.roles.bodyMedium,
     fontSize: 13,
     color: theme.colors.modernist.starterGreen,
+  },
+  startButton: {
+    marginBottom: theme.spacing.sm,
+  },
+  startedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: theme.colors.modernist.starterGreen,
+    borderRadius: 8,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
+  },
+  startedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  startedBadgeText: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 12,
+    color: theme.colors.modernist.paper,
+    letterSpacing: 0.8,
+  },
+  restartLink: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    fontSize: 12,
+    color: theme.colors.modernist.paper,
+    textDecorationLine: 'underline',
+    opacity: 0.85,
   },
   pastPlanRow: {
     paddingHorizontal: theme.spacing.lg,

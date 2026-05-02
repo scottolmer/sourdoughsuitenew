@@ -5,6 +5,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { BakePlan, SavedBakePlanRecord } from '../types/photoRescue';
+import { shiftPlanToNow } from '../utils/bakeDayTimeline';
 
 const BAKE_PLANS_KEY = '@sourdough_bake_plans';
 
@@ -44,23 +45,51 @@ export const bakePlanStorage = {
   },
 
   /**
-   * The "active" plan is the most-recently created plan whose final bake step
-   * is in the future (or, if none qualify, simply the most recent plan).
+   * The "active" plan is chosen in priority order:
+   * 1. A started plan (has startedAt) whose final step is still in the future.
+   * 2. The most-recently created plan whose final step is in the future.
+   * 3. The most recent plan overall.
    * Returns null if nothing has been saved yet.
    */
   async getActive(): Promise<SavedBakePlanRecord | null> {
     const all = await this.getAll();
     if (all.length === 0) return null;
     const now = Date.now();
-    const sorted = [...all].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    const live = sorted.find((r) => {
+    const isLive = (r: SavedBakePlanRecord) => {
       const last = r.plan.steps[r.plan.steps.length - 1];
       if (!last) return false;
       return new Date(last.startsAt).getTime() + 60 * 60 * 1000 > now;
-    });
-    return live ?? sorted[0];
+    };
+    // Prefer an explicitly-started live plan
+    const startedLive = all
+      .filter((r) => !!r.startedAt && isLive(r))
+      .sort((a, b) => new Date(b.startedAt!).getTime() - new Date(a.startedAt!).getTime());
+    if (startedLive.length > 0) return startedLive[0];
+
+    // Fall back to most-recently created live plan
+    const byCreated = [...all].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    return byCreated.find(isLive) ?? byCreated[0];
+  },
+
+  /**
+   * Re-anchors the plan identified by recordId so its first step starts NOW,
+   * preserves relative gaps, marks startedAt, and persists.
+   */
+  async startPlan(recordId: string): Promise<SavedBakePlanRecord> {
+    const all = await this.getAll();
+    const idx = all.findIndex((r) => r.id === recordId);
+    if (idx === -1) throw new Error(`No plan found with id ${recordId}`);
+    const shifted = shiftPlanToNow(all[idx].plan);
+    const updated: SavedBakePlanRecord = {
+      ...all[idx],
+      startedAt: new Date().toISOString(),
+      plan: { ...shifted, id: `plan_${Date.now()}` },
+    };
+    const next = all.map((r, i) => (i === idx ? updated : r));
+    await AsyncStorage.setItem(BAKE_PLANS_KEY, JSON.stringify(next));
+    return updated;
   },
 
   async clearAll(): Promise<void> {
