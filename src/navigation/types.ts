@@ -14,7 +14,15 @@ export type HomeStackParamList = {
 
 export type ToolsStackParamList = {
   ToolsList: undefined;
-  BakersCalculator: undefined;
+  BakersCalculator: {
+    prefilledFormula?: {
+      flour: string;
+      water: string;
+      salt: string;
+      starter: string;
+      name?: string;
+    };
+  } | undefined;
   HydrationCalculator: undefined;
   TimelineCalculator: undefined;
   ScalingCalculator: undefined;

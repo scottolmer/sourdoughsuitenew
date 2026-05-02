@@ -90,11 +90,19 @@ export default function RecipeDetailScreen({ route, navigation }: Props) {
   };
 
   const handleUseInCalculator = () => {
-    // TODO: Navigate to Baker's Calculator with pre-filled values
-    Alert.alert(
-      'Coming Soon',
-      'Calculator integration will be added in the next step!'
-    );
+    if (!recipe) return;
+    (navigation as any).navigate('ToolsTab', {
+      screen: 'BakersCalculator',
+      params: {
+        prefilledFormula: {
+          name: recipe.name,
+          flour: String(recipe.formula.flour),
+          water: String(recipe.formula.water),
+          salt: String(recipe.formula.salt),
+          starter: String(recipe.formula.starter),
+        },
+      },
+    });
   };
 
   if (loading || !recipe) {

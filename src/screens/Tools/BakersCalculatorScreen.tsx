@@ -3,7 +3,7 @@
  * Result-first design with FormulaPreview at top
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -42,6 +42,7 @@ type BakersCalculatorNavigationProp = CompositeNavigationProp<
 
 type Props = {
   navigation: BakersCalculatorNavigationProp;
+  route: NativeStackScreenProps<ToolsStackParamList, 'BakersCalculator'>['route'];
 };
 
 const RECIPE_PRESETS = [
@@ -90,7 +91,7 @@ const RECIPE_PRESETS = [
   },
 ];
 
-export default function BakersCalculatorScreen({ navigation }: Props) {
+export default function BakersCalculatorScreen({ navigation, route }: Props) {
   const [calculationMode, setCalculationMode] = useState<CalculationMode>('flour');
   const [flourWeight, setFlourWeight] = useState('');
   const [totalWeight, setTotalWeight] = useState('');
@@ -101,6 +102,21 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
   ]);
   const [showResults, setShowResults] = useState(false);
   const [inputError, setInputError] = useState('');
+  const [prefilledName, setPrefilledName] = useState<string | undefined>();
+
+  useEffect(() => {
+    const pf = route?.params?.prefilledFormula;
+    if (!pf) return;
+    setFlourWeight(pf.flour);
+    setIngredients([
+      { name: 'Water', percentage: pf.water, amount: '' },
+      { name: 'Salt', percentage: pf.salt, amount: '' },
+      { name: 'Starter', percentage: pf.starter, amount: '' },
+    ]);
+    if (pf.name) setPrefilledName(pf.name);
+    setShowResults(false);
+    setInputError('');
+  }, [route?.params?.prefilledFormula]);
 
   // Live hydration preview (water percentage / flour)
   const liveHydration = useMemo(() => {
@@ -281,6 +297,16 @@ export default function BakersCalculatorScreen({ navigation }: Props) {
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
       >
+        {/* Recipe pre-fill banner */}
+        {prefilledName ? (
+          <View style={styles.prefilledBanner}>
+            <Icon name="bookmark-outline" size={14} color={theme.colors.primary[600]} />
+            <Text style={styles.prefilledBannerText}>
+              Loaded from: <Text style={styles.prefilledBannerName}>{prefilledName}</Text>
+            </Text>
+          </View>
+        ) : null}
+
         {/* Result-first: FormulaPreview always at top */}
         <View style={styles.previewSection}>
           {showResults && previewIngredients.length > 0 ? (
@@ -597,6 +623,28 @@ const styles = StyleSheet.create({
     width: 1,
     height: 40,
     backgroundColor: theme.colors.bench.borderSoft,
+  },
+  prefilledBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    backgroundColor: theme.colors.primary[50],
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.primary[200],
+  },
+  prefilledBannerText: {
+    fontFamily: theme.typography.fonts.regular,
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.secondary,
+  },
+  prefilledBannerName: {
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.primary[700],
   },
   livePreviewHint: {
     fontFamily: theme.typography.fonts.regular,
