@@ -231,6 +231,12 @@ export default function ToolsScreen() {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Page header */}
+      <View style={styles.pageHeader}>
+        <Text style={styles.pageTitle}>Tools</Text>
+        <Text style={styles.pageSubtitle}>Calculators, rescue, and planning.</Text>
+      </View>
+
       {/* Featured Row */}
       <View style={styles.content}>
         <SectionHeader eyebrow="Featured" title="Top Tools" />
@@ -268,8 +274,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.default,
   },
+  pageHeader: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
+  },
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+  },
   content: {
     padding: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
     paddingBottom: 40,
   },
   featuredRow: {
