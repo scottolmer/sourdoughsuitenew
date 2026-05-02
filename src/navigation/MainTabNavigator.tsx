@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
@@ -72,10 +73,13 @@ const modernistHeaderOptions = {
 const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
 const safeTopStyle = { flex: 1, backgroundColor: theme.colors.modernist.paper } as const;
+const safeTopInner = { flex: 1, paddingTop: theme.spacing.md } as const;
 const withSafeTop = (Comp: React.ComponentType<any>) => {
   const Wrapped = (props: any) => (
     <SafeAreaView edges={['top']} style={safeTopStyle}>
-      <Comp {...props} />
+      <View style={safeTopInner}>
+        <Comp {...props} />
+      </View>
     </SafeAreaView>
   );
   Wrapped.displayName = `SafeTop(${Comp.displayName || Comp.name || 'Component'})`;
