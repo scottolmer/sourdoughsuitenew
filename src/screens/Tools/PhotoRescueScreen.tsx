@@ -443,7 +443,7 @@ export default function PhotoRescueScreen() {
       <View style={styles.actionBlock}>
         {loading ? (
           <View style={styles.loadingRow}>
-            <ActivityIndicator color={theme.colors.modernist.copper} />
+            <ActivityIndicator color={theme.colors.modernist.ruleTeal} />
             <Text style={styles.loadingText}>Analyzing photo…</Text>
           </View>
         ) : null}

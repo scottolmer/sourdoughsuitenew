@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
 
   // Variants — Modernist: sharp radii, hairline borders, no heavy shadows.
   primary: {
-    backgroundColor: theme.colors.modernist.copper,
+    backgroundColor: theme.colors.modernist.ruleTeal,
     borderRadius: 8,
   },
   secondary: {

@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
   nextUpButton: {
     marginTop: theme.spacing.md,
     minHeight: 44,
-    backgroundColor: theme.colors.modernist.copper,
+    backgroundColor: theme.colors.modernist.ruleTeal,
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
