@@ -172,7 +172,7 @@ function MainTabNavigator() {
 
           return <Icon name={iconName} size={focused ? 26 : 24} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary[500],
+        tabBarActiveTintColor: theme.colors.modernist.ruleTeal,
         tabBarInactiveTintColor: theme.colors.text.disabled,
         tabBarLabelStyle: {
           fontSize: 12,

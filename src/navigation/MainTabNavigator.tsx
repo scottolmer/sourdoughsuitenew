@@ -278,7 +278,7 @@ export default function MainTabNavigator() {
 
           return <Icon name={iconName} size={focused ? 30 : 28} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary[500],
+        tabBarActiveTintColor: theme.colors.modernist.ruleTeal,
         tabBarInactiveTintColor: theme.colors.text.secondary, // Darker than disabled
         tabBarLabelStyle: {
           fontSize: 12,
