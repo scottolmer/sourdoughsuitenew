@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.modernist.porcelain,
     paddingHorizontal: theme.spacing.md,
     minHeight: 48,
+    overflow: 'hidden',
   },
   inputContainerFocused: {
     borderColor: theme.colors.modernist.ink,
