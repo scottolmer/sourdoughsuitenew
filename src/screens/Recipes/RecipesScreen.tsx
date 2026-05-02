@@ -150,6 +150,7 @@ export default function RecipesScreen() {
   return (
     <View style={styles.container}>
       <ScrollView
+        contentContainerStyle={recipes.length === 0 ? styles.emptyContent : styles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -159,32 +160,30 @@ export default function RecipesScreen() {
           />
         }
       >
-        <View style={styles.content}>
-          {recipes.length === 0 ? (
-            <BenchCard variant="outlined" padding="xl">
-              <View style={styles.emptyState}>
-                <View style={styles.emptyIconRing}>
-                  <Icon
-                    name="book-open-page-variant-outline"
-                    size={40}
-                    color={theme.colors.primary[600]}
-                  />
-                </View>
-                <Text style={styles.emptyStateTitle}>Your formula book is ready.</Text>
-                <Text style={styles.emptyStateText}>
-                  Save your first recipe here. Build from scratch or save directly from any calculator.
-                </Text>
-                <Button
-                  title="Add Recipe"
-                  onPress={handleAddRecipe}
-                  style={styles.button}
+        {recipes.length === 0 ? (
+          <BenchCard variant="outlined" padding="xl">
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconRing}>
+                <Icon
+                  name="book-open-page-variant-outline"
+                  size={40}
+                  color={theme.colors.primary[600]}
                 />
               </View>
-            </BenchCard>
-          ) : (
-            recipes.map(renderRecipeCard)
-          )}
-        </View>
+              <Text style={styles.emptyStateTitle}>Your formula book is ready.</Text>
+              <Text style={styles.emptyStateText}>
+                Save your first recipe here. Build from scratch or save directly from any calculator.
+              </Text>
+              <Button
+                title="Add Recipe"
+                onPress={handleAddRecipe}
+                style={styles.button}
+              />
+            </View>
+          </BenchCard>
+        ) : (
+          recipes.map(renderRecipeCard)
+        )}
       </ScrollView>
 
       <FloatingActionButton icon="plus" onPress={handleAddRecipe} />
@@ -199,6 +198,11 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+  },
+  emptyContent: {
+    padding: theme.spacing.xl,
+    flexGrow: 1,
+    justifyContent: 'center' as const,
   },
   emptyState: {
     alignItems: 'center',
