@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 
 import { theme } from '../../theme';
@@ -28,6 +28,7 @@ import type {
   StarterReadiness,
   ScheduleStyle,
   BakeStepType,
+  SavedBakePlanRecord,
 } from '../../types/photoRescue';
 import {
   generateBakePlan,
@@ -122,6 +123,8 @@ export default function BakeDayCopilotScreen() {
   const [recipeName, setRecipeName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [pastPlans, setPastPlans] = useState<SavedBakePlanRecord[]>([]);
+  const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
 
   const input: BakePlanInput = useMemo(
     () => ({
@@ -157,6 +160,13 @@ export default function BakeDayCopilotScreen() {
       console.error('Failed to persist bake plan', err);
     });
   }, [plan]);
+
+  // Reload past plans whenever the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      bakePlanStorage.getAll().then(setPastPlans).catch(() => {});
+    }, [])
+  );
 
   const timelineSteps: TimelineStep[] = useMemo(() => {
     const now = new Date();
@@ -538,6 +548,68 @@ export default function BakeDayCopilotScreen() {
         </FormulaSheet>
       </View>
 
+      {/* Past Plans */}
+      {pastPlans.length > 0 && (
+        <View style={styles.section}>
+          <RuleHeader
+            title="PAST PLANS"
+            trailing={`${pastPlans.length} SAVED`}
+          />
+          <FormulaSheet background="porcelain" padding="none">
+            {pastPlans.map((record, idx) => {
+              const bakeStep = record.plan.steps.find(s => s.type === 'bake');
+              const targetStep = bakeStep ?? record.plan.steps[record.plan.steps.length - 1];
+              const bakeLabel = targetStep
+                ? `${formatStepDay(targetStep.startsAt)} · ${formatStepTime(targetStep.startsAt)}`
+                : '—';
+              const style = record.plan.input.scheduleStyle === 'overnight-cold-proof'
+                ? 'Overnight'
+                : 'Same Day';
+              const isExpanded = expandedPlanId === record.id;
+              const pastSteps: TimelineStep[] = record.plan.steps.map(step => ({
+                id: step.id,
+                icon: STEP_ICON_MAP[step.type as BakeStepType] ?? 'clock-outline',
+                timeLabel: `${formatStepDay(step.startsAt)} · ${formatStepTime(step.startsAt)}`,
+                title: step.title,
+                notes: step.notes,
+                state: new Date(step.startsAt) < new Date() ? 'past' : 'upcoming',
+              }));
+
+              return (
+                <TouchableOpacity
+                  key={record.id}
+                  activeOpacity={0.8}
+                  onPress={() => setExpandedPlanId(isExpanded ? null : record.id)}
+                  style={[
+                    styles.pastPlanRow,
+                    idx > 0 && styles.pastPlanRowBorder,
+                  ]}
+                >
+                  <View style={styles.pastPlanHeader}>
+                    <View style={styles.pastPlanInfo}>
+                      <Text style={styles.pastPlanBakeAt}>{bakeLabel}</Text>
+                      <Text style={styles.pastPlanMeta}>
+                        {style} · {record.plan.input.hydrationPercent}% hydration · {record.plan.steps.length} steps
+                      </Text>
+                    </View>
+                    <Icon
+                      name={isExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={18}
+                      color={theme.colors.modernist.graphiteMuted}
+                    />
+                  </View>
+                  {isExpanded && (
+                    <View style={styles.pastPlanTimeline}>
+                      <TimelineRail steps={pastSteps} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </FormulaSheet>
+        </View>
+      )}
+
       <View style={styles.actions}>
         <Button
           title="REFRESH PLAN"
@@ -730,6 +802,40 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.roles.bodyMedium,
     fontSize: 13,
     color: theme.colors.modernist.starterGreen,
+  },
+  pastPlanRow: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+  },
+  pastPlanRowBorder: {
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.hairline,
+  },
+  pastPlanHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  pastPlanInfo: {
+    flex: 1,
+    paddingRight: theme.spacing.sm,
+  },
+  pastPlanBakeAt: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 14,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pastPlanMeta: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 12,
+    color: theme.colors.modernist.graphiteMuted,
+  },
+  pastPlanTimeline: {
+    marginTop: theme.spacing.md,
+    paddingTop: theme.spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.hairline,
   },
   actions: {
     marginTop: theme.spacing.xl,
