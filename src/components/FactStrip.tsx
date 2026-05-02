@@ -1,8 +1,12 @@
 /**
  * FactStrip
- * Horizontal/wrapped row of cells.
+ * Single horizontal row of cells.
  * Each cell = small icon + tiny uppercase label + value.
  * Numeric content is right-aligned within its cell when `numeric` is true.
+ *
+ * The strip is always one row: cells use `flex: 1` and `minWidth: 0`,
+ * never `flexWrap`, `flexBasis`, or fixed minimum widths. The deprecated
+ * `wrap` prop is accepted for source compatibility but has no effect.
  */
 
 import React from 'react';
@@ -21,6 +25,10 @@ export interface FactCell {
 
 interface FactStripProps {
   facts: FactCell[];
+  /**
+   * @deprecated FactStrip is always a single horizontal row.
+   * This prop is accepted for source compatibility and ignored.
+   */
   wrap?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -44,15 +52,18 @@ const toneToColor = (tone: FactCell['tone']): string => {
   }
 };
 
-export default function FactStrip({ facts, wrap = false, style }: FactStripProps) {
+let warnedAboutWrap = false;
+
+export default function FactStrip({ facts, wrap, style }: FactStripProps) {
+  if (wrap && !warnedAboutWrap && __DEV__) {
+    warnedAboutWrap = true;
+    // eslint-disable-next-line no-console
+    console.warn(
+      '[FactStrip] The `wrap` prop is deprecated and has no effect. FactStrip is always a single horizontal row.',
+    );
+  }
   return (
-    <View
-      style={[
-        styles.row,
-        wrap ? styles.rowWrap : null,
-        style,
-      ]}
-    >
+    <View style={[styles.row, style]}>
       {facts.map((fact, idx) => {
         const valueColor = toneToColor(fact.tone);
         return (
@@ -60,8 +71,7 @@ export default function FactStrip({ facts, wrap = false, style }: FactStripProps
             key={`${fact.label}-${idx}`}
             style={[
               styles.cell,
-              wrap ? styles.cellWrap : null,
-              idx > 0 && !wrap ? styles.cellDivider : null,
+              idx > 0 ? styles.cellDivider : null,
             ]}
           >
             <View style={styles.headerRow}>
@@ -99,20 +109,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
   },
-  rowWrap: {
-    flexWrap: 'wrap',
-    rowGap: theme.spacing.sm,
-  },
   cell: {
     flex: 1,
+    minWidth: 0,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: 2,
-    minWidth: 72,
-  },
-  cellWrap: {
-    flex: 0,
-    flexBasis: '33.333%',
-    minWidth: 96,
   },
   cellDivider: {
     borderLeftWidth: 1,

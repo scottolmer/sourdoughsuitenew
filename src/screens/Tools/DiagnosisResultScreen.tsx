@@ -118,7 +118,7 @@ export default function DiagnosisResultScreen() {
         padding="md"
         style={styles.factSheet}
       >
-        <FactStrip facts={facts} wrap />
+        <FactStrip facts={facts} />
       </FormulaSheet>
 
       {imageUri ? (

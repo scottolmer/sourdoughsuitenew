@@ -261,7 +261,7 @@ export default function BakeDayCopilotScreen() {
         padding="md"
         style={styles.factSheet}
       >
-        <FactStrip facts={topFacts} wrap />
+        <FactStrip facts={topFacts} />
       </FormulaSheet>
 
       {/* Inputs */}
