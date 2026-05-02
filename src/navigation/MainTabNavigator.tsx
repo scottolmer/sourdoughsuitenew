@@ -56,11 +56,22 @@ const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
 const ToolsStackNav = createNativeStackNavigator<ToolsStackParamList>();
 const StartersStackNav = createNativeStackNavigator<StartersStackParamList>();
 const RecipesStackNav = createNativeStackNavigator<RecipesStackParamList>();
+
+const modernistHeaderOptions = {
+  headerStyle: { backgroundColor: theme.colors.modernist.paper },
+  headerTintColor: theme.colors.modernist.ink,
+  headerTitleStyle: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 17,
+    color: theme.colors.modernist.ink,
+  },
+  headerShadowVisible: false,
+};
 const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
 function HomeStack() {
   return (
-    <HomeStackNav.Navigator>
+    <HomeStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <HomeStackNav.Screen
         name="Home"
         component={HomeScreen}
@@ -77,7 +88,7 @@ function HomeStack() {
 
 function ToolsStack() {
   return (
-    <ToolsStackNav.Navigator>
+    <ToolsStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <ToolsStackNav.Screen
         name="ToolsList"
         component={ToolsScreen}
@@ -159,7 +170,7 @@ function ToolsStack() {
 
 function StartersStack() {
   return (
-    <StartersStackNav.Navigator>
+    <StartersStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <StartersStackNav.Screen
         name="StartersList"
         component={StartersScreen}
@@ -191,7 +202,7 @@ function StartersStack() {
 
 function RecipesStack() {
   return (
-    <RecipesStackNav.Navigator>
+    <RecipesStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <RecipesStackNav.Screen
         name="Recipes"
         component={RecipesScreen}
@@ -218,7 +229,7 @@ function RecipesStack() {
 
 function ProfileStack() {
   return (
-    <ProfileStackNav.Navigator>
+    <ProfileStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <ProfileStackNav.Screen
         name="Profile"
         component={ProfileScreen}
