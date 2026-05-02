@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontFamily: theme.typography.roles.bodySemibold,
-    fontSize: 16,
+    fontSize: 13,
     color: theme.colors.modernist.ink,
   },
   valueNumeric: {
