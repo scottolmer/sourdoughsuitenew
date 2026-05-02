@@ -4,7 +4,7 @@
  */
 
 import React, { useCallback } from 'react';
-import { StatusBar, useColorScheme, View } from 'react-native';
+import { StatusBar, Text, TextInput, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryProvider } from './src/providers/QueryProvider';
@@ -15,6 +15,13 @@ import { PlayfairDisplay_400Regular, PlayfairDisplay_700Bold } from '@expo-googl
 import * as SplashScreen from 'expo-splash-screen';
 
 import { useKeepAwake } from 'expo-keep-awake';
+
+// Disable OS-level font scaling so the app looks consistent
+// regardless of the user's device accessibility font size setting.
+(Text as any).defaultProps = (Text as any).defaultProps ?? {};
+(Text as any).defaultProps.allowFontScaling = false;
+(TextInput as any).defaultProps = (TextInput as any).defaultProps ?? {};
+(TextInput as any).defaultProps.allowFontScaling = false;
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
