@@ -78,10 +78,10 @@ export function runQuickRescue(answers: QuickRescueAnswers): PhotoRescueDiagnosi
       risk = 'Forcing a tight dough into shape tears the gluten. Rest first.';
       missingContextQuestions.push('How long has the dough been in bulk?', 'How many folds have you done so far?');
     } else {
-      diagnosis = 'Dough status unclear — review signs below';
+      diagnosis = 'Dough needs two quick checks';
       confidence = 'low';
-      summary = 'The observations don\'t clearly point to one cause. Review the checklist below and use your best judgment.';
-      visualEvidence = ['Unclear indicators from provided signs'];
+      summary = 'The observations do not clearly point to one cause yet. Start with rise percentage and the poke test, then decide whether to wait, shape, or cool the dough.';
+      visualEvidence = ['No strong fermentation or gluten pattern was selected'];
       doNow = [
         { title: 'Do the poke test', details: 'Poke the dough with a floured finger. Slow indent fill = ready. Fast = more time needed. No spring-back = over.', minutesFromNow: 0 },
         { title: 'Check rise percentage', details: 'Mark the container and measure rise from original volume.', minutesFromNow: 0 },
@@ -175,10 +175,10 @@ export function runQuickRescue(answers: QuickRescueAnswers): PhotoRescueDiagnosi
       nextBake = ['Rebuild starter activity with daily feedings.', 'Increase starter percentage to 20–25% of flour weight.', 'Use warmer water to encourage activity.'];
       risk = 'The loaf is likely safe to eat even with a dense crumb — fermentation just didn\'t complete.';
     } else {
-      diagnosis = 'Crumb result unclear — more context needed';
+      diagnosis = 'Crumb needs more context';
       confidence = 'low';
-      summary = 'Based on the signs described, a specific crumb issue isn\'t clear. Review the checklist below.';
-      visualEvidence = ['Signs did not clearly match a known pattern'];
+      summary = 'A specific crumb issue needs a little more evidence. Start by separating fermentation clues from bake-time clues.';
+      visualEvidence = ['No strong crumb pattern was selected'];
       doNow = [{ title: 'Photograph and note the crumb pattern', details: 'Send a clearer description for a better diagnosis next time.', minutesFromNow: 0 }];
       nextBake = ['Track fermentation time, starter activity, and baking temp for each bake.'];
       risk = 'Without clear visual clues, start with underfermentation as the most common cause and work from there.';
@@ -228,10 +228,10 @@ export function runQuickRescue(answers: QuickRescueAnswers): PhotoRescueDiagnosi
       nextBake = ['Score deeper (1/2 inch) and at an angle.', 'Check proofing — slightly underproofed loaves score and spring better.', 'Use a very sharp blade and replace regularly.'];
       risk = 'Proofing past the optimal window increases blowout risk. Use the dent test before baking.';
     } else {
-      diagnosis = 'Loaf result unclear — more context needed';
+      diagnosis = 'Loaf needs a crumb check';
       confidence = 'low';
-      summary = 'The described observations didn\'t clearly match one pattern. Check the general guidance below.';
-      visualEvidence = ['Observations did not clearly match a known pattern'];
+      summary = 'The outside of the loaf is not enough to name one issue yet. The crumb, bottom crust, and score opening will narrow it down.';
+      visualEvidence = ['No strong exterior loaf pattern was selected'];
       doNow = [{ title: 'Cut and photograph the crumb', details: 'The interior tells more than the exterior in most cases.', minutesFromNow: 0 }];
       nextBake = ['Log oven temperature, fermentation times, and hydration for each bake.'];
       risk = 'Most bakes reveal the issue in the crumb — note both interior and exterior patterns.';

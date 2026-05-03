@@ -185,18 +185,14 @@ export default function PhotoRescueScreen() {
       });
     } catch (err) {
       if (err instanceof PhotoRescueFallbackError) {
-        // Fall back to quick rescue using whatever context the user provided.
-        const elapsedMinutes = hoursElapsed ? parseFloat(hoursElapsed) * 60 : undefined;
-        const qrInput: QuickRescueAnswers = {
+        setError(`${err.message} Answer the quick rescue checklist so the fallback can give a specific result.`);
+        setQuickRescueMode('questions');
+        setQrStep(0);
+        setQrAnswers({
           subject,
-          stage: stage || undefined,
-          roomTempF: roomTemp ? parseFloat(roomTemp) : undefined,
-          elapsedMinutes,
-          observedSigns: [],
-          hydrationPercent: hydration ? parseFloat(hydration) : undefined,
-        };
-        const diagnosis = runQuickRescue(qrInput);
-        navigation.navigate('DiagnosisResult', { diagnosis, imageUri: undefined, isQuickRescue: true });
+          ...(stage ? { stage } : {}),
+        });
+        setQrSelectedSigns([]);
       } else {
         setError('Something went wrong. Try again or use the quick rescue checklist below.');
       }
@@ -277,7 +273,10 @@ export default function PhotoRescueScreen() {
   const triggerQuickRescue = () => {
     setQuickRescueMode('questions');
     setQrStep(0);
-    setQrAnswers({ subject });
+    setQrAnswers({
+      subject,
+      ...(stage ? { stage } : {}),
+    });
     setQrSelectedSigns([]);
   };
 
@@ -295,7 +294,9 @@ export default function PhotoRescueScreen() {
             <Icon name="clipboard-check-outline" size={16} color={theme.colors.primary[600]} />
             <Text style={styles.bannerText}>Using quick rescue checklist</Text>
           </View>
-          <Text style={styles.bannerSub}>Rule-based guidance — your photo was not analyzed.</Text>
+          <Text style={styles.bannerSub}>
+            {error ?? 'Rule-based guidance — your photo was not analyzed.'}
+          </Text>
         </FormulaSheet>
 
         <Text style={styles.qrProgress}>
