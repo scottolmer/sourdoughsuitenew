@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="SourdoughSuite combines sourdough rescue, bake planning, calculators, starter logs, and recipes."
+    />
+    <title>SourdoughSuite - Tool Suite</title>
+    <style>
+      @font-face {
+        font-family: 'Playfair Local';
+        src: url('../../assets/fonts/PlayfairDisplay-Bold.ttf')
+          format('truetype');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: 'Suite Sans';
+        src: url('../../assets/fonts/Inter-Regular.ttf') format('truetype');
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: 'Suite Sans';
+        src: url('../../assets/fonts/Inter-SemiBold.ttf') format('truetype');
+        font-weight: 700;
+      }
+
+      :root {
+        --paper: #fffdf8;
+        --warm: #f6f2eb;
+        --ink: #111111;
+        --muted: #66615b;
+        --line: #d8d3cb;
+        --teal: #2e7474;
+        --teal-light: #9dd0cc;
+        --green: #4d6f3a;
+        --red: #9b3f2f;
+        --copper: #b46f2b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: 'Suite Sans', Avenir, sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+
+      .hero {
+        min-height: 94vh;
+        display: grid;
+        align-content: end;
+        padding: 92px clamp(20px, 5vw, 74px) 34px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+            90deg,
+            rgba(17, 17, 17, 0.88),
+            rgba(17, 17, 17, 0.52),
+            rgba(46, 116, 116, 0.22)
+          ),
+          linear-gradient(
+            180deg,
+            rgba(17, 17, 17, 0.06),
+            rgba(17, 17, 17, 0.82)
+          ),
+          url('assets/sourdoughsuite-hero.png') center / cover;
+      }
+
+      .hero::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 15vh;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 253, 248, 0),
+          var(--paper)
+        );
+      }
+
+      .nav {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px clamp(20px, 5vw, 74px);
+      }
+
+      .brand {
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: 27px;
+        letter-spacing: 0;
+      }
+
+      .nav a {
+        color: white;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .hero-copy {
+        position: relative;
+        z-index: 1;
+        width: min(980px, 100%);
+      }
+
+      .kicker {
+        color: var(--teal-light);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 14px 0 0;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: clamp(60px, 10vw, 140px);
+        line-height: 0.86;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 770px;
+        margin: 24px 0 0;
+        color: #eee9df;
+        font-size: clamp(19px, 2.1vw, 25px);
+        line-height: 1.48;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      .button {
+        min-height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+        color: var(--ink);
+        background: var(--teal-light);
+        border: 1px solid var(--teal-light);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .button.secondary {
+        color: white;
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.42);
+      }
+
+      .metrics {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        width: min(960px, 100%);
+        margin-top: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        background: rgba(17, 17, 17, 0.42);
+        backdrop-filter: blur(14px);
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 18px 14px;
+        text-align: center;
+        border-right: 1px solid rgba(255, 255, 255, 0.22);
+      }
+
+      .metric:last-child {
+        border-right: 0;
+      }
+      .metric span {
+        display: block;
+        margin-bottom: 7px;
+        color: #cbdad8;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .metric strong {
+        display: block;
+        font-size: 15px;
+      }
+
+      .band {
+        padding: clamp(66px, 8vw, 100px) clamp(20px, 5vw, 74px);
+        border-top: 1px solid var(--line);
+        background: linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
+        background-size: 44px 44px;
+      }
+
+      .band h2 {
+        max-width: 900px;
+        margin: 0 0 34px;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: clamp(42px, 6.3vw, 88px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .tools {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+        background: white;
+      }
+
+      .tool {
+        min-height: 260px;
+        padding: 26px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: white;
+        position: relative;
+      }
+
+      .tool::before {
+        content: attr(data-no);
+        color: var(--teal);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .tool h3 {
+        margin: 30px 0 14px;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: clamp(30px, 3.2vw, 42px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .tool p {
+        max-width: 480px;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .operator {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.75fr);
+        gap: clamp(24px, 5vw, 70px);
+        align-items: start;
+        background: var(--warm);
+      }
+
+      .checklist {
+        background: white;
+        border: 1px solid var(--line);
+        border-top: 4px solid var(--copper);
+        padding: 28px;
+      }
+
+      .check {
+        display: grid;
+        grid-template-columns: 90px minmax(0, 1fr);
+        gap: 18px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .check:last-child {
+        border-bottom: 0;
+      }
+      .check b {
+        color: var(--teal);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .check span {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .footer {
+        padding: 34px clamp(20px, 5vw, 74px);
+        color: var(--muted);
+        border-top: 1px solid var(--line);
+        background: var(--paper);
+      }
+
+      @media (max-width: 980px) {
+        .hero {
+          min-height: 900px;
+          background-position: center top;
+        }
+        .metrics,
+        .tools,
+        .operator {
+          grid-template-columns: 1fr;
+        }
+        .metric {
+          border-right: 0;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+        }
+        .metric:last-child {
+          border-bottom: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <nav class="nav" aria-label="Landing page">
+          <div class="brand">SourdoughSuite</div>
+          <a href="index.html">Concepts</a>
+        </nav>
+
+        <div class="hero-copy">
+          <div class="kicker">One app, full bake workflow</div>
+          <h1>SourdoughSuite Tools</h1>
+          <p class="lead">
+            Everything between "this looks wrong" and "the bread is cooling":
+            rescue, planning, formulas, starters, calculators, and saved
+            recipes.
+          </p>
+          <div class="actions">
+            <a class="button" href="#tools">View toolset</a>
+            <a
+              class="button secondary"
+              href="https://github.com/scottolmer/sourdoughsuitenew"
+              >Open GitHub</a
+            >
+          </div>
+        </div>
+
+        <section class="metrics" aria-label="Workflow summary">
+          <div class="metric">
+            <span>Diagnose</span><strong>Photo Rescue</strong>
+          </div>
+          <div class="metric">
+            <span>Schedule</span><strong>Bake Planner</strong>
+          </div>
+          <div class="metric">
+            <span>Calculate</span><strong>Baker %</strong>
+          </div>
+          <div class="metric"><span>Record</span><strong>Recipes</strong></div>
+        </section>
+      </section>
+
+      <section id="tools" class="band">
+        <div class="kicker">Tool Index</div>
+        <h2>A judge can understand the whole product in one scan.</h2>
+
+        <section class="tools" aria-label="SourdoughSuite tools">
+          <article class="tool" data-no="01 / RESCUE">
+            <h3>Photo Rescue</h3>
+            <p>
+              Analyze dough, starter, crumb, or loaf clues and turn them into
+              practical next steps.
+            </p>
+          </article>
+          <article class="tool" data-no="02 / PLAN">
+            <h3>Bake Planner</h3>
+            <p>
+              Create production schedules from target bake time, room
+              temperature, hydration, and starter readiness.
+            </p>
+          </article>
+          <article class="tool" data-no="03 / FORMULA">
+            <h3>Baker's Percentage</h3>
+            <p>
+              Calculate formulas by flour weight or total dough weight, then
+              save the result as a recipe.
+            </p>
+          </article>
+          <article class="tool" data-no="04 / STARTER">
+            <h3>Starter Log</h3>
+            <p>
+              Track culture health, feeding cadence, flour type, last fed, and
+              next feeding.
+            </p>
+          </article>
+          <article class="tool" data-no="05 / RECIPES">
+            <h3>Recipe Index</h3>
+            <p>
+              Keep saved formulas, hydration, yield, instructions, and bake
+              notes in one precise library.
+            </p>
+          </article>
+          <article class="tool" data-no="06 / BENCH">
+            <h3>Calculators</h3>
+            <p>
+              Hydration, levain, preferment, flour blend, scaling, dough weight,
+              temperature, and timeline tools.
+            </p>
+          </article>
+        </section>
+      </section>
+
+      <section class="band operator">
+        <div>
+          <div class="kicker">Why It Works</div>
+          <h2>Made for operational decisions, not browsing.</h2>
+          <p class="lead" style="color: var(--muted)">
+            This concept is the most direct hackathon pitch: the app is not one
+            clever screen, it is a connected workflow for a professional baker's
+            day.
+          </p>
+        </div>
+
+        <div class="checklist" aria-label="Operator value">
+          <div class="check">
+            <b>Fast</b
+            ><span
+              >The first screen explains the toolset without requiring a product
+              tour.</span
+            >
+          </div>
+          <div class="check">
+            <b>Credible</b
+            ><span
+              >The Modernist formula style makes precision the visual
+              language.</span
+            >
+          </div>
+          <div class="check">
+            <b>Broad</b
+            ><span
+              >Rescue, plan, calculate, log, and save are presented as one
+              suite.</span
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      SourdoughSuite · Built for the Replit hackathon · Static landing page
+      concept 03.
+    </footer>
+  </body>
+</html>
