@@ -216,10 +216,18 @@ function hasAny(text, keywords) {
 }
 
 function applyBakerGuardrails(diagnosis) {
+  const doNowText = (diagnosis.doNow || [])
+    .map((action) => `${action.title || ''} ${action.details || ''}`)
+    .join(' ');
+  const bakePlanText = (diagnosis.bakePlanSeed?.adjustments || []).join(' ');
   const evidenceText = [
     diagnosis.diagnosis,
     diagnosis.summary,
     diagnosis.risk,
+    doNowText,
+    ...(diagnosis.nextBake || []),
+    ...(diagnosis.missingContextQuestions || []),
+    bakePlanText,
     ...(diagnosis.visualEvidence || []),
   ].join(' ');
 
@@ -261,6 +269,11 @@ function applyBakerGuardrails(diagnosis) {
     'weak fermentation strength',
     'not enough gas',
     'insufficient gas',
+    'strengthen your starter',
+    'strengthen the starter',
+    'starter is very active',
+    'starter is at peak',
+    'peak activity',
   ]);
   const hasWeakGlutenOrShapingCues = hasAny(evidenceText, [
     'weak gluten',

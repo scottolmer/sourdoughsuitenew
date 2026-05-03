@@ -47,6 +47,7 @@ describe('Photo Rescue Gemini prompt', () => {
       visualEvidence: [
         'Presence of very large, irregular, cavernous holes within the crumb structure.',
         'Uneven distribution of air pockets, with significant voids existing alongside denser areas.',
+        'The gluten around the holes looks collapsed, webby, stretched, and fragile.',
       ],
       doNow: [{ title: 'Review the crumb', details: 'Compare visual signs.' }],
       nextBake: ['Track fermentation time.'],
@@ -59,6 +60,48 @@ describe('Photo Rescue Gemini prompt', () => {
     );
     expect(guarded.summary).toContain('overproofing/overfermentation');
     expect(guarded.risk).toContain('Do not treat this as underproofed');
+  });
+
+  it('does not force overproofing when starter strength and gluten/shaping are better explanations', () => {
+    const guarded = applyBakerGuardrails({
+      id: 'diag_live_style_weak_starter',
+      createdAt: new Date().toISOString(),
+      subject: 'crumb',
+      diagnosis: 'Uneven crumb with large holes and dense patches',
+      confidence: 'medium',
+      summary:
+        'There are several large irregular holes with tighter denser crumb beside them.',
+      visualEvidence: [
+        'Presence of several very large, irregular, cavernous holes in the crumb.',
+        'Areas of tighter, denser crumb adjacent to the large voids.',
+      ],
+      doNow: [
+        {
+          title: 'Evaluate dough handling',
+          details:
+            'The dough may have had insufficient gluten development and weak structure during shaping.',
+        },
+      ],
+      nextBake: [
+        'Strengthen your starter: ensure your starter is very active and strong before mixing.',
+        'Focus on gentle but effective shaping to build stronger surface tension.',
+      ],
+      risk: 'No food safety issue is apparent.',
+      missingContextQuestions: [
+        'How active was your starter when you mixed the dough?',
+      ],
+      bakePlanSeed: {
+        suggestedStyle: 'overnight-cold-proof',
+        adjustments: [
+          'Ensure starter is at peak activity before mixing.',
+          'Build more gluten strength during bulk.',
+        ],
+      },
+    });
+
+    expect(guarded.diagnosis).toBe(
+      'Likely weak starter with weak gluten development and shaping issues'
+    );
   });
 
   it('prefers weak starter when a flat dense crumb has weak gluten and shaping clues', () => {
