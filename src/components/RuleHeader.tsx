@@ -11,15 +11,17 @@ import { theme } from '../theme';
 interface RuleHeaderProps {
   title: string;
   trailing?: string;
+  meta?: string;
   style?: StyleProp<ViewStyle>;
 }
 
-export default function RuleHeader({ title, trailing, style }: RuleHeaderProps) {
+export default function RuleHeader({ title, trailing, meta, style }: RuleHeaderProps) {
+  const trailingText = trailing ?? meta;
   return (
     <View style={[styles.container, style]}>
       <View style={styles.row}>
         <Text style={styles.title}>{title}</Text>
-        {trailing ? <Text style={styles.trailing}>{trailing}</Text> : null}
+        {trailingText ? <Text style={styles.trailing}>{trailingText}</Text> : null}
       </View>
       <View style={styles.rule} />
     </View>

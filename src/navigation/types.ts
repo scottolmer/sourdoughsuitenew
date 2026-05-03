@@ -47,6 +47,15 @@ export type ToolsStackParamList = {
   BakeDayCopilot: {
     diagnosis?: import('../types/photoRescue').PhotoRescueDiagnosis;
   };
+  BakePlanner: {
+    diagnosisId?: string;
+  } | undefined;
+  BakePlanDetail: {
+    planId: string;
+  };
+  PhotoRescueResult: {
+    diagnosisId: string;
+  };
 };
 
 export type StartersStackParamList = {

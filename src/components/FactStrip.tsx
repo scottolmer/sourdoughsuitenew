@@ -33,7 +33,8 @@ export interface FactCell {
 }
 
 interface FactStripProps {
-  facts: FactCell[];
+  facts?: FactCell[];
+  items?: FactCell[];
   /**
    * @deprecated FactStrip is always a single horizontal row.
    * This prop is accepted for source compatibility and ignored.
@@ -63,7 +64,8 @@ const toneToColor = (tone: FactCell['tone']): string => {
 
 let warnedAboutWrap = false;
 
-export default function FactStrip({ facts, wrap, style }: FactStripProps) {
+export default function FactStrip({ facts, items, wrap, style }: FactStripProps) {
+  const cells = facts ?? items ?? [];
   if (wrap && !warnedAboutWrap && __DEV__) {
     warnedAboutWrap = true;
     // eslint-disable-next-line no-console
@@ -73,7 +75,7 @@ export default function FactStrip({ facts, wrap, style }: FactStripProps) {
   }
   return (
     <View style={[styles.row, style]}>
-      {facts.map((fact, idx) => {
+      {cells.map((fact, idx) => {
         const valueColor = toneToColor(fact.tone);
         const cellStyle = [
           styles.cell,

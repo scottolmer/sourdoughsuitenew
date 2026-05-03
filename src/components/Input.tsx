@@ -23,7 +23,6 @@ interface InputProps extends TextInputProps {
   rightIcon?: string;
   onRightIconPress?: () => void;
   floatingLabel?: boolean;
-  required?: boolean;
 }
 
 export default function Input({

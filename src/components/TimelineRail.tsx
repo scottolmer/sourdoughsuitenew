@@ -28,7 +28,14 @@ export interface TimelineStep {
 }
 
 interface TimelineRailProps {
-  steps: TimelineStep[];
+  steps?: TimelineStep[];
+  items?: Array<{
+    id: string;
+    time: string;
+    title: string;
+    notes?: string;
+    tone?: string;
+  }>;
 }
 
 const NODE_SIZE = 14;
@@ -59,12 +66,20 @@ const timeColor: Record<TimelineStepState, string> = {
   upcoming: theme.colors.modernist.graphiteMuted,
 };
 
-export default function TimelineRail({ steps }: TimelineRailProps) {
+export default function TimelineRail({ steps, items }: TimelineRailProps) {
+  const timelineSteps: TimelineStep[] = steps ?? (items ?? []).map((item, index) => ({
+    id: item.id,
+    icon: index === 0 ? 'play-circle-outline' : 'clock-outline',
+    timeLabel: item.time,
+    title: item.title,
+    notes: item.notes,
+    state: item.tone === 'active' ? 'active' : 'upcoming',
+  }));
   return (
     <View style={styles.rail}>
-      {steps.map((step, index) => {
+      {timelineSteps.map((step, index) => {
         const state: TimelineStepState = step.state ?? 'upcoming';
-        const isLast = index === steps.length - 1;
+        const isLast = index === timelineSteps.length - 1;
 
         return (
           <View key={step.id} style={styles.row}>

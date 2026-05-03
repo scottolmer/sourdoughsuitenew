@@ -60,6 +60,13 @@ function getStarterNote(starterReadiness: BakePlanInput['starterReadiness']): st
   return 'Your starter is in good shape. Follow the timeline with regular checks.';
 }
 
+function getHydrationNote(hydrationPercent: number): string {
+  if (hydrationPercent >= 80) return 'High hydration dough: expect a looser feel, use wet hands, and build strength gradually.';
+  if (hydrationPercent >= 75) return 'Moderately high hydration: use gentle folds and avoid adding extra flour too early.';
+  if (hydrationPercent <= 65) return 'Lower hydration dough: expect more resistance during mixing and shaping.';
+  return 'Balanced hydration: follow the timeline, then trust dough expansion and surface tension.';
+}
+
 function getFermentationRisk(input: BakePlanInput): 'low' | 'medium' | 'high' {
   const { roomTempF, starterReadiness, hydrationPercent } = input;
   let riskScore = 0;
@@ -226,6 +233,7 @@ export function generateBakePlan(input: BakePlanInput): BakePlan {
     fermentationRisk: getFermentationRisk(input),
     temperatureNote: getTemperatureNote(input.roomTempF),
     starterNote: getStarterNote(input.starterReadiness),
+    hydrationNote: getHydrationNote(input.hydrationPercent),
     steps,
   };
 }

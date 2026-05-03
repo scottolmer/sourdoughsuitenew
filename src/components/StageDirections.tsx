@@ -16,15 +16,17 @@ export interface StageDirection {
 }
 
 interface StageDirectionsProps {
-  directions: StageDirection[];
+  directions?: StageDirection[];
+  stages?: StageDirection[];
   style?: StyleProp<ViewStyle>;
 }
 
-export default function StageDirections({ directions, style }: StageDirectionsProps) {
+export default function StageDirections({ directions, stages, style }: StageDirectionsProps) {
+  const rows = directions ?? stages ?? [];
   return (
     <View style={[styles.container, style]}>
-      {directions.map((d, idx) => {
-        const isLast = idx === directions.length - 1;
+      {rows.map((d, idx) => {
+        const isLast = idx === rows.length - 1;
         return (
           <View
             key={`${d.stage}-${idx}`}

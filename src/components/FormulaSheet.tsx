@@ -11,6 +11,7 @@ import { theme } from '../theme';
 interface FormulaSheetProps {
   children: ReactNode;
   topRule?: boolean;
+  accented?: boolean;
   background?: 'paper' | 'porcelain' | 'paperWarm';
   padding?: keyof typeof theme.spacing;
   radius?: number;
@@ -20,6 +21,7 @@ interface FormulaSheetProps {
 export default function FormulaSheet({
   children,
   topRule = false,
+  accented = false,
   background = 'porcelain',
   padding = 'lg',
   radius = 10,
@@ -37,7 +39,7 @@ export default function FormulaSheet({
         style,
       ]}
     >
-      {topRule ? <View style={styles.topRule} /> : null}
+      {topRule || accented ? <View style={styles.topRule} /> : null}
       {children}
     </View>
   );

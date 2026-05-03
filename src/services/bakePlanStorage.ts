@@ -20,6 +20,11 @@ export const bakePlanStorage = {
     }
   },
 
+  async getById(recordId: string): Promise<SavedBakePlanRecord | null> {
+    const all = await this.getAll();
+    return all.find((record) => record.id === recordId || record.plan.id === recordId) ?? null;
+  },
+
   async save(plan: BakePlan): Promise<SavedBakePlanRecord> {
     try {
       const all = await this.getAll();

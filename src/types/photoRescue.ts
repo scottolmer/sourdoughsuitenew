@@ -100,6 +100,7 @@ export interface BakePlan {
   fermentationRisk: 'low' | 'medium' | 'high';
   temperatureNote: string;
   starterNote: string;
+  hydrationNote: string;
   steps: BakePlanStep[];
 }
 

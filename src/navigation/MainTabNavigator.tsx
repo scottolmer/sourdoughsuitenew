@@ -37,6 +37,9 @@ import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScr
 import PhotoRescueScreen from '../screens/Tools/PhotoRescueScreen';
 import DiagnosisResultScreen from '../screens/Tools/DiagnosisResultScreen';
 import BakeDayCopilotScreen from '../screens/Tools/BakeDayCopilotScreen';
+import BakePlannerScreen from '../screens/BakePlanner/BakePlannerScreen';
+import BakePlanDetailScreen from '../screens/BakePlanner/BakePlanDetailScreen';
+import PhotoRescueResultScreen from '../screens/PhotoRescue/PhotoRescueResultScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -101,6 +104,9 @@ const SafePrefermentCalculatorScreen = withSafeTop(PrefermentCalculatorScreen);
 const SafeDoughWeightCalculatorScreen = withSafeTop(DoughWeightCalculatorScreen);
 const SafeRecipeRescueCalculatorScreen = withSafeTop(RecipeRescueCalculatorScreen);
 const SafeFlourBlendCalculatorScreen = withSafeTop(FlourBlendCalculatorScreen);
+const SafeBakePlannerScreen = withSafeTop(BakePlannerScreen);
+const SafeBakePlanDetailScreen = withSafeTop(BakePlanDetailScreen);
+const SafePhotoRescueResultScreen = withSafeTop(PhotoRescueResultScreen);
 const SafeStartersScreen = withSafeTop(StartersScreen);
 const SafeStarterDetailScreen = withSafeTop(StarterDetailScreen);
 const SafeAddStarterScreen = withSafeTop(AddStarterScreen);
@@ -235,6 +241,21 @@ function ToolsStack() {
         name="BakeDayCopilot"
         component={BakeDayCopilotScreen}
         options={{ title: 'Bake Day Copilot' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakePlanner"
+        component={SafeBakePlannerScreen}
+        options={{ title: 'Bake Planner' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakePlanDetail"
+        component={SafeBakePlanDetailScreen}
+        options={{ title: 'Bake Plan' }}
+      />
+      <ToolsStackNav.Screen
+        name="PhotoRescueResult"
+        component={SafePhotoRescueResultScreen}
+        options={{ title: 'Photo Rescue Result' }}
       />
     </ToolsStackNav.Navigator>
   );
