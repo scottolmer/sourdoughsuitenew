@@ -60,4 +60,41 @@ describe('Photo Rescue Gemini prompt', () => {
     expect(guarded.summary).toContain('overproofing/overfermentation');
     expect(guarded.risk).toContain('Do not treat this as underproofed');
   });
+
+  it('prefers weak starter when a flat dense crumb has weak gluten and shaping clues', () => {
+    expect(SYSTEM_INSTRUCTION).toContain('Weak starter / weak fermentation strength');
+
+    const prompt = buildUserPrompt({
+      subject: 'crumb',
+      stage: 'Just cut',
+    });
+
+    expect(prompt).toContain('weak starter or weak fermentation strength');
+
+    const guarded = applyBakerGuardrails({
+      id: 'diag_weak_starter',
+      createdAt: new Date().toISOString(),
+      subject: 'crumb',
+      diagnosis: 'Likely overproofed or overfermented crumb with shaping contribution',
+      confidence: 'medium',
+      summary:
+        'The loaf appears flat with a dense, compressed crumb, weak gluten structure, and uneven holes likely affected by shaping.',
+      visualEvidence: [
+        'Flattened loaf profile with limited lift.',
+        'Dense compressed crumb through much of the slice.',
+        'Weak gluten development and shaping issues are visible.',
+        'Some larger irregular holes appear beside tight dense areas.',
+      ],
+      doNow: [{ title: 'Review starter', details: 'Check starter strength before the next bake.' }],
+      nextBake: ['Shorten bulk fermentation.'],
+      risk: 'No food safety issue is apparent.',
+      missingContextQuestions: [],
+    });
+
+    expect(guarded.diagnosis).toBe(
+      'Likely weak starter with weak gluten development and shaping issues'
+    );
+    expect(guarded.summary).toContain('weak starter');
+    expect(guarded.nextBake).toContain('Strengthen the starter before mixing: feed at peak activity for several cycles and use it only when it reliably doubles or triples on schedule.');
+  });
 });

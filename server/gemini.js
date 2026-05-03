@@ -38,11 +38,16 @@ Professional sourdough heuristics:
 - High hydration: sticky and extensible; use wet hands, gentle coil folds, and avoid adding lots of flour late.
 - Poor shaping: uneven crumb, large trapped holes, flat spread, weak surface tension.
 - Dense/gummy crumb: often underfermentation, weak starter, underdeveloped gluten, underbaking, or whole grain needing more hydration.
-- Huge holes plus dense zones: often shaping, trapped air, overfermentation, uneven folds, or rough handling.
+- Weak starter / weak fermentation strength: often a flattened loaf, poor vertical lift, dense or compressed crumb,
+  gummy/heavy texture, weak gluten development, and uneven gas distribution. A few larger irregular pockets beside
+  mostly dense crumb can come from weak starter activity plus weak gluten and shaping issues; do not automatically
+  call that overproofed.
+- Huge holes plus dense zones: often shaping, trapped air, weak starter/weak gluten, overfermentation, uneven folds,
+  or rough handling. Use the whole loaf profile and crumb density to separate these causes.
 - Overproofed / overfermented crumb: often very large cavernous voids, torn or webby gluten sheets, weak-looking
-  membrane around holes, dense gummy patches beside open tunnels, and irregular gas coalescence. Do not call this
-  "inconclusive" when the cavernous pattern is obvious; name overfermentation/overproofing as a likely cause and
-  mention shaping only as a possible contributor.
+  membrane around holes, dense gummy patches beside open tunnels, irregular gas coalescence, collapse, and excessive
+  sour/alcoholic context. Do not call this "inconclusive" when the cavernous pattern is obvious, but do not use
+  caverns alone as proof of overproofing when the overall loaf is flat, dense, and weakly fermented.
 - Underproofed crumb: usually tight, dense, gummy, and relatively closed overall, sometimes with a few tunnels or
   blowout clues. Do not diagnose underproofing when the dominant visual evidence is huge caverns plus collapsed or
   webby gluten unless the image also shows an overall tight/closed crumb.
@@ -149,7 +154,9 @@ If the visible subject is dough, prioritize bulk fermentation, gluten developmen
 
 Do not let optional context flip the visual diagnosis. In particular, if a baked loaf visibly looks flat, spread, collapsed, has little oven spring, or if a sliced crumb shows huge caverns with torn/webby structure and dense gummy patches, do not diagnose it as underproofed solely because the entered time seems short. Treat that as conflicting context and explain the conflict.
 
-For sliced crumb photos with giant irregular caverns and dense patches, prefer a diagnosis headline like "Likely overproofed or overfermented crumb" or "Likely overfermentation with shaping contribution" over a generic "uneven crumb" headline.
+For sliced crumb photos with flat loaf profile, dense compressed crumb, weak gluten, and shaping clues, prefer a diagnosis headline like "Likely weak starter with weak gluten development and shaping issues." For sliced crumb photos with giant irregular caverns, dense patches, collapsed/webby gluten, and stronger overfermentation clues, prefer a diagnosis headline like "Likely overproofed or overfermented crumb" or "Likely overfermentation with shaping contribution" over a generic "uneven crumb" headline.
+
+If the visual evidence points to weak starter or weak fermentation strength, say so directly. Do not hide that diagnosis behind "uneven crumb," "result unclear," or a generic proofing label.
 
 Give a likely diagnosis, confidence label, visual evidence, do-now actions, next-bake prevention tips, and risk/caution note.`;
 }
@@ -236,11 +243,70 @@ function applyBakerGuardrails(diagnosis) {
     'fragile',
     'stretched',
   ]);
+  const hasFlatLowLift = hasAny(evidenceText, [
+    'flat',
+    'flattened',
+    'low lift',
+    'limited lift',
+    'little oven spring',
+    'no oven spring',
+    'compressed',
+    'heavy',
+  ]);
+  const hasWeakStarterCues = hasAny(evidenceText, [
+    'weak starter',
+    'sluggish starter',
+    'starter was weak',
+    'poor starter activity',
+    'weak fermentation strength',
+    'not enough gas',
+    'insufficient gas',
+  ]);
+  const hasWeakGlutenOrShapingCues = hasAny(evidenceText, [
+    'weak gluten',
+    'underdeveloped gluten',
+    'poor gluten',
+    'gluten development',
+    'shaping',
+    'poor shape',
+    'weak surface tension',
+    'trapped air',
+  ]);
   const mentionsUnderproof = hasAny(evidenceText, [
     'underferment',
     'underproof',
     'under-proof',
   ]);
+
+  const weakStarterProfile =
+    diagnosis.subject === 'crumb' &&
+    hasDensePatches &&
+    hasWeakGlutenOrShapingCues &&
+    (hasWeakStarterCues || hasFlatLowLift);
+
+  if (weakStarterProfile) {
+    return {
+      ...diagnosis,
+      diagnosis: 'Likely weak starter with weak gluten development and shaping issues',
+      confidence: diagnosis.confidence === 'low' ? 'medium' : diagnosis.confidence,
+      summary:
+        'The crumb reads more like weak fermentation strength than simple overproofing: the loaf/crumb looks flat or compressed, the crumb is dense in broad areas, and the structure suggests weak starter activity with underdeveloped gluten and shaping issues contributing to the uneven holes.',
+      visualEvidence: [
+        'Dense or compressed crumb appears through much of the slice.',
+        'The loaf or crumb profile suggests limited lift rather than strong expansion.',
+        'Weak gluten development or shaping issues are visible in the uneven gas pattern.',
+        ...(diagnosis.visualEvidence || []),
+      ].slice(0, 5),
+      nextBake: [
+        'Strengthen the starter before mixing: feed at peak activity for several cycles and use it only when it reliably doubles or triples on schedule.',
+        'Build more gluten strength with a short autolyse and enough stretch-and-folds or coil folds during bulk.',
+        'Shape with clearer surface tension while avoiding trapped air pockets.',
+        ...(diagnosis.nextBake || []),
+      ].slice(0, 5),
+      risk:
+        'No food safety issue is apparent. The main risk is a flat, dense loaf from weak starter activity, weak dough strength, and uneven shaping.',
+    };
+  }
 
   if (diagnosis.subject === 'crumb' && hasCaverns && hasDensePatches) {
     const nextBake = [
