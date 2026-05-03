@@ -33,9 +33,9 @@
         "backgroundColor": "#14B8A6"
       },
       "permissions": [
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "SCHEDULE_EXACT_ALARM"
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM"
       ]
     },
     "assetBundlePatterns": [
@@ -50,6 +50,12 @@
         }
       ],
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "31be219b-71da-4638-90c7-b6a3b02bb0ac"
+      }
+    },
+    "owner": "scottolmer"
   }
 }

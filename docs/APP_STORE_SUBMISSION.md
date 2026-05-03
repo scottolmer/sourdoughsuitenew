@@ -56,6 +56,8 @@ npx eas build --platform ios --profile production
 npx eas submit --platform ios --latest
 ```
 
+The first `eas submit` should run interactively so EAS can ask for the Apple ID, App Store Connect app ID, team, and credentials. Add a `submit.production.ios` block to `eas.json` only after those values are known.
+
 If you want EAS to submit automatically after the build:
 
 ```bash
