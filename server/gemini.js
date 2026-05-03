@@ -23,6 +23,11 @@ Do not:
 - Give medical or food-safety guarantees.
 
 Professional sourdough heuristics:
+- First identify what is visibly in the image: unbaked dough, starter, sliced crumb, or baked whole loaf.
+- Treat the selected subject as user context, not a command. If the selected subject conflicts with the image,
+  analyze the thing that is actually visible and set the returned subject to that visible subject.
+- Visual evidence beats timing context. Timing, temperature, hydration, and starter notes can support a
+  diagnosis, but they must not override obvious visible evidence.
 - Ready starter: doubled or nearly doubled, domed top, lots of bubbles, airy, fresh tangy smell, floats easily.
 - Sluggish starter: little rise, dense, few bubbles, sinks, needs feeding.
 - Hungry starter: hooch, strong sour smell, acetone smell, peaked and collapsed.
@@ -35,6 +40,11 @@ Professional sourdough heuristics:
 - Dense/gummy crumb: often underfermentation, weak starter, underdeveloped gluten, underbaking, or whole grain needing more hydration.
 - Huge holes plus dense zones: often shaping, trapped air, overfermentation, uneven folds, or rough handling.
 - Flat loaf/no oven spring: often overfermentation, weak surface tension, too-wet dough, weak starter, or overly deep scoring.
+- Overproofed baked loaf: often squat or wide profile, low vertical lift, weak or absent ear, little oven spring,
+  wrinkled or collapsed areas, excessive spread, or a score that opened poorly despite a baked crust.
+- Underproofed baked loaf: often dramatic side blowout, tight round shape, tearing at the score, dense/tight crumb
+  if the crumb is visible, or explosive oven spring. Do not call a visibly flat, spread loaf underproofed just
+  because the entered timing seems short.
 
 Return only JSON matching the provided schema.`;
 
@@ -117,7 +127,7 @@ function buildUserPrompt(context) {
   return `Analyze this sourdough photo.
 
 Context:
-- Subject: ${context.subject || 'not specified'}
+- User-selected subject: ${context.subject || 'not specified'} (may be wrong if the image clearly shows another category)
 - Stage: ${context.stage || 'not specified'}
 - Room temperature: ${context.roomTempF != null ? context.roomTempF + 'F' : 'not specified'}
 - Time since mixing/feeding: ${context.elapsedMinutes != null ? context.elapsedMinutes + ' minutes' : 'not specified'}
@@ -126,7 +136,11 @@ Context:
 - Starter readiness: ${context.starterReadiness || 'not specified'}
 - User notes: ${context.notes || 'none'}
 
-Focus on the user's selected subject. If the selected subject is dough, prioritize bulk fermentation, gluten development, hydration, and shaping readiness. If the selected subject is starter, prioritize activity, hunger, hooch, mold/spoilage warning signs, and feeding readiness. If the selected subject is crumb, prioritize fermentation, shaping, proofing, baking, and gluten clues. If the selected subject is loaf, prioritize oven spring, spread, crust, scoring, steam, and bake completion clues.
+First classify what is visibly shown in the image, then analyze that visible category. If the user-selected subject conflicts with the image, say so briefly in the summary and return the visible category as "subject".
+
+If the visible subject is dough, prioritize bulk fermentation, gluten development, hydration, and shaping readiness. If the visible subject is starter, prioritize activity, hunger, hooch, mold/spoilage warning signs, and feeding readiness. If the visible subject is crumb, prioritize fermentation, shaping, proofing, baking, and gluten clues. If the visible subject is a whole baked loaf, prioritize oven spring, loaf height versus spread, ear/score opening, crust, side blowouts, collapse, and bake completion clues.
+
+Do not let optional context flip the visual diagnosis. In particular, if a baked loaf visibly looks flat, spread, collapsed, or has little oven spring, do not diagnose it as underproofed solely because the entered time seems short. Treat that as conflicting context and explain the conflict.
 
 Give a likely diagnosis, confidence label, visual evidence, do-now actions, next-bake prevention tips, and risk/caution note.`;
 }
@@ -221,4 +235,4 @@ async function callGemini(imageBase64, mimeType, context) {
   return validateDiagnosis(parsed);
 }
 
-module.exports = { callGemini };
+module.exports = { callGemini, buildUserPrompt, SYSTEM_INSTRUCTION };
