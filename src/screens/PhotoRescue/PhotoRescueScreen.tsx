@@ -129,7 +129,7 @@ export default function PhotoRescueScreen({ navigation }: Props) {
         <Text style={styles.kicker}>PHOTO RESCUE</Text>
         <Text style={styles.title}>Read the dough in front of you.</Text>
         <Text style={styles.subtitle}>
-          Use a sample path for the demo, or upload a baking photo. If analysis
+          Use the sample photo path, or upload a baking photo. If analysis
           is unavailable, the app switches to an honest checklist.
         </Text>
       </View>
@@ -145,7 +145,7 @@ export default function PhotoRescueScreen({ navigation }: Props) {
       />
 
       <FormulaSheet style={styles.photoSheet} accented>
-        <RuleHeader title="Image" meta={imageUri ? 'Uploaded' : 'Demo ready'} />
+        <RuleHeader title="Image" meta={imageUri ? 'Uploaded' : 'Sample ready'} />
         {imageUri ? (
           <Image source={{ uri: imageUri }} style={styles.preview} />
         ) : (
@@ -157,7 +157,7 @@ export default function PhotoRescueScreen({ navigation }: Props) {
             />
             <Text style={styles.sampleTitle}>Sample dough photo</Text>
             <Text style={styles.sampleText}>
-              Optimized for the hackathon path: bulk fermentation rescue.
+              Built for bulk fermentation rescue when you want to try the flow.
             </Text>
           </View>
         )}

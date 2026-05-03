@@ -3,8 +3,16 @@
  */
 
 declare const window: { location: { protocol: string; hostname: string } } | undefined;
+declare const process:
+  | { env?: { EXPO_PUBLIC_API_BASE_URL?: string; NODE_ENV?: string } }
+  | undefined;
 
 function resolveApiBaseUrl(): string {
+  const configuredUrl = process?.env?.EXPO_PUBLIC_API_BASE_URL?.trim();
+  if (configuredUrl) {
+    return configuredUrl.replace(/\/$/, '');
+  }
+
   if (typeof window !== 'undefined' && window && window.location) {
     const { protocol, hostname } = window.location;
     const replitDevMatch = hostname.match(/^(\d+)-(.+\.replit\.dev)$/);
@@ -16,7 +24,13 @@ function resolveApiBaseUrl(): string {
       return `${protocol}//${hostname}:3001/api`;
     }
   }
-  return 'http://localhost:3001/api';
+  if (process?.env?.NODE_ENV !== 'production') {
+    return 'http://localhost:3001/api';
+  }
+
+  // Production iOS builds must set EXPO_PUBLIC_API_BASE_URL in EAS.
+  // Photo Rescue catches this as a fallback path if the API is unavailable.
+  return '';
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();

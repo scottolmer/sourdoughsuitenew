@@ -71,7 +71,6 @@ export default function StartersScreen() {
       try {
         await initializeNotifications();
         notificationsInitialized.current = true;
-        console.log('Notifications initialized successfully');
       } catch (error) {
         console.error('Failed to initialize notifications:', error);
       }

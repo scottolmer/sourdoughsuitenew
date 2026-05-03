@@ -114,7 +114,7 @@ export async function scheduleFeedingReminder(starter: Starter): Promise<string 
 export async function cancelFeedingReminder(starterId: number): Promise<void> {
   // Placeholder: In a real app we'd fetch the ID associated with this starter.
   // For this migration, we might accept that cancelling requires the ID.
-  console.log('Cancel requested for starter', starterId);
+  void starterId;
 }
 
 /**
