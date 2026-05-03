@@ -39,6 +39,13 @@ Professional sourdough heuristics:
 - Poor shaping: uneven crumb, large trapped holes, flat spread, weak surface tension.
 - Dense/gummy crumb: often underfermentation, weak starter, underdeveloped gluten, underbaking, or whole grain needing more hydration.
 - Huge holes plus dense zones: often shaping, trapped air, overfermentation, uneven folds, or rough handling.
+- Overproofed / overfermented crumb: often very large cavernous voids, torn or webby gluten sheets, weak-looking
+  membrane around holes, dense gummy patches beside open tunnels, and irregular gas coalescence. Do not call this
+  "inconclusive" when the cavernous pattern is obvious; name overfermentation/overproofing as a likely cause and
+  mention shaping only as a possible contributor.
+- Underproofed crumb: usually tight, dense, gummy, and relatively closed overall, sometimes with a few tunnels or
+  blowout clues. Do not diagnose underproofing when the dominant visual evidence is huge caverns plus collapsed or
+  webby gluten unless the image also shows an overall tight/closed crumb.
 - Flat loaf/no oven spring: often overfermentation, weak surface tension, too-wet dough, weak starter, or overly deep scoring.
 - Overproofed baked loaf: often squat or wide profile, low vertical lift, weak or absent ear, little oven spring,
   wrinkled or collapsed areas, excessive spread, or a score that opened poorly despite a baked crust.
@@ -140,7 +147,9 @@ First classify what is visibly shown in the image, then analyze that visible cat
 
 If the visible subject is dough, prioritize bulk fermentation, gluten development, hydration, and shaping readiness. If the visible subject is starter, prioritize activity, hunger, hooch, mold/spoilage warning signs, and feeding readiness. If the visible subject is crumb, prioritize fermentation, shaping, proofing, baking, and gluten clues. If the visible subject is a whole baked loaf, prioritize oven spring, loaf height versus spread, ear/score opening, crust, side blowouts, collapse, and bake completion clues.
 
-Do not let optional context flip the visual diagnosis. In particular, if a baked loaf visibly looks flat, spread, collapsed, or has little oven spring, do not diagnose it as underproofed solely because the entered time seems short. Treat that as conflicting context and explain the conflict.
+Do not let optional context flip the visual diagnosis. In particular, if a baked loaf visibly looks flat, spread, collapsed, has little oven spring, or if a sliced crumb shows huge caverns with torn/webby structure and dense gummy patches, do not diagnose it as underproofed solely because the entered time seems short. Treat that as conflicting context and explain the conflict.
+
+For sliced crumb photos with giant irregular caverns and dense patches, prefer a diagnosis headline like "Likely overproofed or overfermented crumb" or "Likely overfermentation with shaping contribution" over a generic "uneven crumb" headline.
 
 Give a likely diagnosis, confidence label, visual evidence, do-now actions, next-bake prevention tips, and risk/caution note.`;
 }

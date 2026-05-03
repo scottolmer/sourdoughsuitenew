@@ -17,6 +17,8 @@ describe('Photo Rescue Gemini prompt', () => {
     expect(SYSTEM_INSTRUCTION).toContain('Visual evidence beats timing context');
     expect(SYSTEM_INSTRUCTION).toContain('Overproofed baked loaf');
     expect(SYSTEM_INSTRUCTION).toContain('Do not call a visibly flat, spread loaf underproofed');
+    expect(SYSTEM_INSTRUCTION).toContain('Overproofed / overfermented crumb');
+    expect(SYSTEM_INSTRUCTION).toContain('huge caverns plus collapsed or');
 
     const prompt = buildUserPrompt({
       subject: 'loaf',
@@ -25,6 +27,7 @@ describe('Photo Rescue Gemini prompt', () => {
     });
 
     expect(prompt).toContain('Do not let optional context flip the visual diagnosis');
-    expect(prompt).toContain('flat, spread, collapsed, or has little oven spring');
+    expect(prompt).toContain('flat, spread, collapsed, has little oven spring');
+    expect(prompt).toContain('Likely overproofed or overfermented crumb');
   });
 });
