@@ -185,14 +185,7 @@ export default function PhotoRescueScreen() {
       });
     } catch (err) {
       if (err instanceof PhotoRescueFallbackError) {
-        setError(`${err.message} Answer the quick rescue checklist so the fallback can give a specific result.`);
-        setQuickRescueMode('questions');
-        setQrStep(0);
-        setQrAnswers({
-          subject,
-          ...(stage ? { stage } : {}),
-        });
-        setQrSelectedSigns([]);
+        setError(`${err.message} Photo analysis did not run. You can try again or use the checklist as a separate fallback.`);
       } else {
         setError('Something went wrong. Try again or use the quick rescue checklist below.');
       }

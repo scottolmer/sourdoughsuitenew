@@ -202,10 +202,10 @@ export default function DiagnosisResultScreen() {
         </View>
       ) : null}
 
-      {/* Things to check (only when present — doesn't break the fixed order) */}
-      {diagnosis.missingContextQuestions?.length > 0 ? (
+      {/* Optional checks only appear for low-confidence results so the screen still feels answer-first. */}
+      {diagnosis.confidence === 'low' && diagnosis.missingContextQuestions?.length > 0 ? (
         <View style={styles.section}>
-          <RuleHeader title="THINGS TO CHECK" />
+          <RuleHeader title="OPTIONAL CHECKS" />
           <FormulaSheet background="porcelain" padding="lg">
             {diagnosis.missingContextQuestions.map((q, i) => (
               <View

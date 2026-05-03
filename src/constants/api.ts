@@ -7,6 +7,8 @@ declare const process:
   | { env?: { EXPO_PUBLIC_API_BASE_URL?: string; NODE_ENV?: string } }
   | undefined;
 
+const PRODUCTION_API_BASE_URL = 'https://api-production-0161c.up.railway.app/api';
+
 function resolveApiBaseUrl(): string {
   const configuredUrl = process?.env?.EXPO_PUBLIC_API_BASE_URL?.trim();
   if (configuredUrl) {
@@ -28,9 +30,7 @@ function resolveApiBaseUrl(): string {
     return 'http://localhost:3001/api';
   }
 
-  // Production iOS builds must set EXPO_PUBLIC_API_BASE_URL in EAS.
-  // Photo Rescue catches this as a fallback path if the API is unavailable.
-  return '';
+  return PRODUCTION_API_BASE_URL;
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
