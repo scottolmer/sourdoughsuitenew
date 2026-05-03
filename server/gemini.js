@@ -203,6 +203,75 @@ function validateDiagnosis(parsed) {
   return parsed;
 }
 
+function hasAny(text, keywords) {
+  const normalized = text.toLowerCase();
+  return keywords.some((keyword) => normalized.includes(keyword));
+}
+
+function applyBakerGuardrails(diagnosis) {
+  const evidenceText = [
+    diagnosis.diagnosis,
+    diagnosis.summary,
+    diagnosis.risk,
+    ...(diagnosis.visualEvidence || []),
+  ].join(' ');
+
+  const hasCaverns = hasAny(evidenceText, [
+    'cavern',
+    'large, irregular',
+    'very large',
+    'giant',
+    'tunnel',
+    'large holes',
+    'large air pockets',
+    'significant voids',
+  ]);
+  const hasDensePatches = hasAny(evidenceText, [
+    'dense',
+    'denser',
+    'gummy',
+    'tight areas',
+    'collapsed',
+    'webby',
+    'fragile',
+    'stretched',
+  ]);
+  const mentionsUnderproof = hasAny(evidenceText, [
+    'underferment',
+    'underproof',
+    'under-proof',
+  ]);
+
+  if (diagnosis.subject === 'crumb' && hasCaverns && hasDensePatches) {
+    const nextBake = [
+      'Shorten bulk or final proof and judge readiness by rise, dough feel, and surface strength rather than time alone.',
+      'Shape gently but deliberately so you do not trap large air pockets.',
+      'Watch for slack, fragile dough or a collapsing surface before baking.',
+      ...(diagnosis.nextBake || []),
+    ].slice(0, 5);
+
+    return {
+      ...diagnosis,
+      diagnosis: 'Likely overproofed or overfermented crumb with shaping contribution',
+      confidence: diagnosis.confidence === 'low' ? 'medium' : diagnosis.confidence,
+      summary:
+        'The crumb shows very large cavernous voids next to denser patches and stretched, fragile-looking gluten. That pattern points more toward overproofing/overfermentation and gas coalescence, with shaping possibly trapping or exaggerating the large pockets.',
+      visualEvidence: [
+        'Very large, irregular caverns or tunnels are visible in the crumb.',
+        'Dense patches sit beside the large voids instead of a consistent open crumb.',
+        'The gluten around the holes looks stretched, webby, or fragile.',
+        ...(diagnosis.visualEvidence || []),
+      ].slice(0, 5),
+      nextBake,
+      risk: mentionsUnderproof
+        ? 'The optional timing/context conflicts with the visual evidence. Do not treat this as underproofed unless the overall crumb is tight and closed; the visible pattern is more consistent with overproofing/overfermentation plus shaping contribution.'
+        : diagnosis.risk,
+    };
+  }
+
+  return diagnosis;
+}
+
 async function callGemini(imageBase64, mimeType, context) {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY not configured');
@@ -241,7 +310,7 @@ async function callGemini(imageBase64, mimeType, context) {
   const rawText = response.text || '';
   const cleaned = stripMarkdownFences(rawText);
   const parsed = JSON.parse(cleaned);
-  return validateDiagnosis(parsed);
+  return applyBakerGuardrails(validateDiagnosis(parsed));
 }
 
-module.exports = { callGemini, buildUserPrompt, SYSTEM_INSTRUCTION };
+module.exports = { callGemini, buildUserPrompt, SYSTEM_INSTRUCTION, applyBakerGuardrails };

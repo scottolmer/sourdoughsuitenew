@@ -1,4 +1,8 @@
-const { buildUserPrompt, SYSTEM_INSTRUCTION } = require('../gemini');
+const {
+  applyBakerGuardrails,
+  buildUserPrompt,
+  SYSTEM_INSTRUCTION,
+} = require('../gemini');
 
 describe('Photo Rescue Gemini prompt', () => {
   it('treats the selected subject as weak context when the image clearly differs', () => {
@@ -29,5 +33,31 @@ describe('Photo Rescue Gemini prompt', () => {
     expect(prompt).toContain('Do not let optional context flip the visual diagnosis');
     expect(prompt).toContain('flat, spread, collapsed, has little oven spring');
     expect(prompt).toContain('Likely overproofed or overfermented crumb');
+  });
+
+  it('rewrites cavernous crumb responses away from underproofing', () => {
+    const guarded = applyBakerGuardrails({
+      id: 'diag_test',
+      createdAt: new Date().toISOString(),
+      subject: 'crumb',
+      diagnosis: 'Imbalanced Fermentation and/or Shaping Issues',
+      confidence: 'medium',
+      summary:
+        'Very large, cavernous holes beside denser areas may indicate underfermentation or shaping issues.',
+      visualEvidence: [
+        'Presence of very large, irregular, cavernous holes within the crumb structure.',
+        'Uneven distribution of air pockets, with significant voids existing alongside denser areas.',
+      ],
+      doNow: [{ title: 'Review the crumb', details: 'Compare visual signs.' }],
+      nextBake: ['Track fermentation time.'],
+      risk: 'Context may suggest underfermentation.',
+      missingContextQuestions: [],
+    });
+
+    expect(guarded.diagnosis).toBe(
+      'Likely overproofed or overfermented crumb with shaping contribution'
+    );
+    expect(guarded.summary).toContain('overproofing/overfermentation');
+    expect(guarded.risk).toContain('Do not treat this as underproofed');
   });
 });
