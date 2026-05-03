@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "rIimfhL9gevrh7LCsyffH"
@@ -12,3 +11,9 @@ id = "NuL6bcNVv5WVyEM_Y59-4"
 uri = "file://assets/splash.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "Zl6Liq5jchi_B6eb9J_2t"
+uri = "file://landing-variants.zip"
+type = "unspecified"
+title = "Landing page variants — open locally in any browser"
