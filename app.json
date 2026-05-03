@@ -16,6 +16,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.sourdoughsuite.app",
+      "icon": "./assets/app-icon.png",
       "buildNumber": "1",
       "supportsTablet": false,
       "infoPlist": {
