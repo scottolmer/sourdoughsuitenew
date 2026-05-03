@@ -274,6 +274,9 @@ function applyBakerGuardrails(diagnosis) {
     'starter is very active',
     'starter is at peak',
     'peak activity',
+    'starter behave',
+    'starter prior to mixing',
+    'active was your starter',
   ]);
   const hasWeakGlutenOrShapingCues = hasAny(evidenceText, [
     'weak gluten',

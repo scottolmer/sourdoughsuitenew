@@ -104,6 +104,46 @@ describe('Photo Rescue Gemini prompt', () => {
     );
   });
 
+  it('uses starter context questions as weak-starter evidence when paired with gluten and shaping concerns', () => {
+    const guarded = applyBakerGuardrails({
+      id: 'diag_live_style_starter_question',
+      createdAt: new Date().toISOString(),
+      subject: 'crumb',
+      diagnosis: 'Likely overproofed or overfermented crumb with shaping contribution',
+      confidence: 'high',
+      summary:
+        'Prominent large tunnels are visible with denser crumb patches and inconsistent gas distribution.',
+      visualEvidence: [
+        'Prominent large irregular tunnels are visible throughout the crumb.',
+        'Dense patches indicate inconsistent gas distribution.',
+      ],
+      doNow: [
+        {
+          title: 'Review dough handling',
+          details:
+            'The dough may have needed stronger gluten development and better shaping tension.',
+        },
+      ],
+      nextBake: [
+        'Strengthen gluten development with adequate stretch and folds.',
+        'Practice even shaping to prevent large air pockets.',
+      ],
+      risk: 'No food safety issue is apparent.',
+      missingContextQuestions: [
+        'How did your starter behave prior to mixing?',
+        'Could you describe your shaping process and how the dough felt?',
+      ],
+      bakePlanSeed: {
+        suggestedStyle: 'overnight-cold-proof',
+        adjustments: ['Focus on more thorough gluten development.'],
+      },
+    });
+
+    expect(guarded.diagnosis).toBe(
+      'Likely weak starter with weak gluten development and shaping issues'
+    );
+  });
+
   it('prefers weak starter when a flat dense crumb has weak gluten and shaping clues', () => {
     expect(SYSTEM_INSTRUCTION).toContain('Weak starter / weak fermentation strength');
 
