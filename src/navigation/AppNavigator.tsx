@@ -6,8 +6,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 import type {
   RootStackParamList,
   MainTabParamList,
@@ -153,7 +154,7 @@ function MainTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+          let iconName: MaterialCommunityIconName;
 
           switch (route.name) {
             case 'HomeTab':
@@ -171,7 +172,7 @@ function MainTabNavigator() {
 
           return <Icon name={iconName} size={focused ? 26 : 24} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary[500],
+        tabBarActiveTintColor: theme.colors.modernist.ruleTeal,
         tabBarInactiveTintColor: theme.colors.text.disabled,
         tabBarLabelStyle: {
           fontSize: 12,

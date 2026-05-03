@@ -4,16 +4,19 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { CommonActions } from '@react-navigation/native';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { MaterialCommunityIconName } from '../types/icons';
 import type {
   HomeStackParamList,
   ToolsStackParamList,
   StartersStackParamList,
   RecipesStackParamList,
-  ProfileStackParamList,
   MainTabParamList,
 } from './types';
 
@@ -31,10 +34,12 @@ import PrefermentCalculatorScreen from '../screens/Tools/PrefermentCalculatorScr
 import DoughWeightCalculatorScreen from '../screens/Tools/DoughWeightCalculatorScreen';
 import RecipeRescueCalculatorScreen from '../screens/Tools/RecipeRescueCalculatorScreen';
 import FlourBlendCalculatorScreen from '../screens/Tools/FlourBlendCalculatorScreen';
-import PhotoRescueScreen from '../screens/PhotoRescue/PhotoRescueScreen';
-import PhotoRescueResultScreen from '../screens/PhotoRescue/PhotoRescueResultScreen';
+import PhotoRescueScreen from '../screens/Tools/PhotoRescueScreen';
+import DiagnosisResultScreen from '../screens/Tools/DiagnosisResultScreen';
+import BakeDayCopilotScreen from '../screens/Tools/BakeDayCopilotScreen';
 import BakePlannerScreen from '../screens/BakePlanner/BakePlannerScreen';
 import BakePlanDetailScreen from '../screens/BakePlanner/BakePlanDetailScreen';
+import PhotoRescueResultScreen from '../screens/PhotoRescue/PhotoRescueResultScreen';
 import StartersScreen from '../screens/Starters/StartersScreen';
 import StarterDetailScreen from '../screens/Starters/StarterDetailScreen';
 import AddStarterScreen from '../screens/Starters/AddStarterScreen';
@@ -49,22 +54,77 @@ import HelpFaqScreen from '../screens/Profile/HelpFaqScreen';
 import AboutScreen from '../screens/Profile/AboutScreen';
 import PrivacyPolicyScreen from '../screens/Profile/PrivacyPolicyScreen';
 import TermsOfServiceScreen from '../screens/Profile/TermsOfServiceScreen';
+import LearnScreen from '../screens/Learn/LearnScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const HomeStackNav = createNativeStackNavigator<HomeStackParamList>();
 const ToolsStackNav = createNativeStackNavigator<ToolsStackParamList>();
 const StartersStackNav = createNativeStackNavigator<StartersStackParamList>();
 const RecipesStackNav = createNativeStackNavigator<RecipesStackParamList>();
-const ProfileStackNav = createNativeStackNavigator<ProfileStackParamList>();
 
-// Stack navigators for each tab
-import LearnScreen from '../screens/Learn/LearnScreen';
+const modernistHeaderOptions = {
+  headerShown: false,
+  headerStyle: { backgroundColor: theme.colors.modernist.paper },
+  headerTintColor: theme.colors.modernist.ink,
+  headerTitleStyle: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 17,
+    color: theme.colors.modernist.ink,
+  },
+  headerShadowVisible: false,
+};
 
-// ...
+const safeTopStyle = { flex: 1, backgroundColor: theme.colors.modernist.paper } as const;
+const safeTopInner = { flex: 1, paddingTop: theme.spacing.xs } as const;
+const withSafeTop = (Comp: React.ComponentType<any>) => {
+  const Wrapped = (props: any) => (
+    <SafeAreaView edges={['top']} style={safeTopStyle}>
+      <View style={safeTopInner}>
+        <Comp {...props} />
+      </View>
+    </SafeAreaView>
+  );
+  Wrapped.displayName = `SafeTop(${Comp.displayName || Comp.name || 'Component'})`;
+  return Wrapped;
+};
+
+// Pre-create all wrapped components at module scope so their identity
+// stays stable across renders — inline calls create new types each render
+// which causes React Navigation to unmount/remount screens on mobile.
+const SafeLearnScreen = withSafeTop(LearnScreen);
+const SafeToolsScreen = withSafeTop(ToolsScreen);
+const SafeBakersCalculatorScreen = withSafeTop(BakersCalculatorScreen);
+const SafeHydrationCalculatorScreen = withSafeTop(HydrationCalculatorScreen);
+const SafeTimelineCalculatorScreen = withSafeTop(TimelineCalculatorScreen);
+const SafeScalingCalculatorScreen = withSafeTop(ScalingCalculatorScreen);
+const SafeTemperatureCalculatorScreen = withSafeTop(TemperatureCalculatorScreen);
+const SafeLevainBuilderScreen = withSafeTop(LevainBuilderScreen);
+const SafeStarterPercentageCalculatorScreen = withSafeTop(StarterPercentageCalculatorScreen);
+const SafePrefermentCalculatorScreen = withSafeTop(PrefermentCalculatorScreen);
+const SafeDoughWeightCalculatorScreen = withSafeTop(DoughWeightCalculatorScreen);
+const SafeRecipeRescueCalculatorScreen = withSafeTop(RecipeRescueCalculatorScreen);
+const SafeFlourBlendCalculatorScreen = withSafeTop(FlourBlendCalculatorScreen);
+const SafeBakePlannerScreen = withSafeTop(BakePlannerScreen);
+const SafeBakePlanDetailScreen = withSafeTop(BakePlanDetailScreen);
+const SafePhotoRescueResultScreen = withSafeTop(PhotoRescueResultScreen);
+const SafeStartersScreen = withSafeTop(StartersScreen);
+const SafeStarterDetailScreen = withSafeTop(StarterDetailScreen);
+const SafeAddStarterScreen = withSafeTop(AddStarterScreen);
+const SafeEditStarterScreen = withSafeTop(EditStarterScreen);
+const SafeAddFeedingScreen = withSafeTop(AddFeedingScreen);
+const SafeRecipesScreen = withSafeTop(RecipesScreen);
+const SafeRecipeDetailScreen = withSafeTop(RecipeDetailScreen);
+const SafeAddRecipeScreen = withSafeTop(AddRecipeScreen);
+const SafeEditRecipeScreen = withSafeTop(EditRecipeScreen);
+const SafeProfileScreen = withSafeTop(ProfileScreen);
+const SafeHelpFaqScreen = withSafeTop(HelpFaqScreen);
+const SafeAboutScreen = withSafeTop(AboutScreen);
+const SafePrivacyPolicyScreen = withSafeTop(PrivacyPolicyScreen);
+const SafeTermsOfServiceScreen = withSafeTop(TermsOfServiceScreen);
 
 function HomeStack() {
   return (
-    <HomeStackNav.Navigator>
+    <HomeStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <HomeStackNav.Screen
         name="Home"
         component={HomeScreen}
@@ -72,8 +132,33 @@ function HomeStack() {
       />
       <HomeStackNav.Screen
         name="Learn"
-        component={LearnScreen}
+        component={SafeLearnScreen}
         options={{ title: 'Sourdough Academy' }}
+      />
+      <HomeStackNav.Screen
+        name="Profile"
+        component={SafeProfileScreen}
+        options={{ title: 'Profile' }}
+      />
+      <HomeStackNav.Screen
+        name="HelpFaq"
+        component={SafeHelpFaqScreen}
+        options={{ title: 'Help & FAQ' }}
+      />
+      <HomeStackNav.Screen
+        name="About"
+        component={SafeAboutScreen}
+        options={{ title: 'About' }}
+      />
+      <HomeStackNav.Screen
+        name="PrivacyPolicy"
+        component={SafePrivacyPolicyScreen}
+        options={{ title: 'Privacy Policy' }}
+      />
+      <HomeStackNav.Screen
+        name="TermsOfService"
+        component={SafeTermsOfServiceScreen}
+        options={{ title: 'Terms of Service' }}
       />
     </HomeStackNav.Navigator>
   );
@@ -81,11 +166,66 @@ function HomeStack() {
 
 function ToolsStack() {
   return (
-    <ToolsStackNav.Navigator>
+    <ToolsStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <ToolsStackNav.Screen
         name="ToolsList"
-        component={ToolsScreen}
+        component={SafeToolsScreen}
         options={{ title: 'Calculators & Tools' }}
+      />
+      <ToolsStackNav.Screen
+        name="BakersCalculator"
+        component={SafeBakersCalculatorScreen}
+        options={{ title: "Baker's Percentage" }}
+      />
+      <ToolsStackNav.Screen
+        name="HydrationCalculator"
+        component={SafeHydrationCalculatorScreen}
+        options={{ title: 'Hydration Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="TimelineCalculator"
+        component={SafeTimelineCalculatorScreen}
+        options={{ title: 'Timeline Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="ScalingCalculator"
+        component={SafeScalingCalculatorScreen}
+        options={{ title: 'Recipe Scaler' }}
+      />
+      <ToolsStackNav.Screen
+        name="TemperatureCalculator"
+        component={SafeTemperatureCalculatorScreen}
+        options={{ title: 'Temperature Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="LevainBuilder"
+        component={SafeLevainBuilderScreen}
+        options={{ title: 'Levain Builder' }}
+      />
+      <ToolsStackNav.Screen
+        name="StarterPercentageCalculator"
+        component={SafeStarterPercentageCalculatorScreen}
+        options={{ title: 'Starter Percentage Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="PrefermentCalculator"
+        component={SafePrefermentCalculatorScreen}
+        options={{ title: 'Preferment Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="DoughWeightCalculator"
+        component={SafeDoughWeightCalculatorScreen}
+        options={{ title: 'Dough Weight Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="RecipeRescueCalculator"
+        component={SafeRecipeRescueCalculatorScreen}
+        options={{ title: 'Recipe Rescue Calculator' }}
+      />
+      <ToolsStackNav.Screen
+        name="FlourBlendCalculator"
+        component={SafeFlourBlendCalculatorScreen}
+        options={{ title: 'Flour Blend Calculator' }}
       />
       <ToolsStackNav.Screen
         name="PhotoRescue"
@@ -93,74 +233,29 @@ function ToolsStack() {
         options={{ title: 'Photo Rescue' }}
       />
       <ToolsStackNav.Screen
-        name="PhotoRescueResult"
-        component={PhotoRescueResultScreen}
+        name="DiagnosisResult"
+        component={DiagnosisResultScreen}
         options={{ title: 'Diagnosis Result' }}
       />
       <ToolsStackNav.Screen
-        name="BakePlanner"
-        component={BakePlannerScreen}
+        name="BakeDayCopilot"
+        component={BakeDayCopilotScreen}
         options={{ title: 'Bake Day Copilot' }}
       />
       <ToolsStackNav.Screen
+        name="BakePlanner"
+        component={SafeBakePlannerScreen}
+        options={{ title: 'Bake Planner' }}
+      />
+      <ToolsStackNav.Screen
         name="BakePlanDetail"
-        component={BakePlanDetailScreen}
+        component={SafeBakePlanDetailScreen}
         options={{ title: 'Bake Plan' }}
       />
       <ToolsStackNav.Screen
-        name="BakersCalculator"
-        component={BakersCalculatorScreen}
-        options={{ title: "Baker's Percentage" }}
-      />
-      <ToolsStackNav.Screen
-        name="HydrationCalculator"
-        component={HydrationCalculatorScreen}
-        options={{ title: 'Hydration Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="TimelineCalculator"
-        component={TimelineCalculatorScreen}
-        options={{ title: 'Timeline Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="ScalingCalculator"
-        component={ScalingCalculatorScreen}
-        options={{ title: 'Recipe Scaler' }}
-      />
-      <ToolsStackNav.Screen
-        name="TemperatureCalculator"
-        component={TemperatureCalculatorScreen}
-        options={{ title: 'Temperature Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="LevainBuilder"
-        component={LevainBuilderScreen}
-        options={{ title: 'Levain Builder' }}
-      />
-      <ToolsStackNav.Screen
-        name="StarterPercentageCalculator"
-        component={StarterPercentageCalculatorScreen}
-        options={{ title: 'Starter Percentage Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="PrefermentCalculator"
-        component={PrefermentCalculatorScreen}
-        options={{ title: 'Preferment Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="DoughWeightCalculator"
-        component={DoughWeightCalculatorScreen}
-        options={{ title: 'Dough Weight Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="RecipeRescueCalculator"
-        component={RecipeRescueCalculatorScreen}
-        options={{ title: 'Recipe Rescue Calculator' }}
-      />
-      <ToolsStackNav.Screen
-        name="FlourBlendCalculator"
-        component={FlourBlendCalculatorScreen}
-        options={{ title: 'Flour Blend Calculator' }}
+        name="PhotoRescueResult"
+        component={SafePhotoRescueResultScreen}
+        options={{ title: 'Photo Rescue Result' }}
       />
     </ToolsStackNav.Navigator>
   );
@@ -168,30 +263,30 @@ function ToolsStack() {
 
 function StartersStack() {
   return (
-    <StartersStackNav.Navigator>
+    <StartersStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <StartersStackNav.Screen
         name="StartersList"
-        component={StartersScreen}
+        component={SafeStartersScreen}
         options={{ title: 'My Starters' }}
       />
       <StartersStackNav.Screen
         name="StarterDetail"
-        component={StarterDetailScreen}
+        component={SafeStarterDetailScreen}
         options={{ title: 'Starter Details' }}
       />
       <StartersStackNav.Screen
         name="AddStarter"
-        component={AddStarterScreen}
+        component={SafeAddStarterScreen}
         options={{ title: 'Add Starter' }}
       />
       <StartersStackNav.Screen
         name="EditStarter"
-        component={EditStarterScreen}
+        component={SafeEditStarterScreen}
         options={{ title: 'Edit Starter' }}
       />
       <StartersStackNav.Screen
         name="AddFeeding"
-        component={AddFeedingScreen}
+        component={SafeAddFeedingScreen}
         options={{ title: 'Log Feeding' }}
       />
     </StartersStackNav.Navigator>
@@ -200,62 +295,31 @@ function StartersStack() {
 
 function RecipesStack() {
   return (
-    <RecipesStackNav.Navigator>
+    <RecipesStackNav.Navigator screenOptions={modernistHeaderOptions}>
       <RecipesStackNav.Screen
         name="Recipes"
-        component={RecipesScreen}
+        component={SafeRecipesScreen}
         options={{ title: 'Recipes' }}
       />
       <RecipesStackNav.Screen
         name="RecipeDetail"
-        component={RecipeDetailScreen}
+        component={SafeRecipeDetailScreen}
         options={{ title: 'Recipe Details' }}
       />
       <RecipesStackNav.Screen
         name="AddRecipe"
-        component={AddRecipeScreen}
+        component={SafeAddRecipeScreen}
         options={{ title: 'Add Recipe' }}
       />
       <RecipesStackNav.Screen
         name="EditRecipe"
-        component={EditRecipeScreen}
+        component={SafeEditRecipeScreen}
         options={{ title: 'Edit Recipe' }}
       />
     </RecipesStackNav.Navigator>
   );
 }
 
-function ProfileStack() {
-  return (
-    <ProfileStackNav.Navigator>
-      <ProfileStackNav.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ title: 'Profile' }}
-      />
-      <ProfileStackNav.Screen
-        name="HelpFaq"
-        component={HelpFaqScreen}
-        options={{ title: 'Help & FAQ' }}
-      />
-      <ProfileStackNav.Screen
-        name="About"
-        component={AboutScreen}
-        options={{ title: 'About' }}
-      />
-      <ProfileStackNav.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicyScreen}
-        options={{ title: 'Privacy Policy' }}
-      />
-      <ProfileStackNav.Screen
-        name="TermsOfService"
-        component={TermsOfServiceScreen}
-        options={{ title: 'Terms of Service' }}
-      />
-    </ProfileStackNav.Navigator>
-  );
-}
 
 export default function MainTabNavigator() {
   return (
@@ -263,7 +327,7 @@ export default function MainTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+          let iconName: MaterialCommunityIconName;
 
           switch (route.name) {
             case 'HomeTab':
@@ -278,16 +342,13 @@ export default function MainTabNavigator() {
             case 'RecipesTab':
               iconName = focused ? 'book-open-variant' : 'book-open-outline';
               break;
-            case 'ProfileTab':
-              iconName = focused ? 'account' : 'account-outline';
-              break;
             default:
               iconName = 'circle';
           }
 
           return <Icon name={iconName} size={focused ? 30 : 28} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary[500],
+        tabBarActiveTintColor: theme.colors.modernist.ruleTeal,
         tabBarInactiveTintColor: theme.colors.text.secondary, // Darker than disabled
         tabBarLabelStyle: {
           fontSize: 12,
@@ -312,26 +373,53 @@ export default function MainTabNavigator() {
         name="HomeTab"
         component={HomeStack}
         options={{ title: 'Home' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="ToolsTab"
         component={ToolsStack}
         options={{ title: 'Tools' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="StartersTab"
         component={StartersStack}
         options={{ title: 'Starters' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
       <Tab.Screen
         name="RecipesTab"
         component={RecipesStack}
         options={{ title: 'Recipes' }}
-      />
-      <Tab.Screen
-        name="ProfileTab"
-        component={ProfileStack}
-        options={{ title: 'Profile' }}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: route.name }] })
+            );
+          },
+        })}
       />
     </Tab.Navigator>
   );

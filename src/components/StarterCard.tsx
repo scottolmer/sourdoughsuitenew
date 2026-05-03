@@ -5,9 +5,11 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { Starter } from '../types';
 import { theme } from '../theme';
+import BenchCard from './BenchCard';
+import MetricTile from './MetricTile';
 import {
   getStarterTypeName,
   getHealthStatusDescription,
@@ -22,29 +24,28 @@ interface Props {
 }
 
 export default function StarterCard({ starter, onPress, onDelete }: Props) {
-  // Determine health status color
-  const getHealthColor = () => {
-    if (!starter.isActive) return theme.colors.text.disabled;
+  const isOverdue = isFeedingOverdue(starter.nextFeedingDue);
+  const feedingText = getNextFeedingText(starter.nextFeedingDue);
 
+  const healthTone = (): 'green' | 'red' | 'default' => {
+    if (!starter.isActive) return 'default';
     switch (starter.healthStatus) {
       case 'excellent':
-        return theme.colors.success.dark;
       case 'good':
-        return theme.colors.success.main;
-      case 'fair':
-        return theme.colors.warning.main;
+        return 'green';
       case 'poor':
-        return theme.colors.error.main;
-      case 'inactive':
-        return theme.colors.text.disabled;
+        return 'red';
+      case 'fair':
+        return isOverdue ? 'red' : 'default';
       default:
-        return theme.colors.success.main;
+        return 'green';
     }
   };
 
-  const healthColor = getHealthColor();
-  const isOverdue = isFeedingOverdue(starter.nextFeedingDue);
-  const feedingText = getNextFeedingText(starter.nextFeedingDue);
+  const feedingTone = (): 'red' | 'copper' | 'default' => {
+    if (isOverdue) return 'red';
+    return 'copper';
+  };
 
   const handleDelete = (e: any) => {
     e.stopPropagation();
@@ -54,181 +55,118 @@ export default function StarterCard({ starter, onPress, onDelete }: Props) {
   };
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.card}>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7} style={styles.touchable}>
+      <BenchCard variant="default" padding="md">
+        {/* Header row */}
         <View style={styles.header}>
-          <View style={styles.titleRow}>
-            <Icon
-              name="bacteria"
-              size={24}
-              color={theme.colors.primary[600]}
-              style={styles.icon}
-            />
-            <Text style={styles.name}>{starter.name}</Text>
-          </View>
-          <View style={styles.headerRight}>
-            <View style={[styles.statusBadge, { backgroundColor: healthColor }]}>
-              <Text style={styles.statusText}>
+          <View style={styles.titleArea}>
+            <Text style={styles.name} numberOfLines={1}>{starter.name}</Text>
+            <View style={[
+              styles.activeBadge,
+              starter.isActive ? styles.activeBadgeOn : styles.activeBadgeOff
+            ]}>
+              <Text style={[
+                styles.activeBadgeText,
+                starter.isActive ? styles.activeBadgeTextOn : styles.activeBadgeTextOff
+              ]}>
                 {starter.isActive ? 'Active' : 'Inactive'}
               </Text>
             </View>
-            {onDelete && (
-              <TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
-                <Icon name="delete" size={20} color={theme.colors.error.main} />
-              </TouchableOpacity>
-            )}
           </View>
-        </View>
-
-        <View style={styles.details}>
-          <View style={styles.detailRow}>
-            <Icon name="grain" size={16} color={theme.colors.text.secondary} />
-            <Text style={styles.detailLabel}>Type:</Text>
-            <Text style={styles.detailValue}>{getStarterTypeName(starter.type)}</Text>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Icon name="wheat" size={16} color={theme.colors.text.secondary} />
-            <Text style={styles.detailLabel}>Flour:</Text>
-            <Text style={styles.detailValue}>{starter.flourType}</Text>
-          </View>
-
-          {starter.healthStatus && (
-            <View style={styles.detailRow}>
-              <Icon name="heart-pulse" size={16} color={healthColor} />
-              <Text style={styles.detailLabel}>Health:</Text>
-              <Text style={[styles.detailValue, { color: healthColor }]}>
-                {getHealthStatusDescription(starter.healthStatus)}
-              </Text>
-            </View>
-          )}
-
-          {starter.nextFeedingDue && (
-            <View style={styles.detailRow}>
-              <Icon
-                name={isOverdue ? "alert-circle" : "clock-outline"}
-                size={16}
-                color={isOverdue ? theme.colors.error.main : theme.colors.text.secondary}
-              />
-              <Text style={styles.detailLabel}>Feeding:</Text>
-              <Text
-                style={[
-                  styles.detailValue,
-                  isOverdue && { color: theme.colors.error.main, fontWeight: '600' }
-                ]}
-              >
-                {feedingText}
-              </Text>
-            </View>
+          {onDelete && (
+            <TouchableOpacity onPress={handleDelete} style={styles.deleteButton} hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+              <Icon name="delete-outline" size={18} color={theme.colors.bench.heatRed} />
+            </TouchableOpacity>
           )}
         </View>
 
-        {starter.notes && (
-          <View style={styles.notes}>
-            <Text style={styles.notesText} numberOfLines={2}>
-              {starter.notes}
-            </Text>
-          </View>
-        )}
+        {/* Subtitle row: type + flour */}
+        <Text style={styles.subtitle}>
+          {getStarterTypeName(starter.type)}{starter.flourType ? ` · ${starter.flourType}` : ''}
+        </Text>
 
-        <View style={styles.footer}>
-          <Icon name="calendar" size={14} color={theme.colors.text.secondary} />
-          <Text style={styles.dateText}>
-            Created {new Date(starter.createdAt).toLocaleDateString()}
-          </Text>
+        {/* Metric tiles row */}
+        <View style={styles.tilesRow}>
+          <MetricTile
+            icon="heart-pulse"
+            label="Health"
+            value={getHealthStatusDescription(starter.healthStatus || 'good')}
+            tone={healthTone()}
+          />
+          <MetricTile
+            icon={isOverdue ? 'alert-circle-outline' : 'clock-time-four-outline'}
+            label="Next feeding"
+            value={feedingText}
+            tone={feedingTone()}
+          />
         </View>
-      </View>
+      </BenchCard>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: theme.colors.background.paper,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
+  touchable: {
     marginBottom: theme.spacing.md,
-    ...theme.shadows.md,
   },
   header: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.sm,
+    marginBottom: 4,
   },
-  titleRow: {
+  titleArea: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-  },
-  icon: {
-    marginRight: theme.spacing.xs,
+    gap: theme.spacing.sm,
+    flexWrap: 'wrap',
   },
   name: {
-    fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.semibold as any,
-    color: theme.colors.text.primary,
-    flex: 1,
+    fontSize: theme.typography.sizes.xl,
+    fontFamily: theme.typography.fonts.heading,
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.bench.crust,
+    flexShrink: 1,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  activeBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+    borderWidth: 1,
   },
-  statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.full,
+  activeBadgeOn: {
+    backgroundColor: '#EAF4E3',
+    borderColor: theme.colors.bench.starterGreen,
   },
-  statusText: {
+  activeBadgeOff: {
+    backgroundColor: theme.colors.background.subtle,
+    borderColor: theme.colors.bench.borderSoft,
+  },
+  activeBadgeText: {
     fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.medium as any,
-    color: theme.colors.background.paper,
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold as any,
+    letterSpacing: 0.4,
+  },
+  activeBadgeTextOn: {
+    color: theme.colors.bench.starterGreen,
+  },
+  activeBadgeTextOff: {
+    color: theme.colors.text.secondary,
   },
   deleteButton: {
-    padding: theme.spacing.xs,
-    marginLeft: theme.spacing.xs,
+    padding: 2,
+    marginLeft: theme.spacing.sm,
   },
-  details: {
-    marginTop: theme.spacing.sm,
+  subtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.md,
   },
-  detailRow: {
+  tilesRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.xs,
-  },
-  detailLabel: {
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
-    marginLeft: theme.spacing.xs,
-    marginRight: theme.spacing.xs,
-    fontWeight: theme.typography.weights.medium as any,
-  },
-  detailValue: {
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.primary,
-  },
-  notes: {
-    marginTop: theme.spacing.sm,
-    paddingTop: theme.spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-  },
-  notesText: {
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary,
-    fontStyle: 'italic',
-  },
-  footer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: theme.spacing.sm,
-    paddingTop: theme.spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border.light,
-  },
-  dateText: {
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.secondary,
-    marginLeft: theme.spacing.xs,
+    gap: theme.spacing.sm,
   },
 });

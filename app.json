@@ -1,24 +1,28 @@
 {
-  "name": "Sourdough Suite",
-  "displayName": "Sourdough Suite",
   "expo": {
     "name": "Sourdough Suite",
     "slug": "sourdough-suite",
     "version": "1.0.0",
     "orientation": "portrait",
-    "entryPoint": "./index.js",
+    "userInterfaceStyle": "light",
     "icon": "./assets/app-icon.png",
     "splash": {
-      "image": "./assets/app-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#14B8A6"
+    },
+    "web": {
+      "bundler": "metro"
     },
     "ios": {
       "bundleIdentifier": "com.sourdoughsuite.app",
       "buildNumber": "1",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
-        "NSUserNotificationsUsageDescription": "Sourdough Suite sends notifications to remind you when your starter needs feeding."
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Sourdough Suite lets you choose baking photos for Photo Rescue so it can help diagnose dough, starter, crumb, and loaf issues.",
+        "NSCameraUsageDescription": "Sourdough Suite may use the camera when you choose to capture a baking photo for Photo Rescue.",
+        "NSUserNotificationsUsageDescription": "Sourdough Suite sends optional local reminders for starter feedings and bake-plan steps."
       }
     },
     "android": {
@@ -26,16 +30,32 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/app-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#14B8A6"
       },
       "permissions": [
-        "RECEIVE_BOOT_COMPLETED",
-        "VIBRATE",
-        "SCHEDULE_EXACT_ALARM"
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM"
       ]
     },
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Sourdough Suite lets you choose baking photos for Photo Rescue so it can help diagnose dough, starter, crumb, and loaf issues.",
+          "cameraPermission": "Sourdough Suite may use the camera when you choose to capture a baking photo for Photo Rescue."
+        }
+      ],
+      "expo-notifications"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "31be219b-71da-4638-90c7-b6a3b02bb0ac"
+      }
+    },
+    "owner": "scottolmer"
   }
 }

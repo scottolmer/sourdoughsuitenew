@@ -12,13 +12,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import BasicInput from '../../components/BasicInput';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
-import { Picker } from '@react-native-picker/picker';
 import {
   calculatePercentageFromAmount,
   calculateAmountFromPercentage,
@@ -302,29 +302,33 @@ export default function RecipeRescueCalculatorScreen() {
             <Text style={styles.sectionTitle}>What Went Wrong?</Text>
 
             <Text style={styles.label}>Which ingredient?</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={problemIngredient}
-                onValueChange={(value) => setProblemIngredient(value as Ingredient)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Flour" value="flour" />
-                <Picker.Item label="Water" value="water" />
-                <Picker.Item label="Salt" value="salt" />
-                <Picker.Item label="Starter" value="starter" />
-              </Picker>
+            <View style={styles.buttonGroup}>
+              {(['flour', 'water', 'salt', 'starter'] as Ingredient[]).map((ing) => (
+                <TouchableOpacity
+                  key={ing}
+                  style={[styles.groupButton, problemIngredient === ing && styles.groupButtonActive]}
+                  onPress={() => setProblemIngredient(ing)}
+                >
+                  <Text style={[styles.groupButtonText, problemIngredient === ing && styles.groupButtonTextActive]}>
+                    {ing.charAt(0).toUpperCase() + ing.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <Text style={styles.label}>What's the problem?</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={problemType}
-                onValueChange={(value) => setProblemType(value as ProblemType)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Added too much" value="too_much" />
-                <Picker.Item label="Don't have enough" value="not_enough" />
-              </Picker>
+            <View style={styles.buttonGroup}>
+              {([{ label: 'Added too much', value: 'too_much' }, { label: 'Not enough', value: 'not_enough' }] as { label: string; value: ProblemType }[]).map((opt) => (
+                <TouchableOpacity
+                  key={opt.value}
+                  style={[styles.groupButton, problemType === opt.value && styles.groupButtonActive]}
+                  onPress={() => setProblemType(opt.value)}
+                >
+                  <Text style={[styles.groupButtonText, problemType === opt.value && styles.groupButtonTextActive]}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <BasicInput
@@ -596,15 +600,31 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xs,
     marginTop: theme.spacing.sm,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: theme.colors.border.default,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.white,
+  buttonGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.xs,
     marginBottom: theme.spacing.sm,
   },
-  picker: {
-    height: 50,
+  groupButton: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border.main,
+    backgroundColor: theme.colors.white,
+  },
+  groupButtonActive: {
+    backgroundColor: theme.colors.primary[500],
+    borderColor: theme.colors.primary[500],
+  },
+  groupButtonText: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text.primary,
+  },
+  groupButtonTextActive: {
+    color: theme.colors.white,
+    fontWeight: theme.typography.weights.semibold as any,
   },
   actions: {
     marginBottom: theme.spacing.md,
@@ -677,7 +697,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.sm,
     paddingTop: theme.spacing.sm,
     borderTopWidth: 2,
-    borderTopColor: theme.colors.border.default,
+    borderTopColor: theme.colors.border.dark,
   },
   totalLabel: {
     fontSize: theme.typography.sizes.lg,

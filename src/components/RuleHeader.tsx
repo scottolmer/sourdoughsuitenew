@@ -1,45 +1,59 @@
+/**
+ * RuleHeader
+ * Uppercase section header followed by a teal hairline rule.
+ * Examples: "FORMULA", "DO NOW", "FEEDING LOG".
+ */
+
 import React from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle, StyleProp } from 'react-native';
 import { theme } from '../theme';
 
 interface RuleHeaderProps {
   title: string;
+  trailing?: string;
   meta?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
-export default function RuleHeader({ title, meta, style }: RuleHeaderProps) {
+export default function RuleHeader({ title, trailing, meta, style }: RuleHeaderProps) {
+  const trailingText = trailing ?? meta;
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.row}>
+        <Text style={styles.title}>{title}</Text>
+        {trailingText ? <Text style={styles.trailing}>{trailingText}</Text> : null}
+      </View>
       <View style={styles.rule} />
-      {meta ? <Text style={styles.meta}>{meta}</Text> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
     marginBottom: theme.spacing.sm,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
   title: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    letterSpacing: 0.6,
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 13,
     color: theme.colors.modernist.ink,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  trailing: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.4,
     textTransform: 'uppercase',
   },
   rule: {
-    flex: 1,
     height: 1,
     backgroundColor: theme.colors.modernist.ruleTeal,
-  },
-  meta: {
-    fontFamily: theme.typography.fonts.medium,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.modernist.graphiteMuted,
   },
 });

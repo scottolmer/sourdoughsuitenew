@@ -36,7 +36,7 @@ export default function Card({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: theme.borderRadius.lg,
+    borderRadius: 12, // Sharper, sheet-like corners (Modernist direction)
   },
   elevated: {
     backgroundColor: theme.colors.modernist.porcelain,
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   outlined: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: theme.colors.modernist.hairlineDark,
+    borderColor: theme.colors.modernist.hairline,
   },
   filled: {
     backgroundColor: theme.colors.modernist.paperWarm,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.modernist.hairline,
   },
   glass: {
-    backgroundColor: theme.colors.modernist.porcelain,
+    backgroundColor: 'rgba(255, 253, 248, 0.85)',
     borderWidth: 1,
     borderColor: theme.colors.modernist.hairline,
   },

@@ -1,20 +1,45 @@
+/**
+ * FormulaSheet
+ * Flat sheet with thin border and optional top teal rule.
+ * The base unit of the Modernist redesign — replaces bulky rounded cards.
+ */
+
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import { theme } from '../theme';
 
 interface FormulaSheetProps {
   children: ReactNode;
-  style?: ViewStyle;
+  topRule?: boolean;
   accented?: boolean;
+  background?: 'paper' | 'porcelain' | 'paperWarm';
+  padding?: keyof typeof theme.spacing;
+  radius?: number;
+  style?: StyleProp<ViewStyle>;
 }
 
 export default function FormulaSheet({
   children,
-  style,
+  topRule = false,
   accented = false,
+  background = 'porcelain',
+  padding = 'lg',
+  radius = 10,
+  style,
 }: FormulaSheetProps) {
   return (
-    <View style={[styles.sheet, accented && styles.accented, style]}>
+    <View
+      style={[
+        styles.sheet,
+        {
+          backgroundColor: theme.colors.modernist[background],
+          borderRadius: radius,
+          padding: theme.spacing[padding],
+        },
+        style,
+      ]}
+    >
+      {topRule || accented ? <View style={styles.topRule} /> : null}
       {children}
     </View>
   );
@@ -22,14 +47,16 @@ export default function FormulaSheet({
 
 const styles = StyleSheet.create({
   sheet: {
-    backgroundColor: theme.colors.modernist.porcelain,
     borderWidth: 1,
     borderColor: theme.colors.modernist.hairline,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
+    overflow: 'hidden',
   },
-  accented: {
-    borderTopWidth: 3,
-    borderTopColor: theme.colors.modernist.ruleTeal,
+  topRule: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: theme.colors.modernist.ruleTeal,
   },
 });

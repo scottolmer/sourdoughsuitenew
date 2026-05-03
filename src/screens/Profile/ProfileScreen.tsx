@@ -6,12 +6,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Linking, TouchableOpacity } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Card from '../../components/Card';
 import { theme } from '../../theme';
-import type { ProfileStackParamList } from '../../navigation/types';
+import type { HomeStackParamList } from '../../navigation/types';
 
-type Props = NativeStackScreenProps<ProfileStackParamList, 'Profile'>;
+type Props = NativeStackScreenProps<HomeStackParamList, 'Profile'>;
 
 export default function ProfileScreen({ navigation }: Props) {
   const handleSocialPress = (url: string) => {
@@ -31,34 +31,10 @@ export default function ProfileScreen({ navigation }: Props) {
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>Community</Text>
         <Card variant="outlined" padding="none">
-          <TouchableOpacity onPress={() => handleSocialPress('https://youtube.com/@SourdoughSuite')}>
+          <TouchableOpacity onPress={() => handleSocialPress('https://x.com/scottolmer')}>
             <View style={styles.menuItem}>
-              <Icon name="youtube" size={24} color="#FF0000" />
-              <Text style={styles.menuItemText}>Subscribe on YouTube</Text>
-              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity onPress={() => handleSocialPress('https://instagram.com/sourdoughsuite')}>
-            <View style={styles.menuItem}>
-              <Icon name="instagram" size={24} color="#E1306C" />
-              <Text style={styles.menuItemText}>Follow on Instagram</Text>
-              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity onPress={() => handleSocialPress('https://facebook.com/sourdoughsuite')}>
-            <View style={styles.menuItem}>
-              <Icon name="facebook" size={24} color="#1877F2" />
-              <Text style={styles.menuItemText}>Like us on Facebook</Text>
-              <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity onPress={() => handleSocialPress('https://tiktok.com/@sourdoughsuite')}>
-            <View style={styles.menuItem}>
-              <Icon name="music-note-eighth" size={24} color="#000000" />
-              <Text style={styles.menuItemText}>Follow on TikTok</Text>
+              <Icon name="twitter" size={24} color="#000000" />
+              <Text style={styles.menuItemText}>Follow @scottolmer on X</Text>
               <Icon name="open-in-new" size={20} color={theme.colors.text.disabled} />
             </View>
           </TouchableOpacity>

@@ -11,7 +11,8 @@ import {
   TextInputProps,
   TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -48,7 +49,7 @@ export default function Input({
       <View style={[styles.container, error && styles.containerError]}>
         {leftIcon && (
           <Icon
-            name={leftIcon}
+            name={(leftIcon as unknown) as MaterialCommunityIconName}
             size={20}
             color="#78716c"
             style={styles.leftIcon}
@@ -82,7 +83,7 @@ export default function Input({
             disabled={!onRightIconPress}
           >
             <Icon
-              name={rightIcon}
+              name={(rightIcon as unknown) as MaterialCommunityIconName}
               size={20}
               color="#78716c"
             />

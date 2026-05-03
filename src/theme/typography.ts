@@ -23,16 +23,6 @@ export const typography = {
     // Fallback to system fonts
     system: 'System',
   },
-
-  roles: {
-    display: 'PlayfairDisplay-Bold',
-    displayRegular: 'PlayfairDisplay-Regular',
-    body: 'Inter-Regular',
-    bodyMedium: 'Inter-Medium',
-    bodySemibold: 'Inter-SemiBold',
-    bodyBold: 'Inter-Bold',
-  },
-
   // Font sizes - More dramatic scale for better hierarchy
   sizes: {
     xs: 12,    // Slightly larger for readability
@@ -73,6 +63,16 @@ export const typography = {
     normal: 0,
     wide: 0.25,
     wider: 0.5,
+  },
+
+  // Semantic font role aliases
+  roles: {
+    display: 'PlayfairDisplay-Bold',
+    displayRegular: 'PlayfairDisplay-Regular',
+    body: 'Inter-Regular',
+    bodyMedium: 'Inter-Medium',
+    bodySemibold: 'Inter-SemiBold',
+    bodyBold: 'Inter-Bold',
   },
 };
 

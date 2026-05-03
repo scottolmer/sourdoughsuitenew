@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SourdoughSuite — Paper &amp; Teal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --teal: #14B8A6;
+      --teal-dark: #0D9488;
+      --teal-light: #CCFBF1;
+      --teal-pale: #F0FDFA;
+      --crust: #3B2112;
+      --crust-soft: #5A3A25;
+      --parchment: #FDFEFE;
+      --parchment-2: #F0FAFA;
+      --border: #E3CDAA;
+      --border-soft: #EDE4D4;
+      --muted: #7A6450;
+      --teal-text: #0F766E;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--parchment);
+      color: var(--crust);
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px clamp(20px, 5vw, 80px);
+      background: rgba(253, 250, 244, 0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 700;
+      color: var(--crust);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--crust);
+    }
+
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      height: 38px;
+      padding: 0 20px;
+      border-radius: 999px;
+      background: var(--teal);
+      color: #fff !important;
+      font-weight: 600 !important;
+      font-size: 13px !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-pill:hover {
+      background: var(--teal-dark) !important;
+      color: #fff !important;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 88px clamp(20px, 5vw, 80px) 80px;
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--parchment-2);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--teal-text);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(44px, 6.5vw, 90px);
+      font-weight: 900;
+      line-height: 0.96;
+      letter-spacing: -0.02em;
+      color: var(--crust);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--teal-dark);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 1.7vw, 19px);
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      padding: 0 36px;
+      border-radius: 999px;
+      background: var(--teal);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      text-decoration: none;
+      box-shadow: 0 8px 32px rgba(20, 184, 166, 0.28);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .hero-pill:hover {
+      background: var(--teal-dark);
+      box-shadow: 0 12px 40px rgba(20, 184, 166, 0.4);
+    }
+
+    /* ── CAPABILITY CARDS ── */
+    .cards-section {
+      padding: 0 clamp(20px, 5vw, 80px) 100px;
+    }
+
+    .cards-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal-text);
+      margin-bottom: 40px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--parchment);
+      border: 1px solid var(--border-soft);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border);
+      box-shadow: 0 8px 32px rgba(59, 33, 18, 0.06);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--teal-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .card h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--crust);
+      margin-bottom: 10px;
+      line-height: 1.15;
+    }
+
+    .card p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    /* ── SCREENSHOT PAIR ── */
+    .screenshot-section {
+      background: var(--parchment-2);
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 100px clamp(20px, 5vw, 80px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 100px);
+      align-items: center;
+    }
+
+    .screenshot-text .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal-text);
+      margin-bottom: 16px;
+    }
+
+    .screenshot-text h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--crust);
+      margin-bottom: 16px;
+    }
+
+    .screenshot-text p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 440px;
+    }
+
+    .screenshot-imgs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .screenshot-imgs img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: block;
+      box-shadow: 0 8px 32px rgba(59, 33, 18, 0.08);
+    }
+
+    .screenshot-imgs img:last-child {
+      margin-top: 24px;
+    }
+
+    /* ── TAGLINE BANNER ── */
+    .tagline {
+      padding: 80px clamp(20px, 5vw, 80px);
+      text-align: center;
+    }
+
+    .tagline h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(36px, 5.5vw, 80px);
+      font-weight: 900;
+      line-height: 1.0;
+      color: var(--crust);
+      letter-spacing: -0.02em;
+    }
+
+    .tagline h2 em {
+      font-style: italic;
+      color: var(--teal-dark);
+    }
+
+    .tagline-rule {
+      width: 64px;
+      height: 2px;
+      background: var(--border);
+      margin: 28px auto;
+    }
+
+    .tagline p {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--crust);
+      color: rgba(255,255,255,0.7);
+      padding: 40px clamp(20px, 5vw, 80px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 18px;
+      color: #fff;
+    }
+
+    footer p {
+      font-size: 13px;
+    }
+
+    footer a {
+      color: var(--teal);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .cards-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .screenshot-section {
+        grid-template-columns: 1fr;
+      }
+
+      .screenshot-imgs {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .screenshot-imgs img:last-child {
+        margin-top: 0;
+      }
+
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a:not(.nav-pill) {
+        display: none;
+      }
+
+      .tagline h2 {
+        font-size: clamp(32px, 9vw, 60px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">SourdoughSuite</div>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a class="nav-pill" href="#">Try the demo</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-tag">Artisan baking companion</div>
+    <h1>Your dough, <em>understood.</em></h1>
+    <p class="hero-sub">SourdoughSuite turns a messy baking moment into a diagnosis, a rescue step, and a timed plan before the dough gets away from you.</p>
+    <a class="hero-pill" href="#">Open Replit Demo</a>
+  </section>
+
+  <section class="cards-section" id="how">
+    <div class="cards-label">What SourdoughSuite does</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">📸</div>
+        <h3>Photo Rescue</h3>
+        <p>Analyze dough, starter, crumb, or loaf with visual context and get a structured diagnosis.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗓</div>
+        <h3>Bake Planner</h3>
+        <p>Generate a deterministic bake-day timeline from your diagnosis and schedule every step.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h3>Calculators</h3>
+        <p>Result-first workbench tools for hydration, starter ratios, and dough weight formulas.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🫙</div>
+        <h3>Starter Logs</h3>
+        <p>Track your starter's health, feedings, and activity over time to build a consistent culture.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="screenshot-section">
+    <div class="screenshot-text">
+      <div class="section-label">The golden path</div>
+      <h2>Diagnose the visible clues. Schedule the recovery.</h2>
+      <p>From photo to rescue plan without hunting for tools. The experience moves from evidence to action to timeline in one connected flow.</p>
+    </div>
+    <div class="screenshot-imgs">
+      <img src="photo-rescue-input.png" alt="Photo Rescue input screen">
+      <img src="dough-diagnosis-result.png" alt="Dough Diagnosis result screen">
+    </div>
+  </section>
+
+  <section class="tagline" id="demo">
+    <h2>Less app.<br><em>More bakery.</em></h2>
+    <div class="tagline-rule"></div>
+    <p>Built for the stressful middle of sourdough. From evidence to action to timeline, without making you hunt for tools.</p>
+    <a class="hero-pill" href="#">Open Demo</a>
+  </section>
+
+  <footer>
+    <div class="footer-brand">SourdoughSuite</div>
+    <p>&copy; 2026 SourdoughSuite. All rights reserved.</p>
+    <a href="#">Try the demo &rarr;</a>
+  </footer>
+</body>
+</html>

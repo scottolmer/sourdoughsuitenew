@@ -11,8 +11,9 @@ import {
   StyleSheet,
   TextInputProps,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 interface BasicInputProps extends TextInputProps {
   label?: string;
@@ -40,18 +41,18 @@ export default function BasicInput({
       ]}>
         {leftIcon && (
           <Icon
-            name={leftIcon}
-            size={20}
-            color={isFocused ? theme.colors.primary[500] : theme.colors.text.tertiary}
+            name={(leftIcon as unknown) as MaterialCommunityIconName}
+            size={18}
+            color={isFocused ? theme.colors.modernist.ink : theme.colors.modernist.graphiteMuted}
             style={styles.leftIcon}
           />
         )}
         <TextInput
           style={[styles.input, leftIcon && styles.inputWithIcon, style]}
-          placeholderTextColor={theme.colors.text.disabled}
+          placeholderTextColor={theme.colors.modernist.graphiteMuted}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          selectionColor={theme.colors.primary[500]}
+          selectionColor={theme.colors.primary[600]}
           {...props}
         />
       </View>
@@ -65,11 +66,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   label: {
-    fontSize: theme.typography.sizes.xs,
-    fontFamily: theme.typography.fonts.semibold,
-    color: theme.colors.modernist.graphite,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.medium,
+    color: theme.colors.text.secondary,
     marginBottom: theme.spacing.xs,
     marginLeft: theme.spacing.xs, // Slight alignment with input
   },
@@ -77,22 +76,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.modernist.hairlineDark,
-    borderRadius: theme.borderRadius.md,
+    borderColor: theme.colors.modernist.hairline,
+    borderRadius: 8,
     backgroundColor: theme.colors.modernist.porcelain,
-    paddingHorizontal: theme.spacing.md,
-    minHeight: 52, // Taller touch target
+    minHeight: 48,
+    overflow: 'hidden',
   },
   inputContainerFocused: {
-    borderColor: theme.colors.modernist.ruleTeal,
+    borderColor: theme.colors.modernist.ink,
     backgroundColor: theme.colors.modernist.porcelain,
   },
   leftIcon: {
+    marginLeft: theme.spacing.md,
     marginRight: theme.spacing.sm,
   },
   input: {
     flex: 1,
     paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.md,
     fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.primary,

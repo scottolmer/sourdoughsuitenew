@@ -1,234 +1,364 @@
+/**
+ * Tools Screen
+ * Grouped calculator suite and baking tools
+ */
+
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import FormulaSheet from '../../components/FormulaSheet';
-import ModernistScreen from '../../components/ModernistScreen';
-import RuleHeader from '../../components/RuleHeader';
-import { ToolsStackParamList } from '../../navigation/types';
+import { useNavigation } from '@react-navigation/native';
+import BenchCard from '../../components/BenchCard';
+import SectionHeader from '../../components/SectionHeader';
 import { theme } from '../../theme';
+import type { MaterialCommunityIconName } from '../../types/icons';
+import type { ToolsStackParamList } from '../../navigation/types';
 import { useHaptics } from '../../hooks/useHaptics';
 
 type NavigationProp = NativeStackNavigationProp<ToolsStackParamList>;
 
-interface ToolRow {
-  route: keyof ToolsStackParamList;
+// Card sizing tokens — kept aligned with HomeScreen so the patterns match
+const FEATURE_CARD_MIN_HEIGHT = 148;
+const FEATURE_ICON_WRAP = 48;
+const FEATURE_ICON_SIZE = 28;
+const LIST_ROW_MIN_HEIGHT = 76;
+const LIST_ICON_WRAP = 44;
+const LIST_ICON_SIZE = 22;
+
+type ToolRoute = Extract<
+  keyof ToolsStackParamList,
+  | 'BakersCalculator'
+  | 'HydrationCalculator'
+  | 'TimelineCalculator'
+  | 'ScalingCalculator'
+  | 'TemperatureCalculator'
+  | 'LevainBuilder'
+  | 'StarterPercentageCalculator'
+  | 'PrefermentCalculator'
+  | 'DoughWeightCalculator'
+  | 'RecipeRescueCalculator'
+  | 'FlourBlendCalculator'
+  | 'PhotoRescue'
+>;
+
+interface ToolDef {
+  icon: MaterialCommunityIconName;
   title: string;
-  label: string;
-  icon: string;
-  featured?: boolean;
+  description: string;
+  color: string;
+  route?: ToolRoute;
+  onPress?: () => void;
 }
 
-const groups: Array<{ title: string; tools: ToolRow[] }> = [
-  {
-    title: 'Hackathon Path',
-    tools: [
-      {
-        route: 'PhotoRescue',
-        title: 'Photo Rescue',
-        label: 'Analyze dough, starter, crumb, or loaf',
-        icon: 'image-search-outline',
-        featured: true,
-      },
-      {
-        route: 'BakePlanner',
-        title: 'Bake Day Copilot',
-        label: 'Create an overnight production schedule',
-        icon: 'calendar-clock',
-        featured: true,
-      },
-    ],
-  },
-  {
-    title: 'Formula',
-    tools: [
-      {
-        route: 'BakersCalculator',
-        title: "Baker's Percentage",
-        label: 'Calculate ratios and save recipes',
-        icon: 'percent-outline',
-      },
-      {
-        route: 'HydrationCalculator',
-        title: 'Hydration Converter',
-        label: 'Adjust dough water percentage',
-        icon: 'water-percent',
-      },
-      {
-        route: 'FlourBlendCalculator',
-        title: 'Flour Blend',
-        label: 'Target protein from mixed flours',
-        icon: 'grain',
-      },
-    ],
-  },
-  {
-    title: 'Schedule And Build',
-    tools: [
-      {
-        route: 'TimelineCalculator',
-        title: 'Timeline Calculator',
-        label: 'Back-time a bake day',
-        icon: 'timeline-clock-outline',
-      },
-      {
-        route: 'LevainBuilder',
-        title: 'Levain Builder',
-        label: 'Build starter for a formula',
-        icon: 'flask-outline',
-      },
-      {
-        route: 'PrefermentCalculator',
-        title: 'Preferment Calculator',
-        label: 'Poolish, biga, and preferments',
-        icon: 'clock-time-four-outline',
-      },
-    ],
-  },
-  {
-    title: 'Adjust',
-    tools: [
-      {
-        route: 'RecipeRescueCalculator',
-        title: 'Recipe Rescue',
-        label: 'Fix ingredient mistakes',
-        icon: 'lifebuoy',
-      },
-      {
-        route: 'ScalingCalculator',
-        title: 'Recipe Scaler',
-        label: 'Scale formulas up or down',
-        icon: 'resize',
-      },
-      {
-        route: 'TemperatureCalculator',
-        title: 'Temperature Calculator',
-        label: 'Control final dough temperature',
-        icon: 'thermometer',
-      },
-      {
-        route: 'DoughWeightCalculator',
-        title: 'Dough Weight',
-        label: 'Calculate dough portions',
-        icon: 'scale',
-      },
-      {
-        route: 'StarterPercentageCalculator',
-        title: 'Starter Percentage',
-        label: 'Estimate fermentation speed',
-        icon: 'bacteria-outline',
-      },
-    ],
-  },
-];
+interface GroupDef {
+  eyebrow: string;
+  title: string;
+  tools: ToolDef[];
+}
+
+function FeaturedToolCard({ tool, onPress }: { tool: ToolDef; onPress: () => void }) {
+  return (
+    <TouchableOpacity style={styles.featuredBtn} onPress={onPress} activeOpacity={0.8}>
+      <BenchCard variant="hero" padding="lg" style={styles.featuredCard}>
+        <View style={[styles.featuredIcon, { backgroundColor: tool.color + '20' }]}>
+          <Icon name={tool.icon} size={FEATURE_ICON_SIZE} color={tool.color} />
+        </View>
+        <Text style={styles.featuredTitle}>{tool.title}</Text>
+        <Text style={styles.featuredDesc}>{tool.description}</Text>
+      </BenchCard>
+    </TouchableOpacity>
+  );
+}
+
+function ToolRow({ tool, onPress }: { tool: ToolDef; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.75}>
+      <BenchCard variant="flat" padding="md" style={styles.toolRow}>
+        <View style={[styles.toolIcon, { backgroundColor: tool.color + '18' }]}>
+          <Icon name={tool.icon} size={LIST_ICON_SIZE} color={tool.color} />
+        </View>
+        <View style={styles.toolInfo}>
+          <Text style={styles.toolTitle}>{tool.title}</Text>
+          <Text style={styles.toolDesc}>{tool.description}</Text>
+        </View>
+        <Icon name="chevron-right" size={18} color={theme.colors.text.disabled} />
+      </BenchCard>
+    </TouchableOpacity>
+  );
+}
 
 export default function ToolsScreen() {
   const navigation = useNavigation<NavigationProp>();
   const haptics = useHaptics();
 
-  const openTool = (route: keyof ToolsStackParamList) => {
+  const go = (route: ToolRoute) => {
     haptics.selection();
-    navigation.navigate(route as any);
+    navigation.navigate(route);
   };
 
+  const goCopilot = () => {
+    haptics.selection();
+    navigation.navigate('BakeDayCopilot', {});
+  };
+
+  const featured: (ToolDef & { onPress: () => void })[] = [
+    {
+      icon: 'camera-iris',
+      title: 'Photo Rescue',
+      description: 'Diagnose your dough from a photo',
+      color: theme.colors.bench.heatRed,
+      onPress: () => go('PhotoRescue'),
+    },
+    {
+      icon: 'calendar-clock',
+      title: 'Bake Day Copilot',
+      description: 'Personalized bake timeline',
+      color: theme.colors.primary[600],
+      onPress: goCopilot,
+    },
+  ];
+
+  const groups: GroupDef[] = [
+    {
+      eyebrow: 'Schedule',
+      title: 'Plan',
+      tools: [
+        {
+          icon: 'calendar-clock',
+          title: 'Bake Day Copilot',
+          description: 'Personalized AI bake timeline',
+          color: theme.colors.primary[600],
+          onPress: goCopilot,
+        },
+      ],
+    },
+    {
+      eyebrow: 'Calculations',
+      title: 'Formula',
+      tools: [
+        {
+          icon: 'percent',
+          title: "Baker's Percentage",
+          description: 'Calculate ingredient ratios',
+          color: theme.colors.primary[600],
+          route: 'BakersCalculator',
+        },
+        {
+          icon: 'water',
+          title: 'Hydration Converter',
+          description: 'Adjust dough hydration',
+          color: theme.colors.bench.waterBlue,
+          route: 'HydrationCalculator',
+        },
+        {
+          icon: 'resize',
+          title: 'Recipe Scaler',
+          description: 'Scale recipes up or down',
+          color: theme.colors.error.main,
+          route: 'ScalingCalculator',
+        },
+        {
+          icon: 'grain',
+          title: 'Flour Blend Calculator',
+          description: 'Mix flours to target protein %',
+          color: theme.colors.warning.main,
+          route: 'FlourBlendCalculator',
+        },
+      ],
+    },
+    {
+      eyebrow: 'Fix It',
+      title: 'Rescue',
+      tools: [
+        {
+          icon: 'camera-iris',
+          title: 'Photo Rescue',
+          description: 'Diagnose your dough from a photo',
+          color: theme.colors.bench.heatRed,
+          route: 'PhotoRescue',
+        },
+        {
+          icon: 'lifebuoy',
+          title: 'Recipe Rescue',
+          description: 'Fix ingredient mistakes',
+          color: theme.colors.error.main,
+          route: 'RecipeRescueCalculator',
+        },
+      ],
+    },
+    {
+      eyebrow: 'Build',
+      title: 'Starter & Dough',
+      tools: [
+        {
+          icon: 'flask-outline',
+          title: 'Levain Builder',
+          description: 'Build starter for your recipe',
+          color: theme.colors.primary[500],
+          route: 'LevainBuilder',
+        },
+        {
+          icon: 'clock-time-four',
+          title: 'Preferment Calculator',
+          description: 'Poolish, biga, pâte fermentée',
+          color: theme.colors.info.dark,
+          route: 'PrefermentCalculator',
+        },
+        {
+          icon: 'weight-gram',
+          title: 'Dough Weight Calculator',
+          description: 'Calculate dough portions',
+          color: theme.colors.secondary[600],
+          route: 'DoughWeightCalculator',
+        },
+        {
+          icon: 'percent-circle',
+          title: 'Starter Percentage',
+          description: 'Calculate fermentation speed',
+          color: theme.colors.bench.starterGreen,
+          route: 'StarterPercentageCalculator',
+        },
+        {
+          icon: 'thermometer',
+          title: 'Temperature Calculator',
+          description: 'Control dough temperature',
+          color: theme.colors.warning.main,
+          route: 'TemperatureCalculator',
+        },
+      ],
+    },
+  ];
+
   return (
-    <ModernistScreen>
-      <View style={styles.header}>
-        <Text style={styles.kicker}>TOOLS</Text>
-        <Text style={styles.title}>Formula workbench</Text>
-        <Text style={styles.subtitle}>
-          Rescue, plan, calculate, and save formulas without leaving the bench.
-        </Text>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Page header */}
+      <View style={styles.pageHeader}>
+        <Text style={styles.pageTitle}>Tools</Text>
+        <Text style={styles.pageSubtitle}>Calculators, rescue, and planning.</Text>
       </View>
 
-      {groups.map(group => (
-        <FormulaSheet key={group.title} style={styles.group} accented>
-          <RuleHeader title={group.title} />
-          {group.tools.map(tool => (
-            <TouchableOpacity
-              key={tool.title}
-              style={[styles.toolRow, tool.featured && styles.featuredRow]}
-              onPress={() => openTool(tool.route)}
-              activeOpacity={0.75}
-            >
-              <Icon
-                name={tool.icon}
-                size={22}
-                color={
-                  tool.featured
-                    ? theme.colors.modernist.copper
-                    : theme.colors.modernist.ruleTeal
-                }
-              />
-              <View style={styles.toolText}>
-                <Text style={styles.toolTitle}>{tool.title}</Text>
-                <Text style={styles.toolLabel}>{tool.label}</Text>
-              </View>
-              <Icon
-                name="chevron-right"
-                size={20}
-                color={theme.colors.modernist.hairlineDark}
-              />
-            </TouchableOpacity>
+      {/* Featured Row */}
+      <View style={styles.content}>
+        <SectionHeader eyebrow="Featured" title="Top Tools" />
+        <View style={styles.featuredRow}>
+          {featured.map((tool, i) => (
+            <FeaturedToolCard key={i} tool={tool} onPress={tool.onPress} />
           ))}
-        </FormulaSheet>
-      ))}
-    </ModernistScreen>
+        </View>
+
+        {/* Grouped tool sections */}
+        {groups.map((group, gi) => (
+          <View key={gi} style={styles.group}>
+            <SectionHeader eyebrow={group.eyebrow} title={group.title} />
+            <View style={styles.groupTools}>
+              {group.tools.map((tool, ti) => (
+                <ToolRow
+                  key={ti}
+                  tool={tool}
+                  onPress={() => {
+                    if (tool.route) go(tool.route);
+                    else if (tool.onPress) tool.onPress();
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
-    marginBottom: theme.spacing.lg,
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background.default,
   },
-  kicker: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    letterSpacing: 0.9,
-    color: theme.colors.modernist.ruleTeal,
-    marginBottom: theme.spacing.xs,
+  pageHeader: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
   },
-  title: {
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
     fontFamily: theme.typography.fonts.heading,
-    fontSize: 36,
-    lineHeight: 42,
     color: theme.colors.modernist.ink,
+    marginBottom: 2,
   },
-  subtitle: {
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
     fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+  },
+  content: {
+    padding: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
+    paddingBottom: 40,
+  },
+  featuredRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.xl,
+  },
+  featuredBtn: {
+    flex: 1,
+  },
+  featuredCard: {
+    flex: 1,
+    minHeight: FEATURE_CARD_MIN_HEIGHT,
+    alignItems: 'flex-start',
+    gap: theme.spacing.sm,
+  },
+  featuredIcon: {
+    width: FEATURE_ICON_WRAP,
+    height: FEATURE_ICON_WRAP,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  featuredTitle: {
     fontSize: theme.typography.sizes.base,
-    lineHeight: 23,
-    color: theme.colors.modernist.graphiteMuted,
-    marginTop: theme.spacing.sm,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.bench.crust,
+  },
+  featuredDesc: {
+    fontSize: theme.typography.sizes.xs,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+    lineHeight: 16,
   },
   group: {
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
+  },
+  groupTools: {
+    gap: theme.spacing.sm,
   },
   toolRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    minHeight: LIST_ROW_MIN_HEIGHT,
     gap: theme.spacing.md,
-    paddingVertical: theme.spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.modernist.hairline,
   },
-  featuredRow: {
-    backgroundColor: theme.colors.modernist.paperWarm,
-    paddingHorizontal: theme.spacing.sm,
+  toolIcon: {
+    width: LIST_ICON_WRAP,
+    height: LIST_ICON_WRAP,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  toolText: {
+  toolInfo: {
     flex: 1,
   },
   toolTitle: {
-    fontFamily: theme.typography.fonts.semibold,
     fontSize: theme.typography.sizes.base,
-    color: theme.colors.modernist.ink,
+    fontFamily: theme.typography.fonts.semibold,
+    color: theme.colors.bench.crust,
+    marginBottom: 2,
   },
-  toolLabel: {
+  toolDesc: {
+    fontSize: theme.typography.sizes.xs,
     fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.modernist.graphiteMuted,
-    marginTop: 2,
+    color: theme.colors.text.secondary,
   },
 });

@@ -14,11 +14,11 @@ import {
   InteractionManager,
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/Button';
-import Card from '../../components/Card';
+import BenchCard from '../../components/BenchCard';
 import StarterCard from '../../components/StarterCard';
 import FloatingActionButton from '../../components/FloatingActionButton';
 import { SkeletonList } from '../../components/SkeletonLoader';
@@ -43,7 +43,6 @@ export default function StartersScreen() {
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
 
-  // Fetch starters using React Query
   const {
     data: starters = [],
     isLoading,
@@ -55,7 +54,6 @@ export default function StartersScreen() {
     queryFn: () => starterStorage.getAll(),
   });
 
-  // Delete starter mutation
   const deleteMutation = useMutation({
     mutationFn: async (starterId: number) => {
       await feedingLogStorage.deleteByStarterId(starterId);
@@ -66,7 +64,6 @@ export default function StartersScreen() {
     },
   });
 
-  // Initialize notifications lazily (after screen is interactive)
   useEffect(() => {
     if (notificationsInitialized.current) return;
 
@@ -74,7 +71,6 @@ export default function StartersScreen() {
       try {
         await initializeNotifications();
         notificationsInitialized.current = true;
-        console.log('Notifications initialized successfully');
       } catch (error) {
         console.error('Failed to initialize notifications:', error);
       }
@@ -106,7 +102,6 @@ export default function StartersScreen() {
     );
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -115,11 +110,10 @@ export default function StartersScreen() {
     );
   }
 
-  // Error state
   if (isError) {
     return (
       <View style={styles.centerContainer}>
-        <Icon name="alert-circle" size={64} color={theme.colors.error.main} />
+        <Icon name="alert-circle" size={64} color={theme.colors.bench.heatRed} />
         <Text style={styles.errorTitle}>Failed to load starters</Text>
         <Text style={styles.errorText}>
           Please check your connection and try again
@@ -129,27 +123,39 @@ export default function StartersScreen() {
     );
   }
 
-  // Empty state
-  if (!starters || starters.length === 0) {
-    return (
+  const isEmpty = !starters || starters.length === 0;
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.titleBlock}>
+        <Text style={styles.pageTitle}>Starters</Text>
+        <Text style={styles.pageSubtitle}>Track feedings, health, and activity.</Text>
+      </View>
       <ScrollView
-        style={styles.container}
+        style={styles.scrollContent}
+        contentContainerStyle={isEmpty ? styles.emptyContent : undefined}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={[theme.colors.primary[600]]}
+            tintColor={theme.colors.primary[600]}
+          />
         }
       >
-
-        <View style={styles.content}>
-          <Card variant="outlined">
+        {isEmpty ? (
+          <BenchCard variant="outlined" padding="xl">
             <View style={styles.emptyState}>
-              <Icon
-                name="bacteria"
-                size={64}
-                color={theme.colors.text.disabled}
-              />
-              <Text style={styles.emptyStateTitle}>Your starter collection awaits!</Text>
+              <View style={styles.emptyIconRing}>
+                <Icon
+                  name="grain"
+                  size={40}
+                  color={theme.colors.primary[600]}
+                />
+              </View>
+              <Text style={styles.emptyStateTitle}>Your starters live here.</Text>
               <Text style={styles.emptyStateText}>
-                Create your first bubbly friend and start your sourdough journey. Track feedings, monitor health, and watch your starter thrive 🍞
+                Add your first to get started. Track feedings, monitor health, and watch your culture thrive.
               </Text>
               <Button
                 title="Add Starter"
@@ -157,44 +163,28 @@ export default function StartersScreen() {
                 style={styles.addButton}
               />
             </View>
-          </Card>
-        </View>
-      </ScrollView>
-    );
-  }
-
-  // List of starters
-  return (
-    <View style={styles.container}>
-
-      <ScrollView
-        style={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch}
-            colors={[theme.colors.primary[500]]}
-            tintColor={theme.colors.primary[500]}
-          />
-        }
-      >
-        <View style={styles.startersList}>
-          {starters.map((starter) => (
-            <StarterCard
-              key={starter.id}
-              starter={starter}
-              onPress={() => handleStarterPress(starter.id)}
-              onDelete={() => handleDeleteStarter(starter)}
-            />
-          ))}
-        </View>
+          </BenchCard>
+        ) : (
+          <View style={styles.startersList}>
+            {starters.map((starter) => (
+              <StarterCard
+                key={starter.id}
+                starter={starter}
+                onPress={() => handleStarterPress(starter.id)}
+                onDelete={() => handleDeleteStarter(starter)}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
 
-      <FloatingActionButton
-        icon="plus"
-        onPress={handleAddStarter}
-        color={theme.colors.primary[500]}
-      />
+      {!isEmpty && (
+        <FloatingActionButton
+          icon="plus"
+          onPress={handleAddStarter}
+          color={theme.colors.primary[600]}
+        />
+      )}
     </View>
   );
 }
@@ -204,6 +194,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background.default,
   },
+  titleBlock: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.default,
+  },
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+  },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -211,64 +218,51 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
     padding: theme.spacing.xl,
   },
-  header: {
-    padding: theme.spacing.xl,
-    backgroundColor: theme.colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border.light,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: theme.typography.sizes['2xl'],
-    fontWeight: theme.typography.weights.bold as any,
-    color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs,
-  },
-  headerSubtitle: {
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.secondary,
-  },
   scrollContent: {
     flex: 1,
   },
-  content: {
+  emptyContent: {
     padding: theme.spacing.xl,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   startersList: {
     padding: theme.spacing.lg,
   },
   emptyState: {
     alignItems: 'center',
-    padding: theme.spacing['3xl'],
+    paddingVertical: theme.spacing['2xl'],
+  },
+  emptyIconRing: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: theme.colors.background.subtle,
+    borderWidth: 1,
+    borderColor: theme.colors.bench.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing.lg,
   },
   emptyStateTitle: {
-    fontSize: theme.typography.sizes['2xl'],
+    fontSize: theme.typography.sizes.xl,
     fontFamily: theme.typography.fonts.heading,
     fontWeight: theme.typography.weights.bold as any,
-    color: theme.colors.text.primary,
-    marginTop: theme.spacing.lg,
+    color: theme.colors.bench.crust,
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   emptyStateText: {
-    fontSize: theme.typography.sizes.lg,
+    fontSize: theme.typography.sizes.base,
     fontFamily: theme.typography.fonts.regular,
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginBottom: theme.spacing.xl,
-    lineHeight: 28,
+    lineHeight: 24,
+    maxWidth: 280,
   },
   addButton: {
-    minWidth: 200,
-  },
-  loadingText: {
-    fontSize: theme.typography.sizes.base,
-    color: theme.colors.text.secondary,
-    marginTop: theme.spacing.md,
+    minWidth: 180,
   },
   errorTitle: {
     fontSize: theme.typography.sizes.xl,

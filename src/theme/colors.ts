@@ -1,41 +1,21 @@
 /**
  * Color palette for SourdoughSuite
- * Premium Artisan Theme - Warm, organic, and elegant
+ * Premium Modernist Theme — Clean, editorial, teal-accented
  */
 
 export const colors = {
-  // Modernist Formula Cards - paper, ink, technical rules
-  modernist: {
-    paper: '#FFFDF8',
-    paperWarm: '#F7F4EE',
-    porcelain: '#FFFFFF',
-    ink: '#111111',
-    graphite: '#2B2B2B',
-    graphiteMuted: '#66615B',
-    hairline: '#D8D3CB',
-    hairlineDark: '#A9A49B',
-    ruleTeal: '#2E7474',
-    tealSoft: '#E6F0EF',
-    copper: '#B46F2B',
-    copperSoft: '#F2E1D0',
-    starterGreen: '#4D6F3A',
-    waterBlue: '#356F8C',
-    heatRed: '#9B3F2F',
-    warningAmber: '#B87A1D',
-  },
-
-  // Primary - Rich Amber / Bronzed Crust
+  // Primary - Teal
   primary: {
-    50: '#E6F0EF',
-    100: '#CFE2E0',
-    200: '#9FC6C4',
-    300: '#6FAAA7',
-    400: '#4D8E8B',
-    500: '#2E7474', // Modernist rule teal
-    600: '#245E5F',
-    700: '#1D4B4C',
-    800: '#16393A',
-    900: '#102B2C',
+    50: '#F0FDFA',
+    100: '#CCFBF1',
+    200: '#99F6E4',
+    300: '#5EEAD4',
+    400: '#2DD4BF',
+    500: '#14B8A6', // Base Primary
+    600: '#0D9488',
+    700: '#0F766E',
+    800: '#115E59',
+    900: '#134E4A',
   },
 
   // Secondary - Warm Neutrals / Stone
@@ -56,24 +36,18 @@ export const colors = {
   success: {
     light: '#dcfce7',
     main: '#4ade80', // Fresh Starter Green
-    default: '#4ade80',
-    medium: '#4ade80',
     dark: '#15803d',
   },
 
   warning: {
     light: '#fef3c7',
-    main: '#f59e0b', // Golden Wheat
-    default: '#f59e0b',
-    medium: '#f59e0b',
+    main: '#f59e0b', // Golden Wheat — semantic status colour, unchanged
     dark: '#b45309',
   },
 
   error: {
     light: '#fee2e2',
     main: '#ef4444', // Scorched Red
-    default: '#ef4444',
-    medium: '#ef4444',
     dark: '#991b1b',
   },
 
@@ -83,38 +57,36 @@ export const colors = {
     dark: '#1e40af',
   },
 
-  // Backgrounds - Warm & Organic
+  // Backgrounds - aligned to Modernist paper tokens
   background: {
-    default: '#FFFDF8',
-    paper: '#FFFDF8',
-    subtle: '#F7F4EE',
-    dark: '#111111',
+    default: '#FDFEFE',   // Modernist paper — cool-neutral white
+    paper: '#FDFEFE',     // Modernist paper — cool-neutral white
+    subtle: '#F2F7F7',    // Modernist paperCool — teal-tinted light gray
+    dark: '#2A1A10',      // Dark Crust
   },
 
   // Card Backgrounds
   cardBg: {
-    warm: '#FDFBF7',
-    cream: '#FFF9F0',
-    wheat: '#FEF3E6',
+    warm: '#F9FCFC',      // Near-white with cool teal tint
+    cream: '#EEF8F7',     // Cool teal-cream (replaces warm cream)
+    wheat: '#E5F3F2',     // Cool teal-tinted (replaces warm wheat)
     neutral: '#F5F5F4',
   },
 
   // Text - High Contrast but Softer
   text: {
-    primary: '#111111',
-    secondary: '#2B2B2B',
-    tertiary: '#66615B',
+    primary: '#2A2826',   // Soft Black / Dark Crust
+    secondary: '#57534e', // Warm Gray
+    tertiary: '#888481',  // Light Gray
     disabled: '#d6d3d1',
     inverse: '#FFFFFF',
   },
 
   // Borders
   border: {
-    light: '#E7E2DA',
-    main: '#D8D3CB',
-    default: '#D8D3CB',
-    medium: '#D8D3CB',
-    dark: '#A9A49B',
+    light: '#E6EEEE',   // Cool teal-tinted (replaces warm '#F0EBE6')
+    main: '#D8E8E7',    // Cool teal-tinted (replaces warm '#E5E0DC')
+    dark: '#D6D3D1',
   },
 
   // Special Effects
@@ -124,10 +96,48 @@ export const colors = {
 
   // Gradients
   gradients: {
-    primary: ['#2E7474', '#245E5F'],
+    primary: ['#3D3D3D', '#1F1F1F'],
     secondary: ['#78716c', '#57534e'],
-    warmResult: ['#fffbf0', '#fef2d6'],
-    golden: ['#fcd34d', '#f59e0b'],
+    warmResult: ['#F0FDFA', '#CCFBF1'],
+    golden: ['#3D3D3D', '#1F1F1F'],
+  },
+
+  // Bench semantic palette — modernist, sourdough-specific
+  bench: {
+    flour: '#F0FAFA',     // Cool teal-white (replaces warm '#FFF9ED')
+    parchment: '#E4F2F1', // Cool teal-tinted (replaces warm parchment '#F8EEDC')
+    linen: '#D6ECEA',     // Cool teal-gray (replaces warm linen '#F2E2C9')
+    crust: '#3B2112',
+    crustSoft: '#5A3A25',
+    crumb: '#14B8A6',
+    copper: '#0D9488',
+    copperDark: '#0F766E',
+    starterGreen: '#557A3B',
+    waterBlue: '#4F7E8A',
+    heatRed: '#A84E2E',
+    border: '#C4C4C4',
+    borderSoft: '#DEDEDE',
+  },
+
+  // Modernist palette — precise editorial style for Modernist Formula Cards redesign.
+  // Color ratio target: ~70% paper/white, 20% ink/graphite, 7% teal rules, 3% teal accent or semantic state.
+  modernist: {
+    paper: '#FDFEFE',     // Cool near-white (replaces warm '#FFFDF8')
+    paperWarm: '#F2F7F7', // Cool teal-tinted (replaces warm '#F7F4EE')
+    porcelain: '#FFFFFF',
+    ink: '#111111',
+    graphite: '#2B2B2B',
+    graphiteMuted: '#66615B',
+    hairline: '#D8D3CB',
+    hairlineDark: '#A9A49B',
+    ruleTeal: '#2E7474',
+    tealSoft: '#E6F0EF',
+    copper: '#0D9488',
+    copperSoft: '#CCEDEB',
+    starterGreen: '#4D6F3A',
+    waterBlue: '#356F8C',
+    heatRed: '#9B3F2F',
+    warningAmber: '#4E7E7B',
   },
 
   transparent: 'transparent',

@@ -1,108 +1,203 @@
+/**
+ * FormulaTable
+ * Structured row table.
+ * Default columns: ingredient (flex) | weight (right) | volume (right) | percent (right).
+ * Long ingredient names wrap within the ingredient column without column drift.
+ */
+
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle, StyleProp } from 'react-native';
 import { theme } from '../theme';
 
 export interface FormulaTableRow {
-  label: string;
+  name: string;
   weight?: string;
   volume?: string;
   percent?: string;
-  isSection?: boolean;
+  emphasis?: boolean;
+  hint?: string;
+}
+
+export interface FormulaTableColumns {
+  weight?: boolean;
+  volume?: boolean;
+  percent?: boolean;
 }
 
 interface FormulaTableProps {
   rows: FormulaTableRow[];
-  columns?: {
-    label?: string;
-    weight?: string;
-    volume?: string;
-    percent?: string;
-  };
+  columns?: FormulaTableColumns;
+  showHeader?: boolean;
+  totals?: FormulaTableRow;
+  style?: StyleProp<ViewStyle>;
 }
+
+const DEFAULT_COLUMNS: FormulaTableColumns = {
+  weight: true,
+  volume: true,
+  percent: true,
+};
+
+const NUMERIC_WIDTH = 64;
 
 export default function FormulaTable({
   rows,
-  columns = {
-    label: 'Ingredient',
-    weight: 'Weight',
-    volume: 'Volume',
-    percent: '%',
-  },
+  columns = DEFAULT_COLUMNS,
+  showHeader = true,
+  totals,
+  style,
 }: FormulaTableProps) {
-  return (
-    <View style={styles.table}>
-      <View style={[styles.row, styles.header]}>
-        <Text style={[styles.headerText, styles.name]}>{columns.label}</Text>
-        <Text style={[styles.headerText, styles.amount]}>{columns.weight}</Text>
-        <Text style={[styles.headerText, styles.amount]}>{columns.volume}</Text>
-        <Text style={[styles.headerText, styles.percent]}>{columns.percent}</Text>
-      </View>
+  const cols: FormulaTableColumns = { ...DEFAULT_COLUMNS, ...columns };
 
-      {rows.map((row, index) =>
-        row.isSection ? (
-          <View key={`${row.label}-${index}`} style={styles.sectionRow}>
-            <Text style={styles.sectionText}>{row.label}</Text>
+  const renderRow = (row: FormulaTableRow, key: string, opts: { isTotal?: boolean } = {}) => {
+    const isTotal = !!opts.isTotal;
+    return (
+      <View
+        key={key}
+        style={[
+          styles.row,
+          isTotal ? styles.totalRow : null,
+        ]}
+      >
+        <View style={styles.nameCell}>
+          <Text
+            style={[
+              styles.cellText,
+              styles.nameText,
+              (row.emphasis || isTotal) && styles.emphasisText,
+            ]}
+          >
+            {row.name}
+          </Text>
+          {row.hint ? <Text style={styles.hintText}>{row.hint}</Text> : null}
+        </View>
+        {cols.weight ? (
+          <Text
+            style={[
+              styles.cellText,
+              styles.numericCell,
+              (row.emphasis || isTotal) && styles.emphasisText,
+            ]}
+            numberOfLines={1}
+          >
+            {row.weight ?? '—'}
+          </Text>
+        ) : null}
+        {cols.volume ? (
+          <Text
+            style={[
+              styles.cellText,
+              styles.numericCell,
+              (row.emphasis || isTotal) && styles.emphasisText,
+            ]}
+            numberOfLines={1}
+          >
+            {row.volume ?? '—'}
+          </Text>
+        ) : null}
+        {cols.percent ? (
+          <Text
+            style={[
+              styles.cellText,
+              styles.numericCell,
+              styles.percentCell,
+              (row.emphasis || isTotal) && styles.emphasisText,
+            ]}
+            numberOfLines={1}
+          >
+            {row.percent ?? '—'}
+          </Text>
+        ) : null}
+      </View>
+    );
+  };
+
+  return (
+    <View style={[styles.table, style]}>
+      {showHeader ? (
+        <View style={[styles.row, styles.headerRow]}>
+          <View style={styles.nameCell}>
+            <Text style={[styles.headerText, styles.nameText]}>Ingredient</Text>
           </View>
-        ) : (
-          <View key={`${row.label}-${index}`} style={styles.row}>
-            <Text style={[styles.cell, styles.name]}>{row.label}</Text>
-            <Text style={[styles.cell, styles.amount]}>{row.weight || ''}</Text>
-            <Text style={[styles.cell, styles.amount]}>{row.volume || ''}</Text>
-            <Text style={[styles.cell, styles.percent]}>{row.percent || ''}</Text>
-          </View>
-        )
-      )}
+          {cols.weight ? (
+            <Text style={[styles.headerText, styles.numericCell]}>Weight</Text>
+          ) : null}
+          {cols.volume ? (
+            <Text style={[styles.headerText, styles.numericCell]}>Volume</Text>
+          ) : null}
+          {cols.percent ? (
+            <Text style={[styles.headerText, styles.numericCell, styles.percentCell]}>%</Text>
+          ) : null}
+        </View>
+      ) : null}
+      {rows.map((row, idx) => renderRow(row, `row-${idx}`))}
+      {totals ? renderRow(totals, 'totals', { isTotal: true }) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   table: {
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.modernist.ruleTeal,
+    width: '100%',
   },
   row: {
     flexDirection: 'row',
-    minHeight: 34,
-    alignItems: 'center',
-    borderBottomWidth: 1,
+    alignItems: 'flex-start',
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: theme.colors.modernist.hairline,
   },
-  header: {
-    minHeight: 32,
+  headerRow: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.modernist.ink,
+    paddingBottom: 6,
   },
-  headerText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    letterSpacing: 0.6,
-    color: theme.colors.modernist.ink,
-    textTransform: 'uppercase',
+  totalRow: {
+    borderBottomWidth: 0,
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.modernist.ink,
+    marginTop: 4,
+    paddingTop: 8,
   },
-  cell: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.modernist.ink,
-  },
-  name: {
-    flex: 1.8,
+  nameCell: {
+    flex: 1,
     paddingRight: theme.spacing.sm,
   },
-  amount: {
-    flex: 0.9,
+  numericCell: {
+    width: NUMERIC_WIDTH,
     textAlign: 'right',
+    paddingLeft: theme.spacing.xs,
+    fontVariant: ['tabular-nums'],
   },
-  percent: {
-    flex: 0.7,
-    textAlign: 'right',
+  percentCell: {
+    color: theme.colors.primary[600],
   },
-  sectionRow: {
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.modernist.ruleTeal,
-    paddingVertical: 5,
+  cellText: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 14,
+    color: theme.colors.modernist.graphite,
+    lineHeight: 20,
   },
-  sectionText: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    color: theme.colors.modernist.ruleTeal,
+  nameText: {
+    fontFamily: theme.typography.roles.bodyMedium,
+    color: theme.colors.modernist.ink,
+  },
+  hintText: {
+    fontFamily: theme.typography.roles.body,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    marginTop: 2,
+    letterSpacing: 0.4,
+  },
+  headerText: {
+    fontFamily: theme.typography.roles.bodySemibold,
+    fontSize: 11,
+    color: theme.colors.modernist.graphiteMuted,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  emphasisText: {
+    fontFamily: theme.typography.roles.bodyBold,
+    color: theme.colors.modernist.ink,
   },
 });

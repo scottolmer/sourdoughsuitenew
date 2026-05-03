@@ -11,8 +11,9 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import { theme } from '../theme';
+import type { MaterialCommunityIconName } from '../types/icons';
 
 import { useHaptics } from '../hooks/useHaptics';
 
@@ -64,7 +65,7 @@ export default function Button({
 
   const iconColor =
     variant === 'outline' || variant === 'ghost'
-      ? theme.colors.primary[600]
+      ? theme.colors.modernist.ink
       : theme.colors.white;
 
   const iconSize = size === 'small' ? 16 : size === 'large' ? 24 : 20;
@@ -83,7 +84,7 @@ export default function Button({
         <View style={styles.content}>
           {leftIcon && (
             <Icon
-              name={leftIcon}
+              name={(leftIcon as unknown) as MaterialCommunityIconName}
               size={iconSize}
               color={iconColor}
               style={styles.leftIcon}
@@ -92,7 +93,7 @@ export default function Button({
           <Text style={textStyles}>{title}</Text>
           {rightIcon && (
             <Icon
-              name={rightIcon}
+              name={(rightIcon as unknown) as MaterialCommunityIconName}
               size={iconSize}
               color={iconColor}
               style={styles.rightIcon}
@@ -109,26 +110,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: theme.borderRadius.md,
+    borderRadius: theme.borderRadius.xl,
   },
 
-  // Variants
+  // Variants — Modernist: sharp radii, hairline borders, no heavy shadows.
   primary: {
-    backgroundColor: theme.colors.primary[500],
-    borderWidth: 1,
-    borderColor: theme.colors.primary[600],
+    backgroundColor: theme.colors.modernist.ruleTeal,
+    borderRadius: 8,
   },
   secondary: {
-    backgroundColor: theme.colors.secondary[600],
-    ...theme.shadows.md,
+    backgroundColor: theme.colors.modernist.ink,
+    borderRadius: 8,
   },
   outline: {
-    backgroundColor: theme.colors.modernist.porcelain,
+    backgroundColor: theme.colors.modernist.paper,
     borderWidth: 1,
-    borderColor: theme.colors.primary[500],
+    borderColor: theme.colors.modernist.ink,
+    borderRadius: 8,
   },
   ghost: {
     backgroundColor: 'transparent',
+    borderRadius: 8,
   },
 
   // Sizes
@@ -161,8 +163,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.fonts.semibold,
     fontWeight: theme.typography.weights.semibold,
     textAlign: 'center',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   primaryText: {
     color: theme.colors.white,
@@ -173,11 +174,11 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.base,
   },
   outlineText: {
-    color: theme.colors.primary[500],
+    color: theme.colors.modernist.ink,
     fontSize: theme.typography.sizes.base,
   },
   ghostText: {
-    color: theme.colors.primary[500],
+    color: theme.colors.modernist.ink,
     fontSize: theme.typography.sizes.base,
   },
 

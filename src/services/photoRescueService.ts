@@ -79,7 +79,7 @@ export function createSamplePhotoRequest(
   context: PhotoRescueContext
 ): PhotoRescueRequest {
   return {
-    imageBase64: 'sample-demo-image',
+    imageBase64: 'sample-baking-image',
     mimeType: 'image/jpeg',
     context,
   };

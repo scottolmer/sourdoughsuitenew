@@ -10,7 +10,7 @@ import { theme } from '../../theme';
 export default function TermsOfServiceScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <Text style={styles.lastUpdated}>Last updated: February 2026</Text>
+      <Text style={styles.lastUpdated}>Last updated: May 2026</Text>
 
       <Card variant="outlined">
         <Text style={styles.sectionTitle}>1. Acceptance of Terms</Text>
@@ -22,7 +22,7 @@ export default function TermsOfServiceScreen() {
       <Card variant="outlined" style={styles.card}>
         <Text style={styles.sectionTitle}>2. Description of Service</Text>
         <Text style={styles.body}>
-          Sourdough Suite is a mobile application designed to assist with sourdough baking. The app provides tools including starter tracking, recipe management, and baking calculators. All features are provided for informational and convenience purposes.
+          Sourdough Suite is a mobile application designed to assist with sourdough baking. The app provides tools including Photo Rescue, bake planning, starter tracking, recipe management, and baking calculators. All features are provided for informational and convenience purposes.
         </Text>
       </Card>
 
@@ -52,37 +52,44 @@ export default function TermsOfServiceScreen() {
       </Card>
 
       <Card variant="outlined" style={styles.card}>
-        <Text style={styles.sectionTitle}>6. Intellectual Property</Text>
+        <Text style={styles.sectionTitle}>6. Photo Rescue and AI Guidance</Text>
+        <Text style={styles.body}>
+          Photo Rescue and any AI-assisted diagnosis are intended as practical baking guidance, not certainty. Results are based on visible clues and the context you provide. You remain responsible for using your own judgment when deciding whether to continue, adjust, or discard a bake.
+        </Text>
+      </Card>
+
+      <Card variant="outlined" style={styles.card}>
+        <Text style={styles.sectionTitle}>7. Intellectual Property</Text>
         <Text style={styles.body}>
           All content, design, graphics, and code within Sourdough Suite are the intellectual property of Sourdough Suite and are protected by applicable copyright and trademark laws. The Sourdough Suite name, logo, and branding are trademarks of Sourdough Suite.
         </Text>
       </Card>
 
       <Card variant="outlined" style={styles.card}>
-        <Text style={styles.sectionTitle}>7. Disclaimer of Warranties</Text>
+        <Text style={styles.sectionTitle}>8. Disclaimer of Warranties</Text>
         <Text style={styles.body}>
           Sourdough Suite is provided "as is" and "as available" without warranties of any kind, either express or implied. We do not warrant that the app will be error-free, uninterrupted, or free of harmful components. Your use of the app is at your own risk.
         </Text>
       </Card>
 
       <Card variant="outlined" style={styles.card}>
-        <Text style={styles.sectionTitle}>8. Limitation of Liability</Text>
+        <Text style={styles.sectionTitle}>9. Limitation of Liability</Text>
         <Text style={styles.body}>
           To the fullest extent permitted by law, Sourdough Suite shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the app, including but not limited to loss of data or baking outcomes.
         </Text>
       </Card>
 
       <Card variant="outlined" style={styles.card}>
-        <Text style={styles.sectionTitle}>9. Changes to Terms</Text>
+        <Text style={styles.sectionTitle}>10. Changes to Terms</Text>
         <Text style={styles.body}>
           We reserve the right to modify these Terms of Service at any time. Changes will be reflected within the app with an updated "Last updated" date. Your continued use of the app after any changes constitutes acceptance of the new terms.
         </Text>
       </Card>
 
       <Card variant="outlined" style={styles.card}>
-        <Text style={styles.sectionTitle}>10. Contact</Text>
+        <Text style={styles.sectionTitle}>11. Contact</Text>
         <Text style={styles.body}>
-          If you have any questions about these Terms of Service, please reach out to us through our social media channels listed on the Profile page.
+          If you have any questions about these Terms of Service, visit the support page linked from the App Store listing or contact @scottolmer on X.
         </Text>
       </Card>
     </ScrollView>

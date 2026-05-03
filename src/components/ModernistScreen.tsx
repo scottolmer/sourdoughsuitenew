@@ -1,10 +1,20 @@
+/**
+ * ModernistScreen
+ * Page wrapper for the Modernist Formula Cards redesign.
+ * - Safe-area handling
+ * - Paper background
+ * - Consistent horizontal padding
+ * - Optional scroll
+ * - Optional bottom action inset (reserves room for a fixed footer/CTA)
+ */
+
 import React, { ReactNode } from 'react';
 import {
   ScrollView,
   StyleSheet,
   View,
   ViewStyle,
-  ScrollViewProps,
+  StyleProp,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../theme';
@@ -13,37 +23,53 @@ interface ModernistScreenProps {
   children: ReactNode;
   scroll?: boolean;
   padded?: boolean;
-  style?: ViewStyle;
-  contentStyle?: ViewStyle;
-  scrollProps?: ScrollViewProps;
+  bottomActionInset?: number;
+  background?: 'paper' | 'paperWarm' | 'porcelain';
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 export default function ModernistScreen({
   children,
   scroll = true,
   padded = true,
+  bottomActionInset = 0,
+  background = 'paper',
   style,
   contentStyle,
-  scrollProps,
 }: ModernistScreenProps) {
-  const content = (
-    <View style={[padded && styles.padded, contentStyle]}>{children}</View>
+  const bg = theme.colors.modernist[background];
+
+  const innerContent = (
+    <View
+      style={[
+        padded && styles.padded,
+        bottomActionInset
+          ? { paddingBottom: bottomActionInset + theme.spacing.lg }
+          : null,
+        contentStyle,
+      ]}
+    >
+      {children}
+    </View>
   );
 
   return (
-    <SafeAreaView style={[styles.container, style]} edges={['top']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: bg }, style]}
+      edges={['top']}
+    >
       {scroll ? (
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
-          {...scrollProps}
+          keyboardShouldPersistTaps="handled"
         >
-          {content}
+          {innerContent}
         </ScrollView>
       ) : (
-        content
+        innerContent
       )}
     </SafeAreaView>
   );
@@ -52,15 +78,15 @@ export default function ModernistScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.modernist.paper,
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: theme.spacing['3xl'],
+    flexGrow: 1,
   },
   padded: {
-    padding: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
   },
 });

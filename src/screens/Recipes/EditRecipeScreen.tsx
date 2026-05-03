@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Picker, { PickerOption } from '../../components/Picker';
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   textArea: {
     backgroundColor: theme.colors.white,
     borderWidth: 1,
-    borderColor: theme.colors.border.medium,
+    borderColor: theme.colors.border.main,
     borderRadius: theme.spacing.sm,
     padding: theme.spacing.md,
     fontSize: theme.typography.sizes.base,

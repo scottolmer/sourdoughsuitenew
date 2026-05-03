@@ -1,220 +1,354 @@
-import React, { useCallback, useState } from 'react';
-import { RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+/**
+ * Recipes Screen
+ * Browse and manage recipes
+ */
+
+import React, { useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useQuery } from '@tanstack/react-query';
+import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
 import Button from '../../components/Button';
-import FactStrip from '../../components/FactStrip';
-import FormulaSheet from '../../components/FormulaSheet';
-import ModernistScreen from '../../components/ModernistScreen';
-import RuleHeader from '../../components/RuleHeader';
+import BenchCard from '../../components/BenchCard';
 import FloatingActionButton from '../../components/FloatingActionButton';
+import { theme } from '../../theme';
+import { Recipe } from '../../types';
 import { RecipesStackParamList } from '../../navigation/types';
 import { getAllRecipes } from '../../services/recipeStorage';
 import { starterStorage } from '../../services/starterStorage';
-import { Recipe, Starter } from '../../types';
-import { theme } from '../../theme';
+import { QUERY_KEYS } from '../../constants';
 
 type NavigationProp = NativeStackNavigationProp<RecipesStackParamList>;
 
 export default function RecipesScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [starters, setStarters] = useState<Starter[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const loadData = async () => {
-    const [loadedRecipes, loadedStarters] = await Promise.all([
-      getAllRecipes(),
-      starterStorage.getAll(),
-    ]);
-    setRecipes(loadedRecipes);
-    setStarters(loadedStarters);
-    setRefreshing(false);
+  const { data: starters = [] } = useQuery({
+    queryKey: [QUERY_KEYS.STARTERS],
+    queryFn: () => starterStorage.getAll(),
+  });
+
+  const loadRecipes = async () => {
+    try {
+      const loadedRecipes = await getAllRecipes();
+      setRecipes(loadedRecipes);
+    } catch (error) {
+      console.error('Error loading recipes:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
   useFocusEffect(
     useCallback(() => {
-      loadData();
+      loadRecipes();
     }, [])
   );
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    loadRecipes();
+  };
+
   const getStarterName = (starterId?: number) => {
-    if (!starterId) return 'none';
-    return starters.find(starter => starter.id === starterId)?.name || 'linked';
+    if (!starterId) return null;
+    const starter = starters.find(s => s.id === starterId);
+    return starter?.name;
+  };
+
+  const handleAddRecipe = () => {
+    navigation.navigate('AddRecipe');
+  };
+
+  const handleRecipePress = (recipeId: string) => {
+    navigation.navigate('RecipeDetail', { recipeId });
+  };
+
+  const renderRecipeCard = (recipe: Recipe) => {
+    const starterName = getStarterName(recipe.starterUsedId);
+
+    return (
+      <TouchableOpacity
+        key={recipe.id}
+        onPress={() => handleRecipePress(recipe.id)}
+        activeOpacity={0.7}
+        style={styles.cardTouchable}
+      >
+        <BenchCard variant="default" padding="md">
+          {/* Name row + starter badge */}
+          <View style={styles.nameRow}>
+            <Text style={styles.recipeName} numberOfLines={2}>{recipe.name}</Text>
+            {starterName && (
+              <View style={styles.starterBadge}>
+                <Icon name="grain" size={11} color={theme.colors.bench.starterGreen} />
+                <Text style={styles.starterBadgeText} numberOfLines={1}>{starterName}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Stats row */}
+          <View style={styles.statsRow}>
+            <View style={styles.stat}>
+              <Icon name="water-percent" size={14} color={theme.colors.bench.waterBlue} />
+              <Text style={styles.statValue}>{recipe.hydration}%</Text>
+              <Text style={styles.statLabel}>hydration</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.stat}>
+              <Icon name="scale" size={14} color={theme.colors.primary[600]} />
+              <Text style={styles.statValue}>{recipe.totalWeight}g</Text>
+              <Text style={styles.statLabel}>total</Text>
+            </View>
+            {recipe.yieldAmount ? (
+              <>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Icon name="bread-slice-outline" size={14} color={theme.colors.bench.crustSoft} />
+                  <Text style={styles.statValue}>{recipe.yieldAmount}</Text>
+                  <Text style={styles.statLabel}>yield</Text>
+                </View>
+              </>
+            ) : null}
+          </View>
+
+          {/* Formula mini-grid */}
+          <View style={styles.formulaGrid}>
+            <View style={styles.formulaCell}>
+              <Text style={styles.formulaValue}>{recipe.formula.flour}g</Text>
+              <Text style={styles.formulaLabel}>Flour</Text>
+            </View>
+            <View style={styles.formulaCell}>
+              <Text style={styles.formulaValue}>{recipe.formula.water}%</Text>
+              <Text style={styles.formulaLabel}>Water</Text>
+            </View>
+            <View style={styles.formulaCell}>
+              <Text style={styles.formulaValue}>{recipe.formula.salt}%</Text>
+              <Text style={styles.formulaLabel}>Salt</Text>
+            </View>
+            <View style={styles.formulaCell}>
+              <Text style={styles.formulaValue}>{recipe.formula.starter}%</Text>
+              <Text style={styles.formulaLabel}>Starter</Text>
+            </View>
+          </View>
+        </BenchCard>
+      </TouchableOpacity>
+    );
   };
 
   return (
-    <ModernistScreen
-      scrollProps={{
-        refreshControl: (
+    <View style={styles.container}>
+      <View style={styles.titleBlock}>
+        <Text style={styles.pageTitle}>Recipes</Text>
+        <Text style={styles.pageSubtitle}>Your saved formulas and bakes.</Text>
+      </View>
+      <ScrollView
+        contentContainerStyle={recipes.length === 0 ? styles.emptyContent : styles.content}
+        refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => {
-              setRefreshing(true);
-              loadData();
-            }}
+            onRefresh={onRefresh}
+            colors={[theme.colors.primary[600]]}
+            tintColor={theme.colors.primary[600]}
           />
-        ),
-      }}
-    >
-      <View style={styles.header}>
-        <Text style={styles.kicker}>RECIPES</Text>
-        <Text style={styles.title}>Formula index</Text>
-        <Text style={styles.subtitle}>
-          Saved recipes formatted as compact baker's percentage cards.
-        </Text>
-      </View>
-
-      {recipes.length === 0 ? (
-        <FormulaSheet accented>
-          <RuleHeader title="Empty Index" />
-          <Text style={styles.emptyTitle}>Your formula index is ready.</Text>
-          <Text style={styles.emptyText}>
-            Save a calculator result or add a recipe to start building a precise
-            working library.
-          </Text>
-          <Button
-            title="Add Recipe"
-            onPress={() => navigation.navigate('AddRecipe')}
-            style={styles.emptyButton}
-          />
-        </FormulaSheet>
-      ) : (
-        recipes.map(recipe => (
-          <TouchableOpacity
-            key={recipe.id}
-            onPress={() => navigation.navigate('RecipeDetail', { recipeId: recipe.id })}
-            activeOpacity={0.75}
-          >
-            <FormulaSheet style={styles.recipeSheet} accented>
-              <View style={styles.recipeTop}>
-                <View style={styles.recipeTitleBlock}>
-                  <Text style={styles.recipeName}>{recipe.name}</Text>
-                  <Text style={styles.recipeDescription} numberOfLines={2}>
-                    {recipe.description || 'Working formula'}
-                  </Text>
-                </View>
+        }
+      >
+        {recipes.length === 0 ? (
+          <BenchCard variant="outlined" padding="xl">
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconRing}>
                 <Icon
-                  name="chevron-right"
-                  size={20}
-                  color={theme.colors.modernist.hairlineDark}
+                  name="book-open-page-variant-outline"
+                  size={40}
+                  color={theme.colors.primary[600]}
                 />
               </View>
-              <FactStrip
-                items={[
-                  {
-                    label: 'Hydration',
-                    value: `${recipe.hydration}%`,
-                    icon: 'water-percent',
-                    tone: 'teal',
-                  },
-                  {
-                    label: 'Weight',
-                    value: `${recipe.totalWeight}g`,
-                    icon: 'scale',
-                  },
-                  {
-                    label: 'Yield',
-                    value: recipe.yieldAmount || 'not set',
-                    icon: 'bread-slice',
-                  },
-                  {
-                    label: 'Starter',
-                    value: getStarterName(recipe.starterUsedId),
-                    icon: 'bacteria-outline',
-                    tone: recipe.starterUsedId ? 'green' : undefined,
-                  },
-                ]}
+              <Text style={styles.emptyStateTitle}>Your recipe book is ready.</Text>
+              <Text style={styles.emptyStateText}>
+                Save your first recipe here. Build from scratch or save directly from any calculator.
+              </Text>
+              <Button
+                title="Add Recipe"
+                onPress={handleAddRecipe}
+                style={styles.button}
               />
-              <View style={styles.formulaMini}>
-                <Text style={styles.miniCell}>FLOUR {recipe.formula.flour}g</Text>
-                <Text style={styles.miniCell}>WATER {recipe.formula.water}%</Text>
-                <Text style={styles.miniCell}>SALT {recipe.formula.salt}%</Text>
-                <Text style={styles.miniCell}>STARTER {recipe.formula.starter}%</Text>
-              </View>
-            </FormulaSheet>
-          </TouchableOpacity>
-        ))
-      )}
+            </View>
+          </BenchCard>
+        ) : (
+          recipes.map(renderRecipeCard)
+        )}
+      </ScrollView>
 
-      <FloatingActionButton icon="plus" onPress={() => navigation.navigate('AddRecipe')} />
-    </ModernistScreen>
+      <FloatingActionButton icon="plus" onPress={handleAddRecipe} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background.default,
+  },
+  titleBlock: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    backgroundColor: theme.colors.background.default,
+  },
+  pageTitle: {
+    fontSize: theme.typography.sizes['3xl'],
+    fontFamily: theme.typography.fonts.heading,
+    color: theme.colors.modernist.ink,
+    marginBottom: 2,
+  },
+  pageSubtitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.regular,
+    color: theme.colors.text.secondary,
+  },
+  content: {
+    padding: theme.spacing.lg,
+  },
+  emptyContent: {
+    padding: theme.spacing.xl,
+    flexGrow: 1,
+    justifyContent: 'center' as const,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: theme.spacing['2xl'],
+  },
+  emptyIconRing: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: theme.colors.background.subtle,
+    borderWidth: 1,
+    borderColor: theme.colors.bench.border,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: theme.spacing.lg,
   },
-  kicker: {
-    fontFamily: theme.typography.fonts.semibold,
-    fontSize: theme.typography.sizes.xs,
-    letterSpacing: 0.9,
-    color: theme.colors.modernist.ruleTeal,
-    marginBottom: theme.spacing.xs,
-  },
-  title: {
+  emptyStateTitle: {
+    fontSize: theme.typography.sizes.xl,
     fontFamily: theme.typography.fonts.heading,
-    fontSize: 36,
-    color: theme.colors.modernist.ink,
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.bench.crust,
+    marginBottom: theme.spacing.sm,
+    textAlign: 'center',
   },
-  subtitle: {
-    fontFamily: theme.typography.fonts.regular,
+  emptyStateText: {
     fontSize: theme.typography.sizes.base,
-    lineHeight: 23,
-    color: theme.colors.modernist.graphiteMuted,
-    marginTop: theme.spacing.sm,
-  },
-  emptyTitle: {
-    fontFamily: theme.typography.fonts.heading,
-    fontSize: theme.typography.sizes['2xl'],
-    color: theme.colors.modernist.ink,
-  },
-  emptyText: {
     fontFamily: theme.typography.fonts.regular,
-    color: theme.colors.modernist.graphiteMuted,
-    lineHeight: 21,
-    marginTop: theme.spacing.sm,
+    color: theme.colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: theme.spacing.xl,
+    lineHeight: 24,
+    maxWidth: 280,
   },
-  emptyButton: {
-    marginTop: theme.spacing.lg,
+  button: {
+    minWidth: 160,
   },
-  recipeSheet: {
-    marginBottom: theme.spacing.lg,
-  },
-  recipeTop: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+  cardTouchable: {
     marginBottom: theme.spacing.md,
   },
-  recipeTitleBlock: {
-    flex: 1,
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   recipeName: {
+    fontSize: theme.typography.sizes.lg,
     fontFamily: theme.typography.fonts.heading,
-    fontSize: theme.typography.sizes.xl,
-    color: theme.colors.modernist.ink,
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.bench.crust,
+    flex: 1,
+    flexShrink: 1,
   },
-  recipeDescription: {
-    fontFamily: theme.typography.fonts.regular,
-    fontSize: theme.typography.sizes.sm,
-    color: theme.colors.modernist.graphiteMuted,
-    marginTop: 3,
-  },
-  formulaMini: {
+  starterBadge: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.modernist.ruleTeal,
-    marginTop: theme.spacing.md,
-    paddingTop: theme.spacing.sm,
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#EAF4E3',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: theme.colors.bench.starterGreen,
+    flexShrink: 0,
+    maxWidth: 120,
+  },
+  starterBadgeText: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.bench.starterGreen,
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold as any,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
     gap: theme.spacing.sm,
   },
-  miniCell: {
+  stat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  statValue: {
+    fontSize: theme.typography.sizes.sm,
     fontFamily: theme.typography.fonts.semibold,
-    fontSize: 10,
-    letterSpacing: 0.5,
-    color: theme.colors.modernist.graphite,
+    fontWeight: theme.typography.weights.semibold as any,
+    color: theme.colors.bench.crust,
+  },
+  statLabel: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.text.secondary,
+  },
+  statDivider: {
+    width: 1,
+    height: 14,
+    backgroundColor: theme.colors.bench.borderSoft,
+    marginHorizontal: 2,
+  },
+  formulaGrid: {
+    flexDirection: 'row',
+    backgroundColor: theme.colors.background.subtle,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: theme.colors.bench.borderSoft,
+    overflow: 'hidden',
+  },
+  formulaCell: {
+    flex: 1,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.xs,
+    alignItems: 'center',
+    borderRightWidth: 1,
+    borderRightColor: theme.colors.bench.borderSoft,
+  },
+  formulaValue: {
+    fontSize: theme.typography.sizes.sm,
+    fontFamily: theme.typography.fonts.semibold,
+    fontWeight: theme.typography.weights.semibold as any,
+    color: theme.colors.bench.crustSoft,
+    marginBottom: 2,
+  },
+  formulaLabel: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.text.secondary,
   },
 });

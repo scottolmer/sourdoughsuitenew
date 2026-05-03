@@ -4,21 +4,30 @@
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps } from '@react-navigation/native';
+import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 
 // Stack param lists
 export type HomeStackParamList = {
   Home: undefined;
   Learn: undefined;
+  Profile: undefined;
+  HelpFaq: undefined;
+  About: undefined;
+  PrivacyPolicy: undefined;
+  TermsOfService: undefined;
 };
 
 export type ToolsStackParamList = {
   ToolsList: undefined;
-  PhotoRescue: undefined;
-  PhotoRescueResult: { diagnosisId: string };
-  BakePlanner: { diagnosisId?: string } | undefined;
-  BakePlanDetail: { planId: string };
-  BakersCalculator: undefined;
+  BakersCalculator: {
+    prefilledFormula?: {
+      flour: string;
+      water: string;
+      salt: string;
+      starter: string;
+      name?: string;
+    };
+  } | undefined;
   HydrationCalculator: undefined;
   TimelineCalculator: undefined;
   ScalingCalculator: undefined;
@@ -29,6 +38,24 @@ export type ToolsStackParamList = {
   DoughWeightCalculator: undefined;
   RecipeRescueCalculator: undefined;
   FlourBlendCalculator: undefined;
+  PhotoRescue: undefined;
+  DiagnosisResult: {
+    diagnosis: import('../types/photoRescue').PhotoRescueDiagnosis;
+    imageUri?: string;
+    isQuickRescue?: boolean;
+  };
+  BakeDayCopilot: {
+    diagnosis?: import('../types/photoRescue').PhotoRescueDiagnosis;
+  };
+  BakePlanner: {
+    diagnosisId?: string;
+  } | undefined;
+  BakePlanDetail: {
+    planId: string;
+  };
+  PhotoRescueResult: {
+    diagnosisId: string;
+  };
 };
 
 export type StartersStackParamList = {
@@ -70,10 +97,9 @@ export type ProfileStackParamList = {
 // Tab param list
 export type MainTabParamList = {
   HomeTab: undefined;
-  ToolsTab: undefined;
+  ToolsTab: NavigatorScreenParams<ToolsStackParamList> | undefined;
   StartersTab: undefined;
   RecipesTab: undefined;
-  ProfileTab: undefined;
 };
 
 // Root stack
