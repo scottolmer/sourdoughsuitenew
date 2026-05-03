@@ -14,6 +14,8 @@ const CHANNEL_ID = 'feeding-reminders';
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
     shouldShowBanner: true,
@@ -141,4 +143,3 @@ export async function scheduleAllFeedingReminders(starters: Starter[]): Promise<
     }
   }
 }
-

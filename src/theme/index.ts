@@ -14,11 +14,11 @@ export const theme = {
   // Border radius - More modern
   borderRadius: {
     none: 0,
-    sm: 6,
-    md: 10,
-    lg: 16,
-    xl: 24,
-    '2xl': 32,
+    sm: 4,
+    md: 8,
+    lg: 10,
+    xl: 12,
+    '2xl': 16,
     full: 9999,
   },
 

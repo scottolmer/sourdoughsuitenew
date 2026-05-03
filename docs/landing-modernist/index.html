@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Three GitHub Pages landing page concepts for SourdoughSuite."
+    />
+    <title>SourdoughSuite Landing Page Concepts</title>
+    <style>
+      @font-face {
+        font-family: 'Playfair Local';
+        src: url('../../assets/fonts/PlayfairDisplay-Bold.ttf')
+          format('truetype');
+        font-weight: 700;
+      }
+      @font-face {
+        font-family: 'Suite Sans';
+        src: url('../../assets/fonts/Inter-Regular.ttf') format('truetype');
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: 'Suite Sans';
+        src: url('../../assets/fonts/Inter-SemiBold.ttf') format('truetype');
+        font-weight: 700;
+      }
+
+      :root {
+        --paper: #fffdf8;
+        --warm: #f5f1e9;
+        --ink: #111111;
+        --muted: #69635c;
+        --line: #d8d3cb;
+        --teal: #2e7474;
+        --teal-dark: #173f41;
+        --copper: #b46f2b;
+        --red: #9b3f2f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Suite Sans', Avenir, sans-serif;
+        color: var(--ink);
+        background: linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
+        background-size: 42px 42px;
+      }
+
+      .wrap {
+        width: min(1180px, calc(100% - 36px));
+        margin: 0 auto;
+        padding: clamp(34px, 6vw, 76px) 0;
+      }
+
+      .kicker {
+        color: var(--teal);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 940px;
+        margin: 14px 0 18px;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: clamp(52px, 9vw, 116px);
+        line-height: 0.9;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 770px;
+        margin: 0 0 42px;
+        color: var(--muted);
+        font-size: clamp(18px, 2vw, 22px);
+        line-height: 1.55;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .concept {
+        min-height: 520px;
+        display: grid;
+        align-content: end;
+        color: var(--ink);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        background: var(--paper);
+        position: relative;
+        overflow: hidden;
+        transition: transform 180ms ease, border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      .concept:hover {
+        transform: translateY(-5px);
+        border-color: var(--teal);
+        box-shadow: 0 24px 70px rgba(17, 17, 17, 0.12);
+      }
+
+      .concept.recommended {
+        border-color: var(--teal);
+        box-shadow: 0 24px 80px rgba(46, 116, 116, 0.16);
+      }
+
+      .concept::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 31%;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .concept::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 42%,
+          rgba(255, 253, 248, 0.94) 70%
+        );
+      }
+
+      .one::before {
+        background-image: linear-gradient(
+            180deg,
+            rgba(255, 253, 248, 0.05),
+            rgba(255, 253, 248, 0.05)
+          ),
+          url('assets/sourdoughsuite-hero.png');
+      }
+
+      .two::before {
+        background-image: linear-gradient(
+            120deg,
+            rgba(17, 17, 17, 0.76),
+            rgba(46, 116, 116, 0.34)
+          ),
+          url('assets/sourdoughsuite-hero.png');
+      }
+
+      .three::before {
+        background-image: linear-gradient(
+            90deg,
+            rgba(255, 253, 248, 0.1),
+            rgba(180, 111, 43, 0.2)
+          ),
+          url('assets/sourdoughsuite-hero.png');
+        filter: saturate(0.72) contrast(1.08);
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+        padding: 26px;
+        border-top: 3px solid var(--teal);
+        background: var(--paper);
+      }
+
+      .badge {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        z-index: 2;
+        padding: 8px 10px;
+        color: white;
+        background: var(--red);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .label {
+        color: var(--copper);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: 34px;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .note {
+        margin-top: 28px;
+        padding-top: 18px;
+        border-top: 1px solid var(--teal);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .concept {
+          min-height: 430px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div class="kicker">GitHub Pages Concepts</div>
+      <h1>Three landing page directions for SourdoughSuite.</h1>
+      <p class="intro">
+        Each option is static HTML, ready to host from the repo's
+        <strong>docs</strong> folder, and designed around the Modernist
+        formula-card language already used in the app.
+      </p>
+
+      <section class="grid" aria-label="Landing page concepts">
+        <a class="concept one" href="formula-cards.html">
+          <div class="content">
+            <div class="label">Concept 01</div>
+            <h2>Formula Cards</h2>
+            <p>
+              The cleanest match to the app: precise tables, measured
+              typography, and product screenshots as the hero signal.
+            </p>
+          </div>
+        </a>
+
+        <a class="concept two recommended" href="bakery-origin.html">
+          <div class="badge">Recommended</div>
+          <div class="content">
+            <div class="label">Concept 02</div>
+            <h2>Bakery Origin</h2>
+            <p>
+              Leads with your professional-baker story and frames the product as
+              a tool born at the bench.
+            </p>
+          </div>
+        </a>
+
+        <a class="concept three" href="tool-suite.html">
+          <div class="content">
+            <div class="label">Concept 03</div>
+            <h2>Tool Suite</h2>
+            <p>
+              Best for judges who need the breadth fast: photo rescue, bake
+              planner, calculators, starters, and recipes.
+            </p>
+          </div>
+        </a>
+      </section>
+
+      <p class="note">
+        Open any concept directly, or publish this folder through GitHub Pages
+        to use it as the comparison index.
+      </p>
+    </main>
+  </body>
+</html>
