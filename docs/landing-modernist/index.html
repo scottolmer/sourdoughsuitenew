@@ -35,6 +35,7 @@
         --teal: #2e7474;
         --teal-dark: #173f41;
         --copper: #b46f2b;
+        --red: #9b3f2f;
       }
 
       * {
@@ -107,6 +108,11 @@
         box-shadow: 0 24px 70px rgba(17, 17, 17, 0.12);
       }
 
+      .concept.recommended {
+        border-color: var(--teal);
+        box-shadow: 0 24px 80px rgba(46, 116, 116, 0.16);
+      }
+
       .concept::before {
         content: '';
         position: absolute;
@@ -160,6 +166,20 @@
         padding: 26px;
         border-top: 3px solid var(--teal);
         background: var(--paper);
+      }
+
+      .badge {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        z-index: 2;
+        padding: 8px 10px;
+        color: white;
+        background: var(--red);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
       }
 
       .label {
@@ -236,7 +256,8 @@
           </div>
         </a>
 
-        <a class="concept three" href="tool-suite.html">
+        <a class="concept three recommended" href="tool-suite.html">
+          <div class="badge">Recommended</div>
           <div class="content">
             <div class="label">Concept 03</div>
             <h2>Tool Suite</h2>
