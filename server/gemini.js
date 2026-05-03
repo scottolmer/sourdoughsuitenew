@@ -183,7 +183,7 @@ async function callGemini(imageBase64, mimeType, context) {
   }
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
   const userPrompt = buildUserPrompt(context);
 

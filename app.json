@@ -49,7 +49,8 @@
           "cameraPermission": "Sourdough Suite may use the camera when you choose to capture a baking photo for Photo Rescue."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      "expo-asset"
     ],
     "extra": {
       "eas": {

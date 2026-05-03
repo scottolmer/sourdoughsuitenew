@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
@@ -45,32 +46,60 @@ const STAGE_CHIPS: Record<PhotoSubject, string[]> = {
 };
 
 type QuickRescueMode = 'input' | 'questions';
+type SupportedMimeType = 'image/jpeg' | 'image/png' | 'image/webp';
 
-function imageUriToBase64(uri: string): Promise<{ base64: string; mimeType: 'image/jpeg' | 'image/png' | 'image/webp' }> {
+function normalizeMimeType(mimeType?: string | null, uri?: string): SupportedMimeType {
+  const normalized = mimeType?.toLowerCase();
+  if (normalized === 'image/png' || normalized === 'image/webp' || normalized === 'image/jpeg') {
+    return normalized;
+  }
+
+  const lowerUri = uri?.toLowerCase() ?? '';
+  if (lowerUri.endsWith('.png')) return 'image/png';
+  if (lowerUri.endsWith('.webp')) return 'image/webp';
+  return 'image/jpeg';
+}
+
+async function readImageUriAsBase64(
+  uri: string,
+  fallbackMimeType?: SupportedMimeType
+): Promise<{ base64: string; mimeType: SupportedMimeType }> {
   if (uri.startsWith('data:')) {
     const [header, data] = uri.split(',');
-    const mime = header.match(/data:(image\/\w+);base64/)?.[1] ?? 'image/jpeg';
-    return Promise.resolve({ base64: data, mimeType: mime as 'image/jpeg' | 'image/png' | 'image/webp' });
+    return {
+      base64: data,
+      mimeType: normalizeMimeType(header.match(/data:(image\/\w+);base64/)?.[1], uri),
+    };
   }
-  return fetch(uri)
-    .then(r => r.blob())
-    .then(blob => new Promise<{ base64: string; mimeType: 'image/jpeg' | 'image/png' | 'image/webp' }>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = reader.result as string;
-        const [header, data] = dataUrl.split(',');
-        const mime = (header.match(/data:(image\/\w+);base64/)?.[1] ?? 'image/jpeg') as 'image/jpeg' | 'image/png' | 'image/webp';
-        resolve({ base64: data, mimeType: mime });
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    }));
+
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: 'base64',
+  });
+
+  return {
+    base64,
+    mimeType: fallbackMimeType ?? normalizeMimeType(undefined, uri),
+  };
+}
+
+async function sampleImageToBase64(): Promise<{ base64: string; mimeType: SupportedMimeType }> {
+  const asset = Asset.fromModule(SAMPLE_DOUGH);
+  await asset.downloadAsync();
+
+  const uri = asset.localUri ?? asset.uri;
+  if (!uri) {
+    throw new Error('Sample image asset is unavailable.');
+  }
+
+  return readImageUriAsBase64(uri, normalizeMimeType(asset.type ? `image/${asset.type}` : undefined, uri));
 }
 
 export default function PhotoRescueScreen() {
   const navigation = useNavigation<NavigationProp>();
 
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageMimeType, setImageMimeType] = useState<SupportedMimeType>('image/jpeg');
   const [subject, setSubject] = useState<PhotoSubject>('dough');
   const [stage, setStage] = useState<string>('');
   const [roomTemp, setRoomTemp] = useState<string>('');
@@ -88,12 +117,16 @@ export default function PhotoRescueScreen() {
   const pickImage = useCallback(async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.8,
-        base64: false,
+        base64: true,
       });
       if (!result.canceled && result.assets.length > 0) {
-        setImageUri(result.assets[0].uri);
+        const asset = result.assets[0];
+        const mimeType = normalizeMimeType(asset.mimeType, asset.uri);
+        setImageUri(asset.uri);
+        setImageBase64(asset.base64 ?? null);
+        setImageMimeType(mimeType);
         setError(null);
       }
     } catch {
@@ -103,6 +136,8 @@ export default function PhotoRescueScreen() {
 
   const useSamplePhoto = useCallback(() => {
     setImageUri('sample');
+    setImageBase64(null);
+    setImageMimeType('image/png');
     setError(null);
   }, []);
 
@@ -115,15 +150,16 @@ export default function PhotoRescueScreen() {
     setError(null);
     try {
       let base64 = '';
-      let mimeType: 'image/jpeg' | 'image/png' | 'image/webp' = 'image/jpeg';
+      let mimeType: SupportedMimeType = imageMimeType;
 
       if (imageUri === 'sample') {
-        const asset = Image.resolveAssetSource(SAMPLE_DOUGH);
-        const result = await imageUriToBase64(asset.uri);
+        const result = await sampleImageToBase64();
         base64 = result.base64;
         mimeType = result.mimeType;
+      } else if (imageBase64) {
+        base64 = imageBase64;
       } else {
-        const result = await imageUriToBase64(imageUri);
+        const result = await readImageUriAsBase64(imageUri, imageMimeType);
         base64 = result.base64;
         mimeType = result.mimeType;
       }
@@ -167,7 +203,18 @@ export default function PhotoRescueScreen() {
     } finally {
       setLoading(false);
     }
-  }, [imageUri, subject, stage, roomTemp, hoursElapsed, hydration, starterHealth, navigation]);
+  }, [
+    imageUri,
+    imageBase64,
+    imageMimeType,
+    subject,
+    stage,
+    roomTemp,
+    hoursElapsed,
+    hydration,
+    starterHealth,
+    navigation,
+  ]);
 
   const handleQuickRescueSingleSelect = (key: string, value: string) => {
     setQrAnswers(prev => ({ ...prev, [key]: value }));
