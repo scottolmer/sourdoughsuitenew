@@ -34,6 +34,11 @@
         --teal: #2e7474;
         --teal-light: #9dd0cc;
         --copper: #b46f2b;
+        --red: #9b3f2f;
+        --green: #4d6f3a;
+        --blueprint: #183f4b;
+        --signal: #d9e66a;
+        --signal-dark: #747b20;
         --line: #d8d3cb;
         --dark: #111111;
       }
@@ -49,6 +54,12 @@
         font-family: 'Suite Sans', Avenir, sans-serif;
         color: var(--paper);
         background: var(--dark);
+        overflow-x: hidden;
+      }
+
+      ::selection {
+        color: var(--ink);
+        background: var(--signal);
       }
 
       .hero {
@@ -188,12 +199,24 @@
         letter-spacing: 0.08em;
         font-size: 13px;
         font-weight: 700;
+        transition: transform 160ms ease, background 160ms ease,
+          border-color 160ms ease;
       }
 
       .button.secondary {
         color: var(--paper);
         background: transparent;
         border-color: rgba(255, 253, 248, 0.36);
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        background: var(--signal);
+        border-color: var(--signal);
+      }
+
+      .button.secondary:hover {
+        color: var(--ink);
       }
 
       .workflow-strip {
@@ -228,6 +251,17 @@
         margin-top: 8px;
         color: #f2eee7;
         line-height: 1.42;
+      }
+
+      .step em {
+        display: block;
+        margin-top: 10px;
+        color: var(--teal-light);
+        font-style: normal;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
       }
 
       .band {
@@ -291,6 +325,117 @@
         line-height: 1.5;
       }
 
+      .tool-band {
+        background: linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px), var(--paper);
+        background-size: 44px 44px;
+      }
+
+      .tool-intro {
+        max-width: 820px;
+        margin: -16px 0 34px;
+        color: var(--muted);
+        font-size: clamp(18px, 2vw, 22px);
+        line-height: 1.52;
+      }
+
+      .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-top: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+        background: white;
+      }
+
+      .tool-card {
+        min-height: 250px;
+        padding: 24px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: white;
+        position: relative;
+        overflow: hidden;
+        transition: transform 160ms ease, box-shadow 160ms ease,
+          background 160ms ease;
+      }
+
+      .tool-card::after {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 5px;
+        background: var(--accent, var(--teal));
+        transform: scaleY(0.25);
+        transform-origin: top;
+        transition: transform 180ms ease;
+      }
+
+      .tool-card:hover {
+        z-index: 1;
+        transform: translateY(-4px);
+        background: #fffffc;
+        box-shadow: 0 24px 60px rgba(17, 17, 17, 0.12);
+      }
+
+      .tool-card:hover::after {
+        transform: scaleY(1);
+      }
+
+      .tool-card b {
+        color: var(--accent, var(--teal));
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .tool-card h3 {
+        margin: 26px 0 12px;
+        font-family: 'Playfair Local', Georgia, serif;
+        font-size: clamp(29px, 3vw, 40px);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .tool-card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.52;
+      }
+
+      .tool-meta {
+        margin-top: 20px;
+        border-top: 1px solid var(--accent, var(--teal));
+      }
+
+      .tool-meta div {
+        display: grid;
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 12px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+      }
+
+      .tool-meta strong {
+        color: var(--ink);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .tool-meta span {
+        color: var(--muted);
+      }
+
+      .bench-note {
+        margin-top: 28px;
+        padding: 20px;
+        color: white;
+        background: var(--blueprint);
+        border-left: 5px solid var(--signal);
+        line-height: 1.5;
+      }
+
       .footer {
         padding: 34px clamp(20px, 5vw, 70px);
         color: var(--muted);
@@ -305,7 +450,8 @@
         }
         .workflow-strip,
         .origin-grid,
-        .cards {
+        .cards,
+        .tool-grid {
           grid-template-columns: 1fr;
         }
         .step {
@@ -314,6 +460,15 @@
         }
         .step:last-child {
           border-bottom: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition: none !important;
         }
       }
     </style>
@@ -346,7 +501,7 @@
             </div>
           </div>
           <div class="actions">
-            <a class="button" href="#workflow">See workflow</a>
+            <a class="button" href="#tools">See tools</a>
             <a
               class="button secondary"
               href="https://github.com/scottolmer/sourdoughsuitenew"
@@ -361,17 +516,21 @@
             ><span
               >Read visible signs from dough, starter, crumb, or loaf.</span
             >
+            <em>Photo Rescue</em>
           </div>
           <div class="step">
             <b>Decide</b
             ><span>Get next steps and risk without pretending certainty.</span>
+            <em>Photo Rescue + calculators</em>
           </div>
           <div class="step">
             <b>Plan</b><span>Build a schedule around the bake window.</span>
+            <em>Bake Planner</em>
           </div>
           <div class="step">
             <b>Save</b
             ><span>Turn the plan into a recipe for the next bake.</span>
+            <em>Recipe Index</em>
           </div>
         </div>
       </section>
@@ -384,6 +543,11 @@
             <div class="quote">
               The app is for the moment when a baker has to make a call: wait,
               fold, cool, proof, bake, scale, or save the formula for tomorrow.
+            </div>
+            <div class="bench-note">
+              The app covers the full sourdough bench: Photo Rescue, Bake
+              Planner, Baker's Percentage, Starter Log, Recipe Index, and the
+              supporting bench calculators.
             </div>
           </div>
 
@@ -418,6 +582,102 @@
             </article>
           </div>
         </div>
+      </section>
+
+      <section id="tools" class="band tool-band">
+        <div class="kicker">Available Tools</div>
+        <h2>The origin story gets them interested. The tools prove the app.</h2>
+        <p class="tool-intro">
+          SourdoughSuite is built around the same decisions I make at the
+          bakery: diagnose what is happening, calculate the formula, plan the
+          bake, care for the starter, and keep records for the next production
+          day.
+        </p>
+
+        <section class="tool-grid" aria-label="SourdoughSuite available tools">
+          <article class="tool-card" style="--accent: var(--red)">
+            <b>01 / Rescue</b>
+            <h3>Photo Rescue</h3>
+            <p>
+              Add a dough, starter, crumb, or loaf photo and get a practical
+              read on risk, likely cause, and what to do next.
+            </p>
+            <div class="tool-meta">
+              <div>
+                <strong>Best for</strong><span>Fermentation calls</span>
+              </div>
+              <div>
+                <strong>Output</strong><span>Diagnosis + next step</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="tool-card" style="--accent: var(--teal)">
+            <b>02 / Schedule</b>
+            <h3>Bake Planner</h3>
+            <p>
+              Build a bake-day timeline from target bake time, room temperature,
+              hydration, starter strength, and proofing strategy.
+            </p>
+            <div class="tool-meta">
+              <div><strong>Best for</strong><span>Production timing</span></div>
+              <div><strong>Output</strong><span>Saved bake plan</span></div>
+            </div>
+          </article>
+
+          <article class="tool-card" style="--accent: var(--copper)">
+            <b>03 / Formula</b>
+            <h3>Baker's Percentage</h3>
+            <p>
+              Calculate formulas by flour weight or total dough weight, then
+              save the finished formula into My Recipes.
+            </p>
+            <div class="tool-meta">
+              <div><strong>Best for</strong><span>Scaling dough</span></div>
+              <div><strong>Output</strong><span>Weights + hydration</span></div>
+            </div>
+          </article>
+
+          <article class="tool-card" style="--accent: var(--green)">
+            <b>04 / Culture</b>
+            <h3>Starter Log</h3>
+            <p>
+              Track feedings, flour type, timing, readiness, and culture health
+              so starter decisions are based on history.
+            </p>
+            <div class="tool-meta">
+              <div><strong>Best for</strong><span>Starter care</span></div>
+              <div><strong>Output</strong><span>Feeding record</span></div>
+            </div>
+          </article>
+
+          <article class="tool-card" style="--accent: var(--blueprint)">
+            <b>05 / Records</b>
+            <h3>Recipe Index</h3>
+            <p>
+              Save recipes, formulas, hydration, yield, method notes, and plans
+              so a successful bake can be repeated.
+            </p>
+            <div class="tool-meta">
+              <div><strong>Best for</strong><span>Repeatability</span></div>
+              <div><strong>Output</strong><span>My Recipes library</span></div>
+            </div>
+          </article>
+
+          <article class="tool-card" style="--accent: var(--signal-dark)">
+            <b>06 / Bench Math</b>
+            <h3>Calculators</h3>
+            <p>
+              Use hydration, levain, preferment, flour blend, scaling, dough
+              temperature, and timeline calculators when the math needs to be
+              fast.
+            </p>
+            <div class="tool-meta">
+              <div><strong>Best for</strong><span>Quick decisions</span></div>
+              <div><strong>Output</strong><span>Production numbers</span></div>
+            </div>
+          </article>
+        </section>
       </section>
     </main>
 
